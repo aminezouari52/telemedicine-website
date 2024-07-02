@@ -1,0 +1,16 @@
+/* $blue: "primary.500" */
+
+/* fontFamily="Bodoni" */
+
+.slider .slider-img {
+  height: 450px;
+  /* object-fit: cover; */
+}
+
+.slider .no-img {
+  height: 450px;
+}
+
+#root {
+  background-color: #f6f8fb;
+}
