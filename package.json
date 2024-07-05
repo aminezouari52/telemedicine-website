@@ -2,8 +2,8 @@
   "name": "my-turborepo",
   "private": true,
   "scripts": {
+    "start": "turbo dev",
     "build": "turbo build",
-    "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },

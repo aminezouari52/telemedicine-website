@@ -1,6 +1,6 @@
 // REACT
 import { useState } from "react";
-import { useNavigate, NavLink, useLocation } from "react-router-dom";
+import { useNavigate, NavLink } from "react-router-dom";
 import { useToast } from "@chakra-ui/react";
 
 // REDUX
@@ -63,7 +63,6 @@ const Register = () => {
       } else {
         navigate("/admin");
       }
-
       dispatch(
         setLoggedInUser({
           name: res.data.name,
@@ -73,9 +72,8 @@ const Register = () => {
           _id: res.data._id,
         })
       );
-
       toast({
-        title: "Account created successfully!",
+        title: "Compte créer avec succès!",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -83,7 +81,7 @@ const Register = () => {
     } catch (err) {
       console.log(err);
       toast({
-        title: "Failed to create or update user",
+        title: "L'émail est déjà utilisé!",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -148,7 +146,7 @@ const Register = () => {
         </Flex>
         <Flex direction="column" gap={2} w="100%">
           <Button
-            tyep="submit"
+            type="submit"
             isDisabled={!email || password.length < 6}
             isLoading={loading}
             colorScheme="primary"

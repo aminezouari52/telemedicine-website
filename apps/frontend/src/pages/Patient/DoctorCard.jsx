@@ -63,7 +63,7 @@ const DoctorCard = ({ product }) => {
             variant="solid"
             colorScheme="primary"
             isDisabled={product?.quantity < 1}
-            onClick={() => navigate("/patient/reservez")}
+            onClick={() => navigate("/patient/book")}
             _hover={{
               opacity: 0.8,
             }}

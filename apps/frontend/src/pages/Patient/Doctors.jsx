@@ -6,24 +6,26 @@ import DoctorCard from "./DoctorCard";
 import { Heading, Flex, Select, Text } from "@chakra-ui/react";
 
 // ASSETS
-import Avatar1 from "../../images/avatars/doctors/1.avif";
-import Avatar2 from "../../images/avatars/doctors/2.avif";
-import Avatar3 from "../../images/avatars/doctors/3.avif";
-import Avatar4 from "../../images/avatars/doctors/4.avif";
-import Avatar5 from "../../images/avatars/doctors/5.avif";
-import Avatar6 from "../../images/avatars/doctors/6.avif";
-import Avatar7 from "../../images/avatars/doctors/7.avif";
-import Avatar8 from "../../images/avatars/doctors/8.avif";
-import Avatar9 from "../../images/avatars/doctors/9.avif";
-import Avatar10 from "../../images/avatars/doctors/10.avif";
+import doctor1 from "../../images/avatars/doctors/1.avif";
+import doctor2 from "../../images/avatars/doctors/2.avif";
+import doctor3 from "../../images/avatars/doctors/3.avif";
+import doctor4 from "../../images/avatars/doctors/4.avif";
+import doctor5 from "../../images/avatars/doctors/5.avif";
+import doctor6 from "../../images/avatars/doctors/6.avif";
+import doctor7 from "../../images/avatars/doctors/7.avif";
+import doctor8 from "../../images/avatars/doctors/8.avif";
+import doctor9 from "../../images/avatars/doctors/9.avif";
+import doctor10 from "../../images/avatars/doctors/10.avif";
 import { ArrowUpDownIcon } from "@chakra-ui/icons";
+import Pagination, { paginate } from "./Pagination";
+import { useState } from "react";
 const doctors = [
   {
     id: 1,
     title: "Dr. Mohamed Amine",
     price: 60,
     slug: "dr-mohamed-amine",
-    images: [Avatar1],
+    images: [doctor1],
     patients: 164,
     hospital: "Hopital sahloul sousse",
   },
@@ -32,7 +34,7 @@ const doctors = [
     title: "Dr. John Doe",
     price: 60,
     slug: "dr-mohamed-amine",
-    images: [Avatar2],
+    images: [doctor2],
     hospital: "Farhat Hached Sousse",
     patients: 206,
   },
@@ -41,7 +43,7 @@ const doctors = [
     title: "Dr. Benjamin Hawthorne",
     price: 80,
     slug: "dr-mohamed-amine",
-    images: [Avatar3],
+    images: [doctor3],
     hospital: "Riverside Medical Center",
     patients: 603,
   },
@@ -50,7 +52,7 @@ const doctors = [
     title: "Dr. Mia Kensington",
     price: 100,
     slug: "dr-mohamed-amine",
-    images: [Avatar4],
+    images: [doctor4],
     hospital: "Farhat Hached Sousse",
     patients: 1533,
   },
@@ -59,58 +61,158 @@ const doctors = [
     title: "Dr. Isabella Langston",
     price: 70,
     slug: "dr-mohamed-amine",
-    images: [Avatar5],
+    images: [doctor5],
     hospital: "Farhat Hached Sousse",
     patients: 702,
+  },
+  {
+    id: 6,
+    title: "Dr. Isabella Langston",
+    price: 70,
+    slug: "dr-mohamed-amine",
+    images: [doctor6],
+    hospital: "Farhat Hached Sousse",
+    patients: 702,
+  },
+  {
+    id: 7,
+    title: "Dr. Isabella Langston",
+    price: 70,
+    slug: "dr-mohamed-amine",
+    images: [doctor7],
+    hospital: "Farhat Hached Sousse",
+    patients: 702,
+  },
+  {
+    id: 8,
+    title: "Dr. Isabella Langston",
+    price: 70,
+    slug: "dr-mohamed-amine",
+    images: [doctor8],
+    hospital: "Farhat Hached Sousse",
+    patients: 702,
+  },
+  {
+    id: 9,
+    title: "Dr. Isabella Langston",
+    price: 70,
+    slug: "dr-mohamed-amine",
+    images: [doctor9],
+    hospital: "Farhat Hached Sousse",
+    patients: 702,
+  },
+  {
+    id: 10,
+    title: "Dr. Isabella Langston",
+    price: 70,
+    slug: "dr-mohamed-amine",
+    images: [doctor10],
+    hospital: "Farhat Hached Sousse",
+    patients: 702,
+  },
+  {
+    id: 1,
+    title: "Dr. Mohamed Amine",
+    price: 60,
+    slug: "dr-mohamed-amine",
+    images: [doctor1],
+    patients: 164,
+    hospital: "Hopital sahloul sousse",
+  },
+  {
+    id: 2,
+    title: "Dr. John Doe",
+    price: 60,
+    slug: "dr-mohamed-amine",
+    images: [doctor2],
+    hospital: "Farhat Hached Sousse",
+    patients: 206,
+  },
+  {
+    id: 3,
+    title: "Dr. Benjamin Hawthorne",
+    price: 80,
+    slug: "dr-mohamed-amine",
+    images: [doctor3],
+    hospital: "Riverside Medical Center",
+    patients: 603,
+  },
+  {
+    id: 4,
+    title: "Dr. Mia Kensington",
+    price: 100,
+    slug: "dr-mohamed-amine",
+    images: [doctor4],
+    hospital: "Farhat Hached Sousse",
+    patients: 1533,
   },
   {
     id: 5,
     title: "Dr. Isabella Langston",
     price: 70,
     slug: "dr-mohamed-amine",
-    images: [Avatar6],
+    images: [doctor5],
     hospital: "Farhat Hached Sousse",
     patients: 702,
   },
   {
-    id: 5,
+    id: 6,
     title: "Dr. Isabella Langston",
     price: 70,
     slug: "dr-mohamed-amine",
-    images: [Avatar7],
+    images: [doctor6],
     hospital: "Farhat Hached Sousse",
     patients: 702,
   },
   {
-    id: 5,
+    id: 7,
     title: "Dr. Isabella Langston",
     price: 70,
     slug: "dr-mohamed-amine",
-    images: [Avatar8],
+    images: [doctor7],
     hospital: "Farhat Hached Sousse",
     patients: 702,
   },
   {
-    id: 5,
+    id: 8,
     title: "Dr. Isabella Langston",
     price: 70,
     slug: "dr-mohamed-amine",
-    images: [Avatar9],
+    images: [doctor8],
     hospital: "Farhat Hached Sousse",
     patients: 702,
   },
   {
-    id: 5,
+    id: 9,
     title: "Dr. Isabella Langston",
     price: 70,
     slug: "dr-mohamed-amine",
-    images: [Avatar10],
+    images: [doctor9],
+    hospital: "Farhat Hached Sousse",
+    patients: 702,
+  },
+  {
+    id: 10,
+    title: "Dr. Isabella Langston",
+    price: 70,
+    slug: "dr-mohamed-amine",
+    images: [doctor10],
     hospital: "Farhat Hached Sousse",
     patients: 702,
   },
 ];
 
 const Doctors = () => {
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const nextPageHandler = () => {
+    setCurrentPage((prev) => prev + 1);
+  };
+
+  const prevPageHandler = () => {
+    setCurrentPage((prev) => prev - 1);
+  };
+
   return (
     <Flex flexDirection="column" gap={10} p={10}>
       <Heading fontSize="xl">Trouver un docteur</Heading>
@@ -180,8 +282,9 @@ const Doctors = () => {
           </Flex>
         </Flex>
         <Flex gap={20} py={4} flexWrap="wrap">
-          {doctors.map((doc) => (
+          {paginate(doctors)[currentPage].map((doc) => (
             <DoctorCard
+              key={doc.id}
               product={{
                 id: doc.id,
                 title: doc.title,
@@ -194,6 +297,13 @@ const Doctors = () => {
           ))}
         </Flex>
       </Flex>
+      <Pagination
+        doctors={paginate(doctors)}
+        currentPage={currentPage}
+        nextPage={nextPageHandler}
+        prevPage={prevPageHandler}
+        updatePage={setCurrentPage}
+      />
     </Flex>
   );
 };

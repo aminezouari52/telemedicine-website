@@ -61,7 +61,7 @@ const Consultations = () => {
             </CardBody>
             <Divider borderColor="gray" />
             <CardFooter>
-              <Flex justifyContent="space-between" alignItem="center" w="100%">
+              <Flex justifyContent="space-between" alignItems="center" w="100%">
                 <Flex alignItems="center" gap="10px">
                   <Icon as={CalendarIcon} color="gray.500" />
                   <Flex fontSize="12px" flexDirection="column">
@@ -101,7 +101,7 @@ const Consultations = () => {
             </CardBody>
             <Divider borderColor="gray" />
             <CardFooter>
-              <Flex justifyContent="space-between" alignItem="center" w="100%">
+              <Flex justifyContent="space-between" alignItems="center" w="100%">
                 <Flex alignItems="center" gap="10px">
                   <Icon as={CalendarIcon} color="gray.500" />
                   <Flex fontSize="12px" flexDirection="column">

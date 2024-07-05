@@ -63,7 +63,7 @@ const Patient = () => {
                   opacity: 0.8,
                 }}
                 size={{ sm: "sm", md: "md", lg: "lg" }}
-                onClick={() => navigate("/patient/reservez")}
+                onClick={() => navigate("/patient/book")}
               >
                 Réservez une consultation!
               </Button>
@@ -140,7 +140,7 @@ const Patient = () => {
               <Button
                 variant="link"
                 color="primary.500"
-                onClick={() => navigate("/patient/reservez")}
+                onClick={() => navigate("/patient/book")}
               >
                 Réservez maintenant.
               </Button>

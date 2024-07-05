@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema;
 
 const userSchema = new mongoose.Schema(
   {
@@ -11,17 +10,13 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "subscriber",
+      default: "user",
     },
-    cart: {
-      type: Array,
-      default: [],
-    },
-    address: String,
     phone: String,
-    wishlist: [{ type: ObjectId, ref: "Product" }],
   },
-  { timestamps: true }
+  { timestamps: true, discriminatorKey: "role", collection: "users" }
 );
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+
+module.exports = User;

@@ -1,22 +1,25 @@
 const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema;
+const User = require("./user.js");
 
 const doctorSchema = new mongoose.Schema({
-  doctor: {
-    type: ObjectId,
-    ref: "Doctor",
-  },
   firstName: String,
   lastName: String,
-  patients: String,
+  title: String,
   hospital: String,
-  image: String,
+  description: String,
+  // image: String,
   price: String,
   specialty: String,
   address: String,
   phone: String,
-  age: String,
-  role: String,
+  age: Number,
+  patients: Number,
+  degree: [String],
+  schedule: String,
+  experience: String,
+  certifications: [String],
 });
 
-module.exports = mongoose.model("Doctor", doctorSchema);
+const Doctor = User.discriminator("doctor", doctorSchema);
+
+module.exports = Doctor;
