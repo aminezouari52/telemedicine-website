@@ -12,8 +12,8 @@ import { Outlet } from "react-router-dom";
 
 // STYLE
 import { Box, Flex, Spinner } from "@chakra-ui/react";
-import Header from "../nav/Header";
-import SideBar from "../nav/SideBar";
+import AdminHeader from "../header/AdminHeader";
+import SideBar from "../header/SideBar";
 
 const AdminRoute = () => {
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ const AdminRoute = () => {
       </Box>
       <Box w="100%" overflowX="hidden" bg="#e9ecef">
         <Box px={5} h="100%">
-          <Header />
+          <AdminHeader />
           <Outlet />
         </Box>
       </Box>

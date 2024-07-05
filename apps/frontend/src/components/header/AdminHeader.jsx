@@ -15,7 +15,7 @@ import { Flex, Button } from "@chakra-ui/react";
 // ASSETS
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 
-const Header = () => {
+const AdminHeader = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const dispatch = useDispatch();
@@ -67,4 +67,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default AdminHeader;

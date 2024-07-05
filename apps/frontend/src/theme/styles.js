@@ -1,11 +1,4 @@
 export const globalStyles = {
-  sizes: {
-    header: {
-      sm: "50px",
-      md: "50px",
-      lg: "60px",
-    },
-  },
   colors: {
     primary: {
       600: "#615EFC",

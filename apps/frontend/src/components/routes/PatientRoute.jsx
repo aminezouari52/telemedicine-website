@@ -9,7 +9,7 @@ import { auth } from "../../firebase";
 
 // COMPONENTS
 import { Outlet } from "react-router-dom";
-import Header from "../patientHeader/Header";
+import PatientHeader from "../header/PatientHeader";
 
 // STYLE
 import { Box, Spinner } from "@chakra-ui/react";
@@ -38,7 +38,7 @@ const PatientRoute = () => {
 
   return ok ? (
     <Box h="100vh" overflowX="hidden">
-      <Header />
+      <PatientHeader />
       <Outlet />
     </Box>
   ) : (
