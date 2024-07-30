@@ -49,7 +49,7 @@ const AdminHeader = () => {
   };
 
   return (
-    <Flex position="sticky" top="0" zIndex="11" p={4} justifyContent="flex-end">
+    <Flex pos="sticky" top="0" zIndex="11" p={4} justifyContent="flex-end">
       <Button
         size="sm"
         color="#fff"

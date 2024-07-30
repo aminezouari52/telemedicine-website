@@ -39,7 +39,7 @@ const HeaderButton = ({ pathname, children }) => {
     >
       {children}
       <Box
-        position="absolute"
+        pos="absolute"
         left="0"
         bottom="0"
         width={location.pathname === pathname || isHovering ? "100%" : "0"}

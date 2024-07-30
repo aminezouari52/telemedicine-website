@@ -27,7 +27,7 @@ import VideoCall from "./pages/Patient/VideoCall";
 
 import NotFound from "./components/NotFound";
 import AllPatient from "./pages/admin/patient/allPatient";
-import Reservez from "./pages/Reservez/Reservez";
+import Consultation from "./pages/consultation/Consultation.jsx";
 import Doctor from "./pages/Doctor";
 import AllUsers from "./pages/admin/users/AllUsers";
 import AllDoctors from "./pages/admin/doctors/allDoctors";
@@ -83,7 +83,7 @@ const App = () => {
 
         <Route path="/patient/*" element={<PatientRoute />}>
           <Route path="home" element={<Patient />} />
-          <Route path="book" element={<Reservez />} />
+          <Route path="consultation/:id" element={<Consultation />} />
           <Route path="consultations" element={<Consultations />} />
           <Route path="doctors" element={<Doctors />} />{" "}
           <Route path="doctors/:id" element={<DoctorDetails />} />

@@ -43,7 +43,7 @@ const PatientRoute = () => {
     </Box>
   ) : (
     <Spinner
-      position="absolute"
+      pos="absolute"
       top="50%"
       right="50%"
       thickness="4px"

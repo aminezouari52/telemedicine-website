@@ -1,4 +1,5 @@
-import { Button, chakra, Flex } from "@chakra-ui/react";
+import { Button, chakra, Flex, Icon } from "@chakra-ui/react";
+import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 
 export const paginate = (items) => {
   const itemsPerPage = 6;
@@ -58,7 +59,7 @@ const Pagination = ({
           onClick={prevPage}
           disabled={currentPage === 0}
         >
-          Précédent
+          <ArrowBackIcon />
         </PagButton>
         {doctors.map((_, index) => (
           <PagButton
@@ -74,7 +75,7 @@ const Pagination = ({
           disabled={currentPage === doctors.length - 1}
           borderRightRadius="lg"
         >
-          Suivant
+          <ArrowForwardIcon />
         </PagButton>
       </Flex>
     </Flex>

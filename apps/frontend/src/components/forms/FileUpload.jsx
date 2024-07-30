@@ -84,10 +84,10 @@ const FileUpload = ({ values, setValues, setLoading, loading }) => {
       <Flex my={2}>
         {values.images &&
           values.images.map((image) => (
-            <Box key={image.public_id} position="relative" mr={2}>
+            <Box key={image.public_id} pos="relative" mr={2}>
               <Avatar src={image.url} borderRadius="0px" size="xl" />
               <SmallCloseIcon
-                position="absolute"
+                pos="absolute"
                 top={-1}
                 right={-1}
                 boxSize={5}

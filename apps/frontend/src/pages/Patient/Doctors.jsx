@@ -285,7 +285,7 @@ const Doctors = () => {
           {paginate(doctors)[currentPage].map((doc) => (
             <DoctorCard
               key={doc.id}
-              product={{
+              doctor={{
                 id: doc.id,
                 title: doc.title,
                 price: doc.price,

@@ -125,7 +125,7 @@ function DoctorDetails() {
             _hover={{
               opacity: "0.8",
             }}
-            onClick={() => navigate("/patient/book")}
+            onClick={() => navigate(`/patient/consultation/${params.id}`)}
           >
             Prenez un rendez-vous
           </Button>

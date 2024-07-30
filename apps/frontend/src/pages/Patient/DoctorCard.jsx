@@ -9,9 +9,9 @@ import { motion } from "framer-motion";
 import { FaRegHospital } from "react-icons/fa";
 import { IoPeopleOutline } from "react-icons/io5";
 
-const DoctorCard = ({ product }) => {
+const DoctorCard = ({ doctor }) => {
   const navigate = useNavigate();
-  const { images, title, price, patients, hospital } = product;
+  const { images, title, price, patients, hospital } = doctor;
 
   return (
     <Flex
@@ -24,7 +24,7 @@ const DoctorCard = ({ product }) => {
     >
       <Flex
         cursor="pointer"
-        onClick={() => navigate(`/patient/doctors/${product.id}`)}
+        onClick={() => navigate(`/patient/doctors/${doctor.id}`)}
       >
         <motion.div
           whileHover={{
@@ -62,13 +62,13 @@ const DoctorCard = ({ product }) => {
             size="sm"
             variant="solid"
             colorScheme="primary"
-            isDisabled={product?.quantity < 1}
-            onClick={() => navigate("/patient/book")}
+            isDisabled={doctor?.quantity < 1}
+            onClick={() => navigate(`/patient/consultation/${doctor.id}`)}
             _hover={{
               opacity: 0.8,
             }}
           >
-            Reservez
+            Réservez
           </Button>
         </Flex>
       </Flex>

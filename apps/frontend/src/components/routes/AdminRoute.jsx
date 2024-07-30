@@ -51,7 +51,7 @@ const AdminRoute = () => {
     </Flex>
   ) : (
     <Spinner
-      position="absolute"
+      pos="absolute"
       top="50%"
       right="50%"
       thickness="4px"

@@ -59,7 +59,7 @@ export const MyUILayout = () => {
       <>
         <Box h="100%" w="100%" zIndex="-4" bg="#000" opacity="0.1"></Box>
         <Spinner
-          position="absolute"
+          pos="absolute"
           top="50%"
           right="50%"
           thickness="4px"

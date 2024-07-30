@@ -41,7 +41,7 @@ const AuthWrapper = ({ children }) => {
       bg="#fff"
     >
       <Flex
-        position="absolute"
+        pos="absolute"
         top="10px"
         left="10px"
         cursor="pointer"

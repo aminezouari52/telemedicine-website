@@ -67,7 +67,7 @@ const PatientHeader = () => {
   };
 
   return (
-    <Box position="sticky" top="0" zIndex="11">
+    <Box pos="sticky" top="0" zIndex="11">
       <Flex
         justifyContent="center"
         alignItems="center"

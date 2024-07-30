@@ -42,8 +42,8 @@ const Home = () => {
   }, [loggedInUser, navigate, location]);
 
   return (
-    <Box flexDirection="column" justifyContent="center" position="relative">
-      <Flex gap="10px" position="absolute" right="20px" top="10px" zIndex="111">
+    <Box flexDirection="column" justifyContent="center" pos="relative">
+      <Flex gap="10px" pos="absolute" right="20px" top="10px" zIndex="111">
         <Button
           _hover={{
             color: "primary.500",
@@ -73,7 +73,7 @@ const Home = () => {
         </video>
       </Box>
       <Flex
-        position="absolute"
+        pos="absolute"
         top="0"
         h="100%"
         w="100%"
