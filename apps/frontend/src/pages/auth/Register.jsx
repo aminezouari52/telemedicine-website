@@ -50,19 +50,13 @@ const Register = () => {
       const user = userCredential.user;
       const idTokenResult = await user.getIdTokenResult();
 
-      // redux store
+      // save to database
       const res = await createOrUpdateUser({
         token: idTokenResult.token,
         role,
       });
-      // redirect
-      if (role === "doctor") {
-        navigate("/doctor");
-      } else if (role === "patient") {
-        navigate("/patient");
-      } else {
-        navigate("/admin");
-      }
+
+      // redux store
       dispatch(
         setLoggedInUser({
           name: res.data.name,
@@ -72,6 +66,14 @@ const Register = () => {
           _id: res.data._id,
         })
       );
+
+      // redirect
+      if (role === "doctor") {
+        navigate("/doctor");
+      } else if (role === "patient") {
+        navigate("/patient");
+      }
+
       toast({
         title: "Compte créer avec succès!",
         status: "success",

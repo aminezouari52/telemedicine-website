@@ -180,9 +180,9 @@ function PatientList() {
         </Card>
       </Flex>
       <SimpleGrid color="white" columns={4} gap={4}>
-        {patients.map((patient) => {
+        {patients.map((patient, index) => {
           return (
-            <Card flex={1} maxW="sm">
+            <Card key={index} flex={1} maxW="sm">
               <CardBody>
                 <Image h="280px" src={patient.avatar} borderRadius="lg" />
                 <Stack mt="6" spacing="3">

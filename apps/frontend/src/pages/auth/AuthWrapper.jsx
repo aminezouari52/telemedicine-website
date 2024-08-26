@@ -1,10 +1,10 @@
 // HOOKS
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // STYLE
-import { Box, Flex, Image } from "@chakra-ui/react";
+import { Flex, Image, Spinner } from "@chakra-ui/react";
 
 // ASSETS
 import loginImg from "../../images/login.webp";
@@ -13,27 +13,37 @@ import loginLogo from "../../images/login-logo.png";
 const AuthWrapper = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
 
   // REDIRECT USER
-  const loggedInUser = useSelector((state) => state.user.loggedInUser);
+  const user = useSelector((state) => state.user.loggedInUser);
   useEffect(() => {
     const intended = location.state;
     if (intended) {
       return;
     } else {
-      if (loggedInUser && loggedInUser.token) {
-        if (loggedInUser.role === "doctor") {
+      if (user && user.token) {
+        if (user.role === "doctor") {
           navigate("/doctor");
-        } else if (loggedInUser.role === "patient") {
+        } else if (user.role === "patient") {
           navigate("/patient");
-        } else {
-          navigate("/admin");
         }
       }
+      setIsLoading(false);
     }
-  }, [loggedInUser, navigate, location]);
+  }, [user, navigate, location]);
 
-  return (
+  return isLoading ? (
+    <Spinner
+      pos="absolute"
+      top="50%"
+      right="50%"
+      thickness="4px"
+      emptyColor="gray.200"
+      color="primary.500"
+      size="xl"
+    />
+  ) : (
     <Flex
       justifyContent="space-between"
       alignItems="center"

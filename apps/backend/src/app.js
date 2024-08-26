@@ -12,6 +12,9 @@ const { authLimiter } = require("./middlewares/rateLimiter");
 const routes = require("./routes/v1");
 const { errorConverter, errorHandler } = require("./middlewares/error");
 const ApiError = require("./utils/ApiError");
+const bodyParser = require("body-parser");
+const os = require("os");
+const formData = require("express-form-data");
 
 const app = express();
 
@@ -23,16 +26,23 @@ if (config.env !== "test") {
 // set security HTTP headers
 app.use(helmet());
 
-// parse json request body
-app.use(express.json());
+// // parse json request body
+app.use(express.json({ limit: "50mb" }));
 
 // parse urlencoded request body
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 app.use(mongoSanitize());
 
 // gzip compression
 app.use(compression());
+
+const options = {
+  uploadDir: os.tmpdir(),
+  autoClean: true,
+};
+// parse data with connect-multiparty.
+app.use(formData.parse(options));
 
 // enable cors
 app.use(cors());

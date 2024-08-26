@@ -20,6 +20,7 @@ import doctor from "../../images/avatars/doctors/1.avif";
 import { Steps, Step, useSteps } from "chakra-ui-steps";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
+import moment from "moment";
 
 const Consultation = () => {
   const { onClose } = useDisclosure();
@@ -48,8 +49,8 @@ const Consultation = () => {
     <Flex direction="column" bg="#fff" p={4} w="100%">
       <Formik
         initialValues={{
-          date: "",
-          time: "",
+          date: moment(new Date()).format("DD-MM-YYYY"),
+          time: moment(new Date()).format("HH:mm"),
           firstName: "",
           lastName: "",
           address: "",
@@ -108,9 +109,8 @@ const Consultation = () => {
                       <Box
                         h={64}
                         bgSize="cover"
-                        style={{
-                          backgroundImage: `url('${doctor}')`,
-                        }}
+                        bgImage={`url('${doctor}')`}
+                        borderRadius="md"
                       ></Box>
                       <Box py={8} maxW="xl">
                         <chakra.h2

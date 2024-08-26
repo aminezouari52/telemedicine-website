@@ -17,7 +17,7 @@ import { Box, Spinner } from "@chakra-ui/react";
 const DoctorRoute = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.loggedInUser);
-  const [ok, setOk] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // redirect if user is not logged in
   useEffect(() => {
@@ -25,7 +25,7 @@ const DoctorRoute = () => {
       if (!user) {
         navigate("/login");
       }
-      setOk(true);
+      setIsLoading(false);
     });
   }, []);
 
@@ -36,12 +36,14 @@ const DoctorRoute = () => {
     }
   }, [user]);
 
-  return ok ? (
-    <Box h="100vh" overflowX="hidden">
-      <DoctorHeader />
-      <Outlet />
-    </Box>
-  ) : (
+  // redirect to profile if new doctor
+  // useEffect(() => {
+  //   if (user && user?.role === "doctor") {
+  //     // redirect to profile
+  //   }
+  // }, []);
+
+  return isLoading ? (
     <Spinner
       pos="absolute"
       top="50%"
@@ -51,6 +53,11 @@ const DoctorRoute = () => {
       color="primary.500"
       size="xl"
     />
+  ) : (
+    <Box h="100vh" overflowX="hidden">
+      <DoctorHeader />
+      <Outlet />
+    </Box>
   );
 };
 

@@ -1,7 +1,6 @@
 const allRoles = {
-  user: [],
-  doctor: [],
-  patient: [],
+  doctor: ["currentUser", "createOrUpdateUser", "updateDoctor"],
+  patient: ["currentUser", "createOrUpdateUser"],
 };
 
 const roles = Object.keys(allRoles);

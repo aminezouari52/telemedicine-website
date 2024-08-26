@@ -1,23 +1,66 @@
 components:
   schemas:
-    User:
+    Doctor:
       type: object
       properties:
-        id:
+        firstName:
           type: string
-        email:
+        lastName:
           type: string
-          format: email
-        name:
+        age:
+          type: number
+        phone:
           type: string
-        role:
+        address:
           type: string
-          enum: [user, admin]
+        city:
+          type: string
+        zip:
+          type: number
+        description:
+          type: string
+        hospital:
+          type: string
+        specialty:
+          type: string
+        price:
+          type: number
+        degrees:
+          type: array
+        items:
+          type: string
+        certifications:
+          type: array
+          items:
+            type: string
+        schedule:
+          type: array
+          items:
+            type: string
+        experience:
+          type: string
       example:
-        id: 5ebac534954b54139806c112
-        email: fake@example.com
-        name: fake name
-        role: user
+        firstName: john
+        lastName: doe
+        age: 32
+        phone: 23423432
+        address: 123 Health St, Apt 4B
+        city: Medicity
+        zip: 12345
+        description: Experienced cardiologist specializing in heart surgeries and patient care.
+        hospital: MediCare General Hospital
+        specialty: Cardiology
+        price: 150
+        degrees:
+          - "MD in Cardiology"
+          - "PhD in Cardiovascular Medicine"
+        certifications:
+          - "American Board of Internal Medicine Certification"
+          - "Advanced Cardiac Life Support (ACLS)"
+        schedule:
+          - "Lundi"
+          - "Samedi"
+        experience: "+5 ans"
 
     Token:
       type: object
@@ -35,9 +78,9 @@ components:
       type: object
       properties:
         access:
-          $ref: '#/components/schemas/Token'
+          $ref: "#/components/schemas/Token"
         refresh:
-          $ref: '#/components/schemas/Token'
+          $ref: "#/components/schemas/Token"
 
     Error:
       type: object
@@ -53,7 +96,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             code: 400
             message: Email already taken
@@ -62,7 +105,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             code: 401
             message: Please authenticate
@@ -71,7 +114,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             code: 403
             message: Forbidden
@@ -80,7 +123,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            $ref: "#/components/schemas/Error"
           example:
             code: 404
             message: Not found

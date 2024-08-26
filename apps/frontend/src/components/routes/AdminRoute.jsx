@@ -18,26 +18,36 @@ import SideBar from "../header/SideBar";
 const AdminRoute = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.loggedInUser);
-  const [ok, setOk] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // redirect if user is not logged in
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (!user) {
-        navigate("/login");
+        // navigate("/login");
       }
-      setOk(true);
+      setIsLoading(false);
     });
   }, []);
 
   // redirect if user is not a patient
   useEffect(() => {
     if (user && user?.role !== "admin") {
-      navigate("/login");
+      // navigate("/login");
     }
   }, [user]);
 
-  return ok ? (
+  return isLoading ? (
+    <Spinner
+      pos="absolute"
+      top="50%"
+      right="50%"
+      thickness="4px"
+      emptyColor="gray.200"
+      color="primary.500"
+      size="xl"
+    />
+  ) : (
     <Flex h="calc(100vh - 40px)">
       <Box display={{ sm: "none", md: "block" }}>
         <SideBar />
@@ -49,16 +59,6 @@ const AdminRoute = () => {
         </Box>
       </Box>
     </Flex>
-  ) : (
-    <Spinner
-      pos="absolute"
-      top="50%"
-      right="50%"
-      thickness="4px"
-      emptyColor="gray.200"
-      color="primary.500"
-      size="xl"
-    />
   );
 };
 

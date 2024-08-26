@@ -132,12 +132,12 @@ const DateStep = ({ nextForm }) => {
           dateFormat="yyyy/mm/dd h:mm aa"
           onChange={(date) => {
             setStartDate(date);
-            setFieldValue("date", moment(date).format("YYYY-MM-DD"));
+            setFieldValue("date", moment(date).format("DD-MM-YYYY"));
             validateField("date");
           }}
           inline
           dayClassName={(date) => {
-            const dayDate = moment(date).format("YYYY-MM-DD");
+            const dayDate = moment(date).format("DD-MM-YYYY");
             return checkReservation(dayDate);
           }}
           // holidays={holidaysFunction()}

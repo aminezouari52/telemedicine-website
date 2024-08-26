@@ -1,12 +1,12 @@
 import axios from "axios";
 
-export const createOrUpdateUser = async (authtoken) => {
+export const createOrUpdateUser = async (user) => {
   return await axios.post(
-    `${import.meta.env.VITE_REACT_APP_API}/create-or-update-user`,
-    { role: authtoken.role },
+    `${import.meta.env.VITE_REACT_APP_API}/auth/create-or-update-user`,
+    { role: user.role },
     {
       headers: {
-        authtoken: authtoken.token,
+        authtoken: user.token,
       },
     }
   );
@@ -14,7 +14,7 @@ export const createOrUpdateUser = async (authtoken) => {
 
 export const currentUser = async (authtoken) => {
   return await axios.post(
-    `${import.meta.env.VITE_REACT_APP_API}/current-user`,
+    `${import.meta.env.VITE_REACT_APP_API}/auth/current-user`,
     {},
     {
       headers: {

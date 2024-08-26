@@ -33,7 +33,7 @@ import AllUsers from "./pages/admin/users/AllUsers";
 import AllDoctors from "./pages/admin/doctors/allDoctors";
 import Dashboard from "./pages/admin/dashboard/dashboard";
 import Rdv from "./pages/admin/rdv/rdv";
-import DoctorProfile from "./pages/doctor/doctorProfile.jsx";
+import DoctorProfile from "./modules/doctor/components/DoctorProfile";
 import ListConsultation from "./pages/doctor/ListConsultation.jsx";
 import PatientList from "./pages/doctor/PatientList.jsx";
 import PatientProfile from "./pages/doctor/PatientProfile.jsx";
@@ -45,6 +45,7 @@ const App = () => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const idTokenResult = await user.getIdTokenResult();
+
         try {
           const res = await currentUser(idTokenResult.token);
           dispatch(

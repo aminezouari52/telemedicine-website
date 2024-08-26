@@ -38,11 +38,9 @@ const Login = () => {
       navigate(intended.from);
     } else {
       if (res.data.role === "doctor") {
-        navigate("/doctor");
+        navigate("/doctor/home");
       } else if (res.data.role === "patient") {
         navigate("/patient/home");
-      } else {
-        navigate("/admin");
       }
     }
   };
@@ -70,7 +68,7 @@ const Login = () => {
     } catch (err) {
       console.log(err);
       toast({
-        title: "Failed to login user",
+        title: "Email ou mot de passe incorrect",
         status: "error",
         duration: 3000,
         isClosable: true,

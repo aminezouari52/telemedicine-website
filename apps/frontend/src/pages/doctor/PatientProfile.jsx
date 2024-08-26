@@ -91,7 +91,8 @@ function PatientProfile() {
                     bg="gray.50"
                     justifyContent="space-between"
                     p={4}
-                    gap={4}>
+                    gap={4}
+                  >
                     <Avatar
                       size="lg"
                       name="Segun Adebayo"
@@ -202,7 +203,8 @@ function PatientProfile() {
                     bg="gray.50"
                     justifyContent="space-between"
                     p={4}
-                    gap={4}>
+                    gap={4}
+                  >
                     <Avatar
                       size="lg"
                       name="Segun Adebayo"
@@ -240,7 +242,8 @@ function PatientProfile() {
                     bg="gray.50"
                     justifyContent="space-between"
                     p={4}
-                    gap={4}>
+                    gap={4}
+                  >
                     <Avatar
                       size="lg"
                       name="Segun Adebayo"
@@ -278,7 +281,8 @@ function PatientProfile() {
                     bg="gray.50"
                     justifyContent="space-between"
                     p={4}
-                    gap={4}>
+                    gap={4}
+                  >
                     <Avatar
                       size="lg"
                       name="Segun Adebayo"
@@ -316,7 +320,8 @@ function PatientProfile() {
                     bg="gray.50"
                     justifyContent="space-between"
                     p={4}
-                    gap={4}>
+                    gap={4}
+                  >
                     <Avatar
                       size="lg"
                       name="Segun Adebayo"
@@ -373,8 +378,9 @@ function PatientProfile() {
                     <CardFooter>
                       <Flex
                         justifyContent="space-between"
-                        alignItem="center"
-                        w="100%">
+                        alignItems="center"
+                        w="100%"
+                      >
                         <Flex alignItems="center" gap="10px">
                           <Icon as={CalendarIcon} color="gray.500" />
                           <Flex fontSize="12px" flexDirection="column">
@@ -391,7 +397,8 @@ function PatientProfile() {
                             rightIcon={<CalendarIcon />}
                             _hover={{
                               opacity: 0.8,
-                            }}>
+                            }}
+                          >
                             replanifier
                           </Button>
                           <Button
@@ -402,7 +409,8 @@ function PatientProfile() {
                             rightIcon={<ArrowForwardIcon />}
                             _hover={{
                               opacity: 0.8,
-                            }}>
+                            }}
+                          >
                             details
                           </Button>
                         </Flex>
@@ -431,8 +439,9 @@ function PatientProfile() {
                     <CardFooter>
                       <Flex
                         justifyContent="space-between"
-                        alignItem="center"
-                        w="100%">
+                        alignItems="center"
+                        w="100%"
+                      >
                         <Flex alignItems="center" gap="10px">
                           <Icon as={CalendarIcon} color="gray.500" />
                           <Flex fontSize="12px" flexDirection="column">
@@ -450,7 +459,8 @@ function PatientProfile() {
                             rightIcon={<CalendarIcon />}
                             _hover={{
                               opacity: 0.8,
-                            }}>
+                            }}
+                          >
                             replanifier
                           </Button>
                           <Button
@@ -461,7 +471,8 @@ function PatientProfile() {
                             rightIcon={<ArrowForwardIcon />}
                             _hover={{
                               opacity: 0.8,
-                            }}>
+                            }}
+                          >
                             details
                           </Button>
                         </Flex>
@@ -490,8 +501,9 @@ function PatientProfile() {
                     <CardFooter>
                       <Flex
                         justifyContent="space-between"
-                        alignItem="center"
-                        w="100%">
+                        alignItems="center"
+                        w="100%"
+                      >
                         <Flex alignItems="center" gap="10px">
                           <Icon as={CalendarIcon} color="gray.500" />
                           <Flex fontSize="12px" flexDirection="column">
@@ -509,7 +521,8 @@ function PatientProfile() {
                             rightIcon={<CalendarIcon />}
                             _hover={{
                               opacity: 0.8,
-                            }}>
+                            }}
+                          >
                             replanifier
                           </Button>
                           <Button
@@ -520,7 +533,8 @@ function PatientProfile() {
                             rightIcon={<ArrowForwardIcon />}
                             _hover={{
                               opacity: 0.8,
-                            }}>
+                            }}
+                          >
                             details
                           </Button>
                         </Flex>
@@ -538,11 +552,13 @@ function PatientProfile() {
                         direction={"row"}
                         alignItems={"start"}
                         justifyContent={"start"}
-                        gap={4}>
+                        gap={4}
+                      >
                         <Flex
                           alignItems={"center"}
                           justifyContent={"center"}
-                          gap={4}>
+                          gap={4}
+                        >
                           <Flex flexDirection="column">
                             <Text fontWeight="bold">Note Medicament</Text>
                             <Text color="gray">
@@ -562,11 +578,13 @@ function PatientProfile() {
                         direction={"row"}
                         alignItems={"start"}
                         justifyContent={"start"}
-                        gap={4}>
+                        gap={4}
+                      >
                         <Flex
                           alignItems={"center"}
                           justifyContent={"center"}
-                          gap={4}>
+                          gap={4}
+                        >
                           <Flex flexDirection="column">
                             <Text fontWeight="bold">Note Medicament</Text>
                             <Text color="gray">
@@ -586,11 +604,13 @@ function PatientProfile() {
                         direction={"row"}
                         alignItems={"start"}
                         justifyContent={"start"}
-                        gap={4}>
+                        gap={4}
+                      >
                         <Flex
                           alignItems={"center"}
                           justifyContent={"center"}
-                          gap={4}>
+                          gap={4}
+                        >
                           <Flex flexDirection="column">
                             <Text fontWeight="bold">Note Medicament</Text>
                             <Text color="gray">

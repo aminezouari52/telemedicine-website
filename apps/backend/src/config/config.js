@@ -11,6 +11,15 @@ const envVarsSchema = Joi.object()
       .required(),
     PORT: Joi.number().default(3000),
     MONGODB_URL: Joi.string().required().description("Mongo DB url"),
+    CLOUDINARY_CLOUD_NAME: Joi.string()
+      .required()
+      .description("Cloudinary Cloud Name"),
+    CLOUDINARY_API_KEY: Joi.string()
+      .required()
+      .description("Cloudinary API Key"),
+    CLOUDINARY_API_SECRET: Joi.string()
+      .required()
+      .description("Cloudinary API Secret"),
     // JWT_SECRET: Joi.string().required().description('JWT secret key'),
     // JWT_ACCESS_EXPIRATION_MINUTES: Joi.number().default(30).description('minutes after which access tokens expire'),
     // JWT_REFRESH_EXPIRATION_DAYS: Joi.number().default(30).description('days after which refresh tokens expire'),
@@ -45,6 +54,11 @@ module.exports = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     },
+  },
+  cloudinary: {
+    cloud_name: envVars.CLOUDINARY_CLOUD_NAME,
+    api_key: envVars.CLOUDINARY_API_KEY,
+    api_secret: envVars.CLOUDINARY_API_SECRET,
   },
   //   jwt: {
   //     secret: envVars.JWT_SECRET,

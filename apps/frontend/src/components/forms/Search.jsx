@@ -35,10 +35,10 @@ const Search = () => {
     );
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    navigate(`/shop?${text}`);
-  };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   navigate(`/shop?${text}`);
+  // };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -72,7 +72,7 @@ const Search = () => {
 
   return (
     <form
-      onSubmit={handleSubmit}
+      // onSubmit={handleSubmit}
       style={{ display: "flex", alignItems: "center" }}
       ref={formRef}
     >

@@ -4,11 +4,6 @@ const { roles } = require("../config/roles");
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     email: {
       type: String,
       required: true,
@@ -26,15 +21,6 @@ const userSchema = new mongoose.Schema(
       enum: roles,
       default: "user",
     },
-    phone: {
-      type: String,
-      required: true,
-      unique: true,
-      match: [
-        /^\+?[1-9]\d{1,14}$/,
-        "Please enter a valid phone number with an optional leading + sign.",
-      ],
-    },
   },
   { timestamps: true, discriminatorKey: "role", collection: "users" },
 );
@@ -42,3 +28,14 @@ const userSchema = new mongoose.Schema(
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
+
+/**
+ * Check if email is taken
+ * @param {string} email - The user's email
+ * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
+ * @returns {Promise<boolean>}
+ */
+userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
+  const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
+  return !!user;
+};

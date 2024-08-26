@@ -234,9 +234,14 @@ const Doctors = () => {
                 variant="outline"
                 focusBorderColor="primary.500"
               >
-                <option value="recent">tous</option>
-                <option value="recent">specspecspec</option>
-                <option value="recent">spec2</option>
+                <option value="Généraliste">Généraliste</option>
+                <option value="Cardiologue">Cardiologue</option>
+                <option value="Dermatologue">Dermatologue</option>
+                <option value="Endocrinologue">Endocrinologue</option>
+                <option value="Gastro-entérologue">Gastro-entérologue</option>
+                <option value="Neurologue">Neurologue</option>
+                <option value="Pédiatre">Pédiatre</option>
+                <option value="Psychiatre">Psychiatre</option>
               </Select>
             </Flex>
 

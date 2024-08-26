@@ -36,7 +36,7 @@ const AdminHeader = () => {
     try {
       await signOut(auth);
       dispatch(logout(null));
-      navigate("/login");
+      // navigate("/login");
     } catch (err) {
       console.log(err);
       toast({

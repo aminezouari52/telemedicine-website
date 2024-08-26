@@ -1,5 +1,5 @@
 // HOOKS
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
 // STYLE
-import { Heading, Flex, Box, Text, Button } from "@chakra-ui/react";
+import { Heading, Flex, Box, Text, Button, Spinner } from "@chakra-ui/react";
 
 // ASSETS
 import HeroVid from "../images/hero-video2.mp4";
@@ -15,6 +15,7 @@ import HeroVid from "../images/hero-video2.mp4";
 const Home = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
 
   const videoStyle = {
     width: "100%",
@@ -34,14 +35,23 @@ const Home = () => {
           navigate("/doctor");
         } else if (loggedInUser.role === "patient") {
           navigate("/patient");
-        } else {
-          navigate("/admin");
         }
       }
+      setIsLoading(false);
     }
   }, [loggedInUser, navigate, location]);
 
-  return (
+  return isLoading ? (
+    <Spinner
+      pos="absolute"
+      top="50%"
+      right="50%"
+      thickness="4px"
+      emptyColor="gray.200"
+      color="primary.500"
+      size="xl"
+    />
+  ) : (
     <Box flexDirection="column" justifyContent="center" pos="relative">
       <Flex gap="10px" pos="absolute" right="20px" top="10px" zIndex="111">
         <Button
