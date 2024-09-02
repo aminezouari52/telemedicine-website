@@ -101,300 +101,295 @@ const General = () => {
         schedule: [],
         experience: "Moins qu'une année",
       }}
-      onSubmit={async (values, setFieldValue) => {
+      onSubmit={async (values, { setFieldValue }) => {
         setFormIsloading(true);
         const imageResponse = await uploadProfilePicture(user, imageSrc);
-        setFieldValue("photo", imageResponse);
+        setFieldValue("photo", imageResponse.data.url);
         updateDoctor({ id: user._id, token: user.token }, values);
         setFormIsloading(false);
       }}
     >
       {({ handleChange, setFieldValue, values }) => {
         return (
-          <SimpleGrid as={Form} display="grid" columns={3} spacing={6}>
-            <GridItem colSpan={1}>
-              <Box>
-                <Heading fontSize="lg" lineHeight="6">
-                  Profile
-                </Heading>
-                <Text
-                  mt={1}
-                  fontSize="sm"
-                  color="gray.600"
-                  _dark={{
-                    color: "gray.400",
-                  }}
-                >
-                  Veuillez remplir ce formulaire pour compléter votre profil
-                  avec vos informations personnelles.
-                </Text>
-              </Box>
-            </GridItem>
-
-            <GridItem colSpan={2}>
-              <Stack
-                shadow="base"
-                rounded="md"
-                overflow="hidden"
-                px={4}
-                py={5}
-                bg="#fff"
-                spacing={6}
-                p={6}
+          <Flex as={Form} direction="column" gap={8}>
+            <Box>
+              <Heading fontSize="lg" lineHeight="6">
+                Personelles
+              </Heading>
+              <Text
+                mt={1}
+                fontSize="sm"
+                color="gray.600"
+                _dark={{
+                  color: "gray.400",
+                }}
               >
+                Veuillez remplir ce formulaire pour compléter votre profil avec
+                vos informations personnelles.
+              </Text>
+            </Box>
+
+            <Stack
+              shadow="base"
+              rounded="md"
+              overflow="hidden"
+              bg="#fff"
+              spacing={6}
+              py={6}
+              px={6}
+            >
+              <FormControl>
+                <FormLabel
+                  fontSize="sm"
+                  fontWeight="md"
+                  color="gray.700"
+                  mb={3}
+                >
+                  Photo
+                </FormLabel>
+                {imageIsLoading ? (
+                  <Spinner
+                    thickness="3px"
+                    emptyColor="gray.200"
+                    color="primary.500"
+                    size="lg"
+                  />
+                ) : (
+                  <Flex alignItems="center" gap={4}>
+                    <Avatar
+                      boxSize={12}
+                      bg="gray.100"
+                      src={imageSrc}
+                      icon={
+                        <Icon
+                          as={!imageSrc && FaUser}
+                          boxSize={9}
+                          mt={3}
+                          rounded="full"
+                          color="gray.300"
+                        />
+                      }
+                    />
+                    <Box as="label" cursor="pointer">
+                      <Input
+                        type="file"
+                        display="none"
+                        accept="images/*"
+                        onChange={profileImageHandler}
+                      />
+                      <Button
+                        as="span"
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        fontWeight="medium"
+                        _focus={{ shadow: "none" }}
+                      >
+                        Changer
+                      </Button>
+                    </Box>
+                  </Flex>
+                )}
+              </FormControl>
+
+              <SimpleGrid columns={2} spacing={6}>
                 <FormControl>
                   <FormLabel
+                    htmlFor="firstName"
                     fontSize="sm"
                     fontWeight="md"
                     color="gray.700"
                     mb={3}
                   >
-                    Photo
+                    Prénom
                   </FormLabel>
-                  {imageIsLoading ? (
-                    <Spinner
-                      thickness="3px"
-                      emptyColor="gray.200"
-                      color="primary.500"
-                      size="lg"
-                    />
-                  ) : (
-                    <Flex alignItems="center" gap={4}>
-                      <Avatar
-                        boxSize={12}
-                        bg="gray.100"
-                        src={imageSrc}
-                        icon={
-                          <Icon
-                            as={!imageSrc && FaUser}
-                            boxSize={9}
-                            mt={3}
-                            rounded="full"
-                            color="gray.300"
-                          />
-                        }
-                      />
-                      <Box as="label" cursor="pointer">
-                        <Input
-                          type="file"
-                          display="none"
-                          accept="images/*"
-                          onChange={profileImageHandler}
-                        />
-                        <Button
-                          as="span"
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          fontWeight="medium"
-                          _focus={{ shadow: "none" }}
-                        >
-                          Changer
-                        </Button>
-                      </Box>
-                    </Flex>
-                  )}
-                </FormControl>
-
-                <SimpleGrid columns={6} spacing={6}>
-                  <FormControl as={GridItem} colSpan={3}>
-                    <FormLabel
-                      htmlFor="firstName"
-                      fontSize="sm"
-                      fontWeight="md"
-                      color="gray.700"
-                      mb={3}
-                    >
-                      Prénom
-                    </FormLabel>
-                    <Input
-                      as={Field}
-                      type="text"
-                      name="firstName"
-                      id="firstName"
-                      autoComplete="given-name"
-                      focusBorderColor="secondary.500"
-                      shadow="sm"
-                      size="sm"
-                      w="full"
-                      rounded="md"
-                    />
-                  </FormControl>
-                  <FormControl as={GridItem} colSpan={3}>
-                    <FormLabel
-                      htmlFor="lastName"
-                      fontSize="sm"
-                      fontWeight="md"
-                      color="gray.700"
-                      mb={3}
-                    >
-                      Nom
-                    </FormLabel>
-                    <Input
-                      as={Field}
-                      type="text"
-                      name="lastName"
-                      id="lastName"
-                      autoComplete="family-name"
-                      focusBorderColor="secondary.500"
-                      shadow="sm"
-                      size="sm"
-                      w="full"
-                      rounded="md"
-                    />
-                  </FormControl>
-                </SimpleGrid>
-
-                <SimpleGrid columns={6} spacing={6}>
-                  <FormControl as={GridItem} colSpan={3}>
-                    <FormLabel
-                      htmlFor="age"
-                      fontSize="sm"
-                      fontWeight="md"
-                      color="gray.700"
-                      mb={3}
-                    >
-                      Age
-                    </FormLabel>
-                    <NumberInput
-                      name="age"
-                      size="sm"
-                      defaultValue={1}
-                      min={1}
-                      max={100}
-                      focusBorderColor="secondary.500"
-                      onChange={(value) => {
-                        setFieldValue("age", +value);
-                      }}
-                    >
-                      <NumberInputField rounded="md" shadow="sm" />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                  </FormControl>
-                  <FormControl as={GridItem} colSpan={3}>
-                    <FormLabel
-                      htmlFor="phone"
-                      fontSize="sm"
-                      fontWeight="md"
-                      color="gray.700"
-                      mb={3}
-                    >
-                      Téléphone
-                    </FormLabel>
-                    <InputGroup size="sm">
-                      <InputLeftAddon>+216</InputLeftAddon>
-                      <Input
-                        as={Field}
-                        type="tel"
-                        name="phone"
-                        id="phone"
-                        autoComplete="tel"
-                        focusBorderColor="secondary.500"
-                        shadow="sm"
-                        w="full"
-                        rounded="md"
-                      />
-                    </InputGroup>
-                  </FormControl>
-                </SimpleGrid>
-
-                <SimpleGrid columns={6} spacing={6}>
-                  <FormControl as={GridItem} colSpan={2}>
-                    <FormLabel
-                      htmlFor="address"
-                      fontSize="sm"
-                      fontWeight="md"
-                      color="gray.700"
-                      mb={3}
-                    >
-                      Adresse de la rue
-                    </FormLabel>
-                    <Input
-                      as={Field}
-                      type="text"
-                      name="address"
-                      id="address"
-                      autoComplete="street-address"
-                      focusBorderColor="secondary.500"
-                      shadow="sm"
-                      size="sm"
-                      w="full"
-                      rounded="md"
-                    />
-                  </FormControl>
-
-                  <FormControl as={GridItem} colSpan={2}>
-                    <FormLabel
-                      htmlFor="city"
-                      fontSize="sm"
-                      fontWeight="md"
-                      color="gray.700"
-                      mb={3}
-                    >
-                      Ville
-                    </FormLabel>
-                    <Input
-                      as={Field}
-                      type="text"
-                      name="city"
-                      id="city"
-                      autoComplete="city"
-                      focusBorderColor="secondary.500"
-                      shadow="sm"
-                      size="sm"
-                      w="full"
-                      rounded="md"
-                    />
-                  </FormControl>
-
-                  <FormControl as={GridItem} colSpan={2}>
-                    <FormLabel
-                      htmlFor="zip"
-                      fontSize="sm"
-                      fontWeight="md"
-                      color="gray.700"
-                      mb={3}
-                    >
-                      Code postal / Poste
-                    </FormLabel>
-                    <Input
-                      as={Field}
-                      type="text"
-                      name="zip"
-                      id="zip"
-                      autoComplete="postal-code"
-                      focusBorderColor="secondary.500"
-                      shadow="sm"
-                      size="sm"
-                      w="full"
-                      rounded="md"
-                    />
-                  </FormControl>
-                </SimpleGrid>
-                <FormControl mt={1}>
-                  <FormLabel
-                    fontSize="sm"
-                    fontWeight="md"
-                    color="gray.700"
-                    mb={3}
-                  >
-                    Description
-                  </FormLabel>
-                  <Textarea
-                    onChange={handleChange}
-                    name="description"
-                    placeholder="Brève description de votre profil."
-                    rows={3}
-                    shadow="sm"
+                  <Input
+                    as={Field}
+                    type="text"
+                    name="firstName"
+                    id="firstName"
+                    autoComplete="given-name"
                     focusBorderColor="secondary.500"
-                    fontSize="sm"
+                    shadow="sm"
+                    size="sm"
+                    w="full"
+                    rounded="md"
                   />
                 </FormControl>
-              </Stack>
-            </GridItem>
+                <FormControl>
+                  <FormLabel
+                    htmlFor="lastName"
+                    fontSize="sm"
+                    fontWeight="md"
+                    color="gray.700"
+                    mb={3}
+                  >
+                    Nom
+                  </FormLabel>
+                  <Input
+                    as={Field}
+                    type="text"
+                    name="lastName"
+                    id="lastName"
+                    autoComplete="family-name"
+                    focusBorderColor="secondary.500"
+                    shadow="sm"
+                    size="sm"
+                    w="full"
+                    rounded="md"
+                  />
+                </FormControl>
+              </SimpleGrid>
+
+              <SimpleGrid columns={6} spacing={6}>
+                <FormControl as={GridItem} colSpan={3}>
+                  <FormLabel
+                    htmlFor="age"
+                    fontSize="sm"
+                    fontWeight="md"
+                    color="gray.700"
+                    mb={3}
+                  >
+                    Age
+                  </FormLabel>
+                  <NumberInput
+                    name="age"
+                    size="sm"
+                    defaultValue={1}
+                    min={1}
+                    max={100}
+                    focusBorderColor="secondary.500"
+                    onChange={(value) => {
+                      setFieldValue("age", +value);
+                    }}
+                  >
+                    <NumberInputField rounded="md" shadow="sm" />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </FormControl>
+                <FormControl as={GridItem} colSpan={3}>
+                  <FormLabel
+                    htmlFor="phone"
+                    fontSize="sm"
+                    fontWeight="md"
+                    color="gray.700"
+                    mb={3}
+                  >
+                    Téléphone
+                  </FormLabel>
+                  <InputGroup size="sm">
+                    <InputLeftAddon>+216</InputLeftAddon>
+                    <Input
+                      as={Field}
+                      type="tel"
+                      name="phone"
+                      id="phone"
+                      autoComplete="tel"
+                      focusBorderColor="secondary.500"
+                      shadow="sm"
+                      w="full"
+                      rounded="md"
+                    />
+                  </InputGroup>
+                </FormControl>
+              </SimpleGrid>
+
+              <SimpleGrid columns={6} spacing={6}>
+                <FormControl as={GridItem} colSpan={2}>
+                  <FormLabel
+                    htmlFor="address"
+                    fontSize="sm"
+                    fontWeight="md"
+                    color="gray.700"
+                    mb={3}
+                  >
+                    Adresse de la rue
+                  </FormLabel>
+                  <Input
+                    as={Field}
+                    type="text"
+                    name="address"
+                    id="address"
+                    autoComplete="street-address"
+                    focusBorderColor="secondary.500"
+                    shadow="sm"
+                    size="sm"
+                    w="full"
+                    rounded="md"
+                  />
+                </FormControl>
+
+                <FormControl as={GridItem} colSpan={2}>
+                  <FormLabel
+                    htmlFor="city"
+                    fontSize="sm"
+                    fontWeight="md"
+                    color="gray.700"
+                    mb={3}
+                  >
+                    Ville
+                  </FormLabel>
+                  <Input
+                    as={Field}
+                    type="text"
+                    name="city"
+                    id="city"
+                    autoComplete="city"
+                    focusBorderColor="secondary.500"
+                    shadow="sm"
+                    size="sm"
+                    w="full"
+                    rounded="md"
+                  />
+                </FormControl>
+
+                <FormControl as={GridItem} colSpan={2}>
+                  <FormLabel
+                    htmlFor="zip"
+                    fontSize="sm"
+                    fontWeight="md"
+                    color="gray.700"
+                    mb={3}
+                  >
+                    Code postal / Poste
+                  </FormLabel>
+                  <Input
+                    as={Field}
+                    type="text"
+                    name="zip"
+                    id="zip"
+                    autoComplete="postal-code"
+                    focusBorderColor="secondary.500"
+                    shadow="sm"
+                    size="sm"
+                    w="full"
+                    rounded="md"
+                  />
+                </FormControl>
+              </SimpleGrid>
+              <FormControl mt={1}>
+                <FormLabel
+                  fontSize="sm"
+                  fontWeight="md"
+                  color="gray.700"
+                  mb={3}
+                >
+                  Description
+                </FormLabel>
+                <Textarea
+                  onChange={handleChange}
+                  name="description"
+                  placeholder="Brève description de votre profil."
+                  rows={3}
+                  shadow="sm"
+                  focusBorderColor="secondary.500"
+                  fontSize="sm"
+                />
+              </FormControl>
+            </Stack>
 
             <GridItem colSpan={3}>
               <Divider my="5" borderColor="gray.300" />
@@ -430,8 +425,8 @@ const General = () => {
                 spacing={6}
                 p={6}
               >
-                <SimpleGrid columns={3} spacing={6}>
-                  <FormControl as={GridItem} colSpan={[6, 4]}>
+                <Flex gap={6}>
+                  <FormControl as={Flex} direction="column">
                     <FormLabel
                       fontSize="sm"
                       fontWeight="md"
@@ -474,9 +469,7 @@ const General = () => {
                       </option>
                     </Select>
                   </FormControl>
-                </SimpleGrid>
-                <SimpleGrid columns={3} spacing={6}>
-                  <FormControl as={GridItem} colSpan={[6, 4]}>
+                  <FormControl as={Flex} direction="column">
                     <FormLabel
                       fontSize="sm"
                       fontWeight="md"
@@ -506,82 +499,23 @@ const General = () => {
                       <option value="Psychiatre">Psychiatre</option>
                     </Select>
                   </FormControl>
-                </SimpleGrid>
-
-                <Flex direction="column" wrap="wrap">
-                  <Text fontWeight="md" fontSize="md" color="gray.900" mb={3}>
-                    Dîplomes
-                  </Text>
-                  <FieldArray
-                    name="degrees"
-                    render={({ remove, push }) => (
-                      <>
-                        <Stack spacing={4}>
-                          {values.degrees?.map((degree, index) => (
-                            <Flex key={index} justifyContent="flex-end">
-                              <Input
-                                name={`degrees.${index}`}
-                                placeholder="Diplôme d'État de Docteur en Médecine."
-                                type="text"
-                                focusBorderColor="secondary.500"
-                                borderRightRadius={0}
-                                shadow="sm"
-                                size="sm"
-                                w="full"
-                                rounded="md"
-                                pr={6}
-                                value={degree}
-                                onChange={handleChange}
-                              />
-                              <IconButton
-                                type="button"
-                                colorScheme="red"
-                                size="sm"
-                                icon={<CloseIcon h="10px" w="10px" />}
-                                borderLeftRadius={0}
-                                onClick={() => remove(index)}
-                              />
-                            </Flex>
-                          ))}
-                        </Stack>
-                        <Flex gap={2} mt={2}>
-                          <IconButton
-                            size="xs"
-                            type="button"
-                            borderColor="secondary.500"
-                            variant="outline"
-                            isRound={true}
-                            onClick={() => push("")}
-                            _hover={{
-                              bg: "secondary.500",
-                              "& svg": { color: "white" },
-                            }}
-                            icon={<AddIcon color="secondary.500" />}
-                          />
-                          <Text fontSize="md" color="gray.500">
-                            Ajouter un dîplome
-                          </Text>
-                        </Flex>
-                      </>
-                    )}
-                  />
                 </Flex>
 
-                <Flex direction="column" wrap="wrap">
-                  <Text fontSize="md" color="gray.900" mb={3}>
-                    Certificats
-                  </Text>
-                  <FieldArray
-                    name="certifications"
-                    render={({ remove, push }) => (
-                      <>
-                        <Stack spacing={4}>
-                          {values?.certifications?.map(
-                            (certification, index) => (
+                <Flex gap={6}>
+                  <Flex direction="column" wrap="wrap" w="100%">
+                    <Text fontWeight="md" fontSize="md" color="gray.900" mb={3}>
+                      Dîplomes
+                    </Text>
+                    <FieldArray
+                      name="degrees"
+                      render={({ remove, push }) => (
+                        <>
+                          <Stack spacing={4}>
+                            {values.degrees?.map((degree, index) => (
                               <Flex key={index} justifyContent="flex-end">
                                 <Input
-                                  name={`certifications.${index}`}
-                                  placeholder="Fellow du Collège américain des médecins (FACP)."
+                                  name={`degrees.${index}`}
+                                  placeholder="Diplôme d'État de Docteur en Médecine."
                                   type="text"
                                   focusBorderColor="secondary.500"
                                   borderRightRadius={0}
@@ -590,7 +524,7 @@ const General = () => {
                                   w="full"
                                   rounded="md"
                                   pr={6}
-                                  value={certification}
+                                  value={degree}
                                   onChange={handleChange}
                                 />
                                 <IconButton
@@ -602,32 +536,93 @@ const General = () => {
                                   onClick={() => remove(index)}
                                 />
                               </Flex>
-                            )
-                          )}
-                        </Stack>
-                        <Flex gap={2} mt={2}>
-                          <IconButton
-                            size="xs"
-                            type="button"
-                            borderColor="secondary.500"
-                            variant="outline"
-                            isRound={true}
-                            onClick={() => push("")}
-                            _hover={{
-                              bg: "secondary.500",
-                              "& svg": {
-                                color: "white",
-                              },
-                            }}
-                            icon={<AddIcon color="secondary.500" />}
-                          />
-                          <Text fontSize="md" color="gray.500">
-                            Ajouter une certificat
-                          </Text>
-                        </Flex>
-                      </>
-                    )}
-                  />
+                            ))}
+                          </Stack>
+                          <Flex gap={2} mt={2}>
+                            <IconButton
+                              size="xs"
+                              type="button"
+                              borderColor="secondary.500"
+                              variant="outline"
+                              isRound={true}
+                              onClick={() => push("")}
+                              _hover={{
+                                bg: "secondary.500",
+                                "& svg": { color: "white" },
+                              }}
+                              icon={<AddIcon color="secondary.500" />}
+                            />
+                            <Text fontSize="md" color="gray.500">
+                              Ajouter un dîplome
+                            </Text>
+                          </Flex>
+                        </>
+                      )}
+                    />
+                  </Flex>
+
+                  <Flex direction="column" wrap="wrap" w="100%">
+                    <Text fontSize="md" color="gray.900" mb={3}>
+                      Certificats
+                    </Text>
+                    <FieldArray
+                      name="certifications"
+                      render={({ remove, push }) => (
+                        <>
+                          <Stack spacing={4}>
+                            {values?.certifications?.map(
+                              (certification, index) => (
+                                <Flex key={index} justifyContent="flex-end">
+                                  <Input
+                                    name={`certifications.${index}`}
+                                    placeholder="Fellow du Collège américain des médecins (FACP)."
+                                    type="text"
+                                    focusBorderColor="secondary.500"
+                                    borderRightRadius={0}
+                                    shadow="sm"
+                                    size="sm"
+                                    w="full"
+                                    rounded="md"
+                                    pr={6}
+                                    value={certification}
+                                    onChange={handleChange}
+                                  />
+                                  <IconButton
+                                    type="button"
+                                    colorScheme="red"
+                                    size="sm"
+                                    icon={<CloseIcon h="10px" w="10px" />}
+                                    borderLeftRadius={0}
+                                    onClick={() => remove(index)}
+                                  />
+                                </Flex>
+                              )
+                            )}
+                          </Stack>
+                          <Flex gap={2} mt={2}>
+                            <IconButton
+                              size="xs"
+                              type="button"
+                              borderColor="secondary.500"
+                              variant="outline"
+                              isRound={true}
+                              onClick={() => push("")}
+                              _hover={{
+                                bg: "secondary.500",
+                                "& svg": {
+                                  color: "white",
+                                },
+                              }}
+                              icon={<AddIcon color="secondary.500" />}
+                            />
+                            <Text fontSize="md" color="gray.500">
+                              Ajouter une certificat
+                            </Text>
+                          </Flex>
+                        </>
+                      )}
+                    />
+                  </Flex>
                 </Flex>
 
                 <chakra.fieldset>
@@ -781,7 +776,7 @@ const General = () => {
                 Sauveguarder
               </Button>
             </GridItem>
-          </SimpleGrid>
+          </Flex>
         );
       }}
     </Formik>

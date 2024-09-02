@@ -12,19 +12,19 @@ import { Heading, Flex, Box, Text, Button, Spinner } from "@chakra-ui/react";
 // ASSETS
 import HeroVid from "../images/hero-video2.mp4";
 
+const videoStyle = {
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+};
+
 const Home = () => {
+  const loggedInUser = useSelector((state) => state.user.loggedInUser);
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
 
-  const videoStyle = {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
-  };
-
   // REDIRECT USER
-  const loggedInUser = useSelector((state) => state.user.loggedInUser);
   useEffect(() => {
     const intended = location.state;
     if (intended) {
