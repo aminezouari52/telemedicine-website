@@ -1,5 +1,5 @@
 // HOOKS
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 
 // FUNCTIONS
@@ -7,9 +7,10 @@ import {
   updateDoctor,
   uploadProfilePicture,
 } from "../../../../functions/doctor";
+import { debounceFieldValue } from "../../../../utils";
 
 // PACKAGES
-import { Field, FieldArray, Form, Formik } from "formik";
+import { Field, FieldArray, Form, Formik, useFormik } from "formik";
 
 // COMPONENTS
 import ImageUpload from "../../../../components/ImageUpload";
@@ -57,6 +58,7 @@ const General = () => {
   const [formIsLoading, setFormIsloading] = useState(false);
   const user = useSelector((state) => state.user.loggedInUser);
   const [imageSrc, setImageSrc] = useState("");
+  const memoizeDebounceFieldValue = useCallback(debounceFieldValue, []);
 
   const profileImageHandler = (uri) => {
     setImageIsloading(true);
@@ -187,7 +189,6 @@ const General = () => {
                     Prénom
                   </FormLabel>
                   <Input
-                    as={Field}
                     type="text"
                     name="firstName"
                     id="firstName"
@@ -197,6 +198,13 @@ const General = () => {
                     size="sm"
                     w="full"
                     rounded="md"
+                    onChange={(event) => {
+                      memoizeDebounceFieldValue(
+                        "firstName",
+                        event.target.value,
+                        setFieldValue
+                      );
+                    }}
                   />
                 </FormControl>
                 <FormControl>
@@ -210,7 +218,6 @@ const General = () => {
                     Nom
                   </FormLabel>
                   <Input
-                    as={Field}
                     type="text"
                     name="lastName"
                     id="lastName"
@@ -220,6 +227,13 @@ const General = () => {
                     size="sm"
                     w="full"
                     rounded="md"
+                    onChange={(event) => {
+                      memoizeDebounceFieldValue(
+                        "lastName",
+                        event.target.value,
+                        setFieldValue
+                      );
+                    }}
                   />
                 </FormControl>
               </SimpleGrid>
@@ -242,9 +256,9 @@ const General = () => {
                     min={1}
                     max={100}
                     focusBorderColor="secondary.500"
-                    onChange={(value) => {
-                      setFieldValue("age", +value);
-                    }}
+                    onChange={(value) =>
+                      memoizeDebounceFieldValue("age", +value, setFieldValue)
+                    }
                   >
                     <NumberInputField rounded="md" shadow="sm" />
                     <NumberInputStepper>
@@ -266,7 +280,6 @@ const General = () => {
                   <InputGroup size="sm">
                     <InputLeftAddon>+216</InputLeftAddon>
                     <Input
-                      as={Field}
                       type="tel"
                       name="phone"
                       id="phone"
@@ -275,11 +288,17 @@ const General = () => {
                       shadow="sm"
                       w="full"
                       rounded="md"
+                      onChange={(event) => {
+                        memoizeDebounceFieldValue(
+                          "phone",
+                          event.target.value,
+                          setFieldValue
+                        );
+                      }}
                     />
                   </InputGroup>
                 </FormControl>
               </SimpleGrid>
-
               <SimpleGrid columns={6} spacing={6}>
                 <FormControl as={GridItem} colSpan={2}>
                   <FormLabel
@@ -292,7 +311,6 @@ const General = () => {
                     Adresse de la rue
                   </FormLabel>
                   <Input
-                    as={Field}
                     type="text"
                     name="address"
                     id="address"
@@ -302,6 +320,13 @@ const General = () => {
                     size="sm"
                     w="full"
                     rounded="md"
+                    onChange={(event) => {
+                      memoizeDebounceFieldValue(
+                        "address",
+                        event.target.value,
+                        setFieldValue
+                      );
+                    }}
                   />
                 </FormControl>
 
@@ -316,7 +341,6 @@ const General = () => {
                     Ville
                   </FormLabel>
                   <Input
-                    as={Field}
                     type="text"
                     name="city"
                     id="city"
@@ -326,6 +350,13 @@ const General = () => {
                     size="sm"
                     w="full"
                     rounded="md"
+                    onChange={(event) => {
+                      memoizeDebounceFieldValue(
+                        "city",
+                        event.target.value,
+                        setFieldValue
+                      );
+                    }}
                   />
                 </FormControl>
 
@@ -340,7 +371,6 @@ const General = () => {
                     Code postal / Poste
                   </FormLabel>
                   <Input
-                    as={Field}
                     type="text"
                     name="zip"
                     id="zip"
@@ -350,6 +380,13 @@ const General = () => {
                     size="sm"
                     w="full"
                     rounded="md"
+                    onChange={(event) => {
+                      memoizeDebounceFieldValue(
+                        "zip",
+                        event.target.value,
+                        setFieldValue
+                      );
+                    }}
                   />
                 </FormControl>
               </SimpleGrid>
@@ -363,13 +400,19 @@ const General = () => {
                   Description
                 </FormLabel>
                 <Textarea
-                  onChange={handleChange}
                   name="description"
                   placeholder="Brève description de votre profil."
                   rows={3}
                   shadow="sm"
                   focusBorderColor="secondary.500"
                   fontSize="sm"
+                  onChange={(event) => {
+                    memoizeDebounceFieldValue(
+                      "description",
+                      event.target.value,
+                      setFieldValue
+                    );
+                  }}
                 />
               </FormControl>
             </Stack>
@@ -507,8 +550,13 @@ const General = () => {
                                   w="full"
                                   rounded="md"
                                   pr={6}
-                                  value={degree}
-                                  onChange={handleChange}
+                                  onChange={(event) => {
+                                    memoizeDebounceFieldValue(
+                                      `degrees.${index}`,
+                                      event.target.value,
+                                      setFieldValue
+                                    );
+                                  }}
                                 />
                                 <IconButton
                                   type="button"
@@ -567,8 +615,13 @@ const General = () => {
                                     w="full"
                                     rounded="md"
                                     pr={6}
-                                    value={certification}
-                                    onChange={handleChange}
+                                    onChange={(event) => {
+                                      memoizeDebounceFieldValue(
+                                        `certifications.${index}`,
+                                        event.target.value,
+                                        setFieldValue
+                                      );
+                                    }}
                                   />
                                   <IconButton
                                     type="button"
@@ -697,9 +750,15 @@ const General = () => {
                         shadow="sm"
                         w="full"
                         rounded="md"
-                        onChange={handleChange}
                         min={1}
                         max={1000}
+                        onChange={(event) => {
+                          memoizeDebounceFieldValue(
+                            "price",
+                            event.target.value,
+                            setFieldValue
+                          );
+                        }}
                       />
                       <InputRightElement
                         pointerEvents="none"
