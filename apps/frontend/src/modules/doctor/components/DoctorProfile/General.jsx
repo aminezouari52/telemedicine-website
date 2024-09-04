@@ -10,7 +10,9 @@ import {
 
 // PACKAGES
 import { Field, FieldArray, Form, Formik } from "formik";
-import Resizer from "react-image-file-resizer";
+
+// COMPONENTS
+import ImageUpload from "../../../../components/ImageUpload";
 
 // STYLE
 import {
@@ -56,29 +58,15 @@ const General = () => {
   const user = useSelector((state) => state.user.loggedInUser);
   const [imageSrc, setImageSrc] = useState("");
 
-  const profileImageHandler = (e) => {
-    let image = e.target.files[0];
-
-    // resize
+  const profileImageHandler = (uri) => {
     setImageIsloading(true);
-    Resizer.imageFileResizer(
-      image,
-      720,
-      720,
-      "JPEG",
-      100,
-      0,
-      async (uri) => {
-        try {
-          setImageSrc(uri);
-          setImageIsloading(false);
-        } catch (err) {
-          setImageIsloading(false);
-          console.log("CLOUDINARY UPLOAD ERR", err);
-        }
-      },
-      "base64"
-    );
+    try {
+      setImageSrc(uri);
+      setImageIsloading(false);
+    } catch (err) {
+      setImageIsloading(false);
+      console.log("CLOUDINARY UPLOAD ERR", err);
+    }
   };
 
   return (
@@ -171,12 +159,7 @@ const General = () => {
                       }
                     />
                     <Box as="label" cursor="pointer">
-                      <Input
-                        type="file"
-                        display="none"
-                        accept="images/*"
-                        onChange={profileImageHandler}
-                      />
+                      <ImageUpload onChange={profileImageHandler} />
                       <Button
                         as="span"
                         type="button"
