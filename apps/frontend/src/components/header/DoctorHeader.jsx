@@ -31,7 +31,7 @@ import { signOut } from "firebase/auth";
 import { logout } from "../../reducers/userReducer";
 import { auth } from "../../firebase";
 
-const DoctorHeader = () => {
+export const DoctorHeader = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const toast = useToast();
@@ -67,7 +67,7 @@ const DoctorHeader = () => {
   };
 
   return (
-    <Box pos="sticky" top="0" zIndex="11">
+    <Box pos="sticky" top="0" zIndex="5">
       <Flex
         justifyContent="center"
         alignItems="center"
@@ -124,9 +124,9 @@ const DoctorHeader = () => {
           </HeaderButton>
         </Flex>
         <Flex alignItems="center" justifyContent="flex-end" height="100%">
-          <Menu>
+          <Menu size="xs">
             <MenuButton
-              size="sm"
+              size="xs"
               as={IconButton}
               icon={<FaRegUser />}
             ></MenuButton>
@@ -142,5 +142,3 @@ const DoctorHeader = () => {
     </Box>
   );
 };
-
-export default DoctorHeader;

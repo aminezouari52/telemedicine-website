@@ -12,7 +12,7 @@ export const createOrUpdateUser = async (user) => {
   );
 };
 
-export const currentUser = async (authtoken) => {
+export const getCurrentUser = async (authtoken) => {
   return await axios.post(
     `${import.meta.env.VITE_REACT_APP_API}/auth/current-user`,
     {},

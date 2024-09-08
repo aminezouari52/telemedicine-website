@@ -9,7 +9,7 @@ import { auth } from "../../firebase";
 
 // COMPONENTS
 import { Outlet } from "react-router-dom";
-import DoctorHeader from "../header/DoctorHeader";
+import { DoctorHeader } from "../header";
 
 // STYLE
 import { Box, Spinner } from "@chakra-ui/react";

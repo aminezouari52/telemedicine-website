@@ -8,11 +8,10 @@ import { onAuthStateChanged } from "firebase/auth";
 
 // FUNCTIONS
 import { setLoggedInUser } from "./reducers/userReducer";
-import { currentUser } from "./functions/auth";
+import { getCurrentUser } from "./functions/auth";
 
 // COMPONENTS
 import { Routes, Route, Navigate } from "react-router-dom";
-import AdminRoute from "./components/routes/AdminRoute";
 import DoctorRoute from "./components/routes/DoctorRoute";
 import PatientRoute from "./components/routes/PatientRoute";
 import Home from "./pages/Home";
@@ -24,15 +23,9 @@ import Consultations from "./pages/Patient/Consultations";
 import Doctors from "./pages/Patient/Doctors";
 import DoctorDetails from "./pages/Patient/DoctorDetails";
 import VideoCall from "./pages/Patient/VideoCall";
-
 import NotFound from "./components/NotFound";
-import AllPatient from "./pages/admin/patient/allPatient";
 import Consultation from "./pages/consultation/Consultation.jsx";
 import Doctor from "./pages/Doctor";
-import AllUsers from "./pages/admin/users/AllUsers";
-import AllDoctors from "./pages/admin/doctors/allDoctors";
-import Dashboard from "./pages/admin/dashboard/dashboard";
-import Rdv from "./pages/admin/rdv/rdv";
 import DoctorProfile from "./modules/doctor/components/DoctorProfile";
 import ListConsultation from "./pages/doctor/ListConsultation.jsx";
 import PatientList from "./pages/doctor/PatientList.jsx";
@@ -47,7 +40,7 @@ const App = () => {
         const idTokenResult = await user.getIdTokenResult();
 
         try {
-          const res = await currentUser(idTokenResult.token);
+          const res = await getCurrentUser(idTokenResult.token);
           dispatch(
             setLoggedInUser({
               name: res.data.name,
@@ -73,14 +66,6 @@ const App = () => {
         <Route exact path="/register" element={<Register />} />
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/admin/*" element={<AdminRoute />}>
-          <Route path="dashboard" element={<Dashboard />} />
-          <Route path="allUsers" element={<AllUsers />} />
-          <Route path="allDoctors" element={<AllDoctors />} />
-          <Route path="allPatients" element={<AllPatient />} />
-          <Route path="allRdv" element={<Rdv />} />
-          <Route path="*" element={<Navigate to="/admin/dashboard" />} />
-        </Route>
 
         <Route path="/patient/*" element={<PatientRoute />}>
           <Route path="home" element={<Patient />} />

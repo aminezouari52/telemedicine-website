@@ -33,7 +33,7 @@ import { ArrowForwardIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import loginLogo from "../../images/login-logo.png";
 import { FaRegBell } from "react-icons/fa";
 
-const PatientHeader = () => {
+export const PatientHeader = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const toast = useToast();
@@ -67,7 +67,7 @@ const PatientHeader = () => {
   };
 
   return (
-    <Box pos="sticky" top="0" zIndex="11">
+    <Box pos="sticky" top="0" zIndex="5">
       <Flex
         justifyContent="center"
         alignItems="center"

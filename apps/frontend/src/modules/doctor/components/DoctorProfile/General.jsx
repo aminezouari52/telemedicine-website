@@ -1,5 +1,5 @@
 // HOOKS
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 
 // FUNCTIONS
@@ -8,9 +8,10 @@ import {
   uploadProfilePicture,
 } from "../../../../functions/doctor";
 import { debounceFieldValue } from "../../../../utils";
+import { getCurrentUser } from "../../../../functions/auth";
 
 // PACKAGES
-import { Field, FieldArray, Form, Formik, useFormik } from "formik";
+import { Field, FieldArray, Form, Formik } from "formik";
 
 // COMPONENTS
 import ImageUpload from "../../../../components/ImageUpload";
@@ -46,57 +47,68 @@ import {
   InputRightElement,
   IconButton,
   Divider,
-  Spinner,
 } from "@chakra-ui/react";
 
 // ASSETS
 import { FaUser } from "react-icons/fa";
 import { AddIcon, CloseIcon } from "@chakra-ui/icons";
 
-const General = () => {
-  const [imageIsLoading, setImageIsloading] = useState(false);
-  const [formIsLoading, setFormIsloading] = useState(false);
+const General = ({ setIsLoading }) => {
   const user = useSelector((state) => state.user.loggedInUser);
-  const [imageSrc, setImageSrc] = useState("");
   const memoizeDebounceFieldValue = useCallback(debounceFieldValue, []);
+  const [currentUser, setCurrentUser] = useState();
+  const [imageSrc, setImageSrc] = useState();
 
   const profileImageHandler = (uri) => {
-    setImageIsloading(true);
-    try {
-      setImageSrc(uri);
-      setImageIsloading(false);
-    } catch (err) {
-      setImageIsloading(false);
-      console.log("CLOUDINARY UPLOAD ERR", err);
-    }
+    setIsLoading(true);
+    setImageSrc(uri);
+    setIsLoading(false);
   };
+
+  useEffect(() => {
+    const getUser = async () => {
+      if (user && user.token) {
+        const res = await getCurrentUser(user.token);
+        setCurrentUser(res.data);
+      }
+    };
+    getUser();
+  }, [user]);
+
+  useEffect(() => {
+    if (currentUser) {
+      setImageSrc(currentUser.photo);
+    }
+  }, [currentUser]);
 
   return (
     <Formik
+      enableReinitialize
       initialValues={{
-        photo: "",
-        firstName: "",
-        lastName: "",
-        age: 0,
-        phone: "",
-        address: "",
-        city: "",
-        zip: 0,
-        description: "",
-        hospital: "",
-        specialty: "Généraliste",
-        price: 0,
-        degrees: [],
-        certifications: [],
-        schedule: [],
-        experience: "Moins qu'une année",
+        firstName: currentUser?.firstName,
+        lastName: currentUser?.lastName,
+        age: currentUser?.age,
+        phone: currentUser?.phone,
+        address: currentUser?.address,
+        city: currentUser?.city,
+        zip: currentUser?.zip,
+        description: currentUser?.description,
+        hospital: currentUser?.hospital,
+        specialty: currentUser?.specialty,
+        price: currentUser?.price,
+        degrees: currentUser?.degrees,
+        certifications: currentUser?.certifications,
+        schedule: currentUser?.schedule,
+        experience: currentUser?.experience,
       }}
-      onSubmit={async (values, { setFieldValue }) => {
-        setFormIsloading(true);
+      onSubmit={async (values) => {
+        setIsLoading(true);
         const imageResponse = await uploadProfilePicture(user, imageSrc);
-        setFieldValue("photo", imageResponse.data.url);
-        updateDoctor({ id: user._id, token: user.token }, values);
-        setFormIsloading(false);
+        updateDoctor(
+          { id: user._id, token: user.token },
+          { ...values, photo: imageResponse.data.url }
+        );
+        setIsLoading(false);
       }}
     >
       {({ handleChange, setFieldValue, values }) => {
@@ -137,44 +149,35 @@ const General = () => {
                 >
                   Photo
                 </FormLabel>
-                {imageIsLoading ? (
-                  <Spinner
-                    thickness="3px"
-                    emptyColor="gray.200"
-                    color="primary.500"
-                    size="lg"
+                <Flex alignItems="center" gap={4}>
+                  <Avatar
+                    boxSize={12}
+                    bg="gray.100"
+                    src={imageSrc}
+                    icon={
+                      <Icon
+                        as={!imageSrc && FaUser}
+                        boxSize={9}
+                        mt={3}
+                        rounded="full"
+                        color="gray.300"
+                      />
+                    }
                   />
-                ) : (
-                  <Flex alignItems="center" gap={4}>
-                    <Avatar
-                      boxSize={12}
-                      bg="gray.100"
-                      src={imageSrc}
-                      icon={
-                        <Icon
-                          as={!imageSrc && FaUser}
-                          boxSize={9}
-                          mt={3}
-                          rounded="full"
-                          color="gray.300"
-                        />
-                      }
-                    />
-                    <Box as="label" cursor="pointer">
-                      <ImageUpload onChange={profileImageHandler} />
-                      <Button
-                        as="span"
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        fontWeight="medium"
-                        _focus={{ shadow: "none" }}
-                      >
-                        Changer
-                      </Button>
-                    </Box>
-                  </Flex>
-                )}
+                  <Box as="label" cursor="pointer">
+                    <ImageUpload onChange={profileImageHandler} />
+                    <Button
+                      as="span"
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      fontWeight="medium"
+                      _focus={{ shadow: "none" }}
+                    >
+                      Changer
+                    </Button>
+                  </Box>
+                </Flex>
               </FormControl>
 
               <SimpleGrid columns={2} spacing={6}>
@@ -189,6 +192,7 @@ const General = () => {
                     Prénom
                   </FormLabel>
                   <Input
+                    as={Field}
                     type="text"
                     name="firstName"
                     id="firstName"
@@ -198,10 +202,13 @@ const General = () => {
                     size="sm"
                     w="full"
                     rounded="md"
+                    value={values?.firstName || ""}
                     onChange={(event) => {
+                      const { value } = event.target;
+                      setFieldValue("firstName", value, false);
                       memoizeDebounceFieldValue(
                         "firstName",
-                        event.target.value,
+                        value,
                         setFieldValue
                       );
                     }}
@@ -227,10 +234,13 @@ const General = () => {
                     size="sm"
                     w="full"
                     rounded="md"
+                    value={values?.lastName || ""}
                     onChange={(event) => {
+                      const { value } = event.target;
+                      setFieldValue("lastName", value, false);
                       memoizeDebounceFieldValue(
                         "lastName",
-                        event.target.value,
+                        value,
                         setFieldValue
                       );
                     }}
@@ -252,13 +262,14 @@ const General = () => {
                   <NumberInput
                     name="age"
                     size="sm"
-                    defaultValue={1}
+                    value={values?.age}
                     min={1}
                     max={100}
                     focusBorderColor="secondary.500"
-                    onChange={(value) =>
-                      memoizeDebounceFieldValue("age", +value, setFieldValue)
-                    }
+                    onChange={(value) => {
+                      setFieldValue("age", value, false);
+                      memoizeDebounceFieldValue("age", +value, setFieldValue);
+                    }}
                   >
                     <NumberInputField rounded="md" shadow="sm" />
                     <NumberInputStepper>
@@ -280,6 +291,7 @@ const General = () => {
                   <InputGroup size="sm">
                     <InputLeftAddon>+216</InputLeftAddon>
                     <Input
+                      as={Field}
                       type="tel"
                       name="phone"
                       id="phone"
@@ -288,10 +300,13 @@ const General = () => {
                       shadow="sm"
                       w="full"
                       rounded="md"
+                      value={values.phone || ""}
                       onChange={(event) => {
+                        const { value } = event.target;
+                        setFieldValue("phone", value, false);
                         memoizeDebounceFieldValue(
                           "phone",
-                          event.target.value,
+                          value,
                           setFieldValue
                         );
                       }}
@@ -311,6 +326,7 @@ const General = () => {
                     Adresse de la rue
                   </FormLabel>
                   <Input
+                    as={Field}
                     type="text"
                     name="address"
                     id="address"
@@ -320,10 +336,13 @@ const General = () => {
                     size="sm"
                     w="full"
                     rounded="md"
+                    value={values.address || ""}
                     onChange={(event) => {
+                      const { value } = event.target;
+                      setFieldValue("address", value, false);
                       memoizeDebounceFieldValue(
                         "address",
-                        event.target.value,
+                        value,
                         setFieldValue
                       );
                     }}
@@ -341,6 +360,7 @@ const General = () => {
                     Ville
                   </FormLabel>
                   <Input
+                    as={Field}
                     type="text"
                     name="city"
                     id="city"
@@ -350,12 +370,11 @@ const General = () => {
                     size="sm"
                     w="full"
                     rounded="md"
+                    value={values.city || ""}
                     onChange={(event) => {
-                      memoizeDebounceFieldValue(
-                        "city",
-                        event.target.value,
-                        setFieldValue
-                      );
+                      const { value } = event.target;
+                      setFieldValue("city", value, false);
+                      memoizeDebounceFieldValue("city", value, setFieldValue);
                     }}
                   />
                 </FormControl>
@@ -371,6 +390,7 @@ const General = () => {
                     Code postal / Poste
                   </FormLabel>
                   <Input
+                    as={Field}
                     type="text"
                     name="zip"
                     id="zip"
@@ -380,12 +400,11 @@ const General = () => {
                     size="sm"
                     w="full"
                     rounded="md"
+                    value={values.zip || ""}
                     onChange={(event) => {
-                      memoizeDebounceFieldValue(
-                        "zip",
-                        event.target.value,
-                        setFieldValue
-                      );
+                      const { value } = event.target;
+                      setFieldValue("zip", value, false);
+                      memoizeDebounceFieldValue("zip", value, setFieldValue);
                     }}
                   />
                 </FormControl>
@@ -406,10 +425,13 @@ const General = () => {
                   shadow="sm"
                   focusBorderColor="secondary.500"
                   fontSize="sm"
+                  value={values.description || ""}
                   onChange={(event) => {
+                    const { value } = event.target;
+                    setFieldValue("description", value, false);
                     memoizeDebounceFieldValue(
                       "description",
-                      event.target.value,
+                      value,
                       setFieldValue
                     );
                   }}
@@ -470,6 +492,7 @@ const General = () => {
                       rounded="md"
                       shadow="sm"
                       onChange={handleChange}
+                      value={values?.hospital}
                     >
                       <option value="">Selectionnez un hôpital...</option>
                       <option value="Hôpital Mongi Slim">
@@ -511,6 +534,7 @@ const General = () => {
                       rounded="md"
                       shadow="sm"
                       name="specialty"
+                      value={values?.specialty}
                       onChange={handleChange}
                     >
                       <option value="Généraliste">Généraliste</option>
@@ -537,7 +561,7 @@ const General = () => {
                       render={({ remove, push }) => (
                         <>
                           <Stack spacing={4}>
-                            {values.degrees?.map((degree, index) => (
+                            {values.degrees?.map((_, index) => (
                               <Flex key={index} justifyContent="flex-end">
                                 <Input
                                   name={`degrees.${index}`}
@@ -550,10 +574,17 @@ const General = () => {
                                   w="full"
                                   rounded="md"
                                   pr={6}
+                                  value={values.degrees[index] || ""}
                                   onChange={(event) => {
+                                    const { value } = event.target;
+                                    setFieldValue(
+                                      `degrees.${index}`,
+                                      value,
+                                      false
+                                    );
                                     memoizeDebounceFieldValue(
                                       `degrees.${index}`,
-                                      event.target.value,
+                                      value,
                                       setFieldValue
                                     );
                                   }}
@@ -601,39 +632,44 @@ const General = () => {
                       render={({ remove, push }) => (
                         <>
                           <Stack spacing={4}>
-                            {values?.certifications?.map(
-                              (certification, index) => (
-                                <Flex key={index} justifyContent="flex-end">
-                                  <Input
-                                    name={`certifications.${index}`}
-                                    placeholder="Fellow du Collège américain des médecins (FACP)."
-                                    type="text"
-                                    focusBorderColor="secondary.500"
-                                    borderRightRadius={0}
-                                    shadow="sm"
-                                    size="sm"
-                                    w="full"
-                                    rounded="md"
-                                    pr={6}
-                                    onChange={(event) => {
-                                      memoizeDebounceFieldValue(
-                                        `certifications.${index}`,
-                                        event.target.value,
-                                        setFieldValue
-                                      );
-                                    }}
-                                  />
-                                  <IconButton
-                                    type="button"
-                                    colorScheme="red"
-                                    size="sm"
-                                    icon={<CloseIcon h="10px" w="10px" />}
-                                    borderLeftRadius={0}
-                                    onClick={() => remove(index)}
-                                  />
-                                </Flex>
-                              )
-                            )}
+                            {values?.certifications?.map((_, index) => (
+                              <Flex key={index} justifyContent="flex-end">
+                                <Input
+                                  name={`certifications.${index}`}
+                                  placeholder="Fellow du Collège américain des médecins (FACP)."
+                                  type="text"
+                                  focusBorderColor="secondary.500"
+                                  borderRightRadius={0}
+                                  shadow="sm"
+                                  size="sm"
+                                  w="full"
+                                  rounded="md"
+                                  pr={6}
+                                  value={values.certifications[index] || ""}
+                                  onChange={(event) => {
+                                    const { value } = event.target;
+                                    setFieldValue(
+                                      `certifications.${index}`,
+                                      value,
+                                      false
+                                    );
+                                    memoizeDebounceFieldValue(
+                                      `certifications.${index}`,
+                                      value,
+                                      setFieldValue
+                                    );
+                                  }}
+                                />
+                                <IconButton
+                                  type="button"
+                                  colorScheme="red"
+                                  size="sm"
+                                  icon={<CloseIcon h="10px" w="10px" />}
+                                  borderLeftRadius={0}
+                                  onClick={() => remove(index)}
+                                />
+                              </Flex>
+                            ))}
                           </Stack>
                           <Flex gap={2} mt={2}>
                             <IconButton
@@ -660,7 +696,6 @@ const General = () => {
                     />
                   </Flex>
                 </Flex>
-
                 <chakra.fieldset>
                   <Box as="legend" fontSize="md" color="gray.900" mb={3}>
                     Experience
@@ -672,8 +707,9 @@ const General = () => {
                     fontSize="sm"
                     color="gray.700"
                     colorScheme="primary"
-                    defaultValue="Moins qu'une année"
                     borderColor="primary.500"
+                    value={values.experience || "Moins qu'une année"}
+                    onChange={(value) => setFieldValue("experience", value)}
                   >
                     <Stack spacing={4}>
                       {["Moins qu'une année", "1 - 5 ans", "+5 ans"].map(
@@ -681,7 +717,6 @@ const General = () => {
                           <Radio
                             key={experience}
                             spacing={3}
-                            onChange={handleChange}
                             name="experience"
                             value={experience}
                           >
@@ -752,10 +787,13 @@ const General = () => {
                         rounded="md"
                         min={1}
                         max={1000}
+                        value={values.price || 0}
                         onChange={(event) => {
+                          const { value } = event.target;
+                          setFieldValue("price", value, false);
                           memoizeDebounceFieldValue(
                             "price",
-                            event.target.value,
+                            value,
                             setFieldValue
                           );
                         }}
@@ -794,6 +832,7 @@ const General = () => {
                           borderColor="primary.500"
                           rounded="md"
                           value={day}
+                          isChecked={values?.schedule?.includes(day)}
                           onChange={handleChange}
                         >
                           {day}
@@ -810,7 +849,6 @@ const General = () => {
                 type="submit"
                 colorScheme="primary"
                 size="sm"
-                isLoading={formIsLoading}
                 _hover={{
                   opacity: 0.8,
                 }}

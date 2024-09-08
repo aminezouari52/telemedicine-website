@@ -53,7 +53,7 @@ const Home = () => {
     />
   ) : (
     <Box flexDirection="column" justifyContent="center" pos="relative">
-      <Flex gap="10px" pos="absolute" right="20px" top="10px" zIndex="111">
+      <Flex gap="10px" pos="absolute" right="20px" top="10px" zIndex="6">
         <Button
           _hover={{
             color: "primary.500",
