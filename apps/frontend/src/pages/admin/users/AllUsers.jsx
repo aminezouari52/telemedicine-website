@@ -28,7 +28,7 @@ import {
   TableContainer,
 } from "@chakra-ui/react";
 import React, { useRef, useState } from "react";
-import LocalSearch from "../../../components/forms/LocalSearch";
+import LocalSearch from "@/components/forms/LocalSearch";
 import { useNavigate } from "react-router-dom";
 import { AiFillDelete } from "react-icons/ai";
 import CreateUser from "./createUser";

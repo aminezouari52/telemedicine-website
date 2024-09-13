@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useFormikContext } from "formik";
 
 // STYLED COMPONENTS
-import InputField from "../../../components/InputField";
+import InputField from "@/components/InputField";
 import { Flex, Button } from "@chakra-ui/react";
 
 const ContactInfo = ({ nextForm, prevForm }) => {

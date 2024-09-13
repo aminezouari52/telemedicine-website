@@ -5,14 +5,15 @@ import { useToast } from "@chakra-ui/react";
 
 // REDUX
 import { useDispatch } from "react-redux";
-import { setLoggedInUser } from "../../reducers/userReducer";
+import { setLoggedInUser } from "@/reducers/userReducer";
 
 // FIREBASE
-import { auth } from "../../firebase";
+import { auth } from "@/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { validateEmail } from "@/utils";
 
 // FUNCTIONS
-import { createOrUpdateUser } from "../../functions/auth";
+import { createOrUpdateUser } from "@/functions/auth";
 
 // STYLE
 import {
@@ -40,6 +41,10 @@ const Register = () => {
     setLoading(true);
     // create user
     try {
+      if (!validateEmail(email)) {
+        throw new Error("Invalid Email");
+      }
+
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
@@ -83,7 +88,7 @@ const Register = () => {
     } catch (err) {
       console.log(err);
       toast({
-        title: "L'émail est déjà utilisé!",
+        title: "Vérifier votre email",
         status: "error",
         duration: 3000,
         isClosable: true,

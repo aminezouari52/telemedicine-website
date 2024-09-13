@@ -3,18 +3,16 @@ import { useState, useEffect, useCallback } from "react";
 import { useSelector } from "react-redux";
 
 // FUNCTIONS
-import {
-  updateDoctor,
-  uploadProfilePicture,
-} from "../../../../functions/doctor";
-import { debounceFieldValue } from "../../../../utils";
-import { getCurrentUser } from "../../../../functions/auth";
+import { updateDoctor, uploadProfilePicture } from "@/functions/doctor";
+import { debounceFieldValue } from "@/utils";
+import { getCurrentUser } from "@/functions/auth";
 
 // PACKAGES
 import { Field, FieldArray, Form, Formik } from "formik";
 
 // COMPONENTS
-import ImageUpload from "../../../../components/ImageUpload";
+import ImageUpload from "@/components/ImageUpload";
+import TextFormControl from "./TextFormControl";
 
 // STYLE
 import {
@@ -156,7 +154,7 @@ const General = ({ setIsLoading }) => {
                     src={imageSrc}
                     icon={
                       <Icon
-                        as={!imageSrc && FaUser}
+                        as={FaUser}
                         boxSize={9}
                         mt={3}
                         rounded="full"
@@ -181,71 +179,32 @@ const General = ({ setIsLoading }) => {
               </FormControl>
 
               <SimpleGrid columns={2} spacing={6}>
-                <FormControl>
-                  <FormLabel
-                    htmlFor="firstName"
-                    fontSize="sm"
-                    fontWeight="md"
-                    color="gray.700"
-                    mb={3}
-                  >
-                    Prénom
-                  </FormLabel>
-                  <Input
-                    as={Field}
-                    type="text"
-                    name="firstName"
-                    id="firstName"
-                    autoComplete="given-name"
-                    focusBorderColor="secondary.500"
-                    shadow="sm"
-                    size="sm"
-                    w="full"
-                    rounded="md"
-                    value={values?.firstName || ""}
-                    onChange={(event) => {
-                      const { value } = event.target;
-                      setFieldValue("firstName", value, false);
-                      memoizeDebounceFieldValue(
-                        "firstName",
-                        value,
-                        setFieldValue
-                      );
-                    }}
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel
-                    htmlFor="lastName"
-                    fontSize="sm"
-                    fontWeight="md"
-                    color="gray.700"
-                    mb={3}
-                  >
-                    Nom
-                  </FormLabel>
-                  <Input
-                    type="text"
-                    name="lastName"
-                    id="lastName"
-                    autoComplete="family-name"
-                    focusBorderColor="secondary.500"
-                    shadow="sm"
-                    size="sm"
-                    w="full"
-                    rounded="md"
-                    value={values?.lastName || ""}
-                    onChange={(event) => {
-                      const { value } = event.target;
-                      setFieldValue("lastName", value, false);
-                      memoizeDebounceFieldValue(
-                        "lastName",
-                        value,
-                        setFieldValue
-                      );
-                    }}
-                  />
-                </FormControl>
+                <TextFormControl
+                  label="Prénom"
+                  autoComplete="given-name"
+                  value={values?.firstName || ""}
+                  name="firstName"
+                  onChange={(event) => {
+                    const { value } = event.target;
+                    setFieldValue("firstName", value, false);
+                    memoizeDebounceFieldValue(
+                      "firstName",
+                      value,
+                      setFieldValue
+                    );
+                  }}
+                />
+                <TextFormControl
+                  label="Nom"
+                  autoComplete="family-name"
+                  value={values?.lastName || ""}
+                  name="lastName"
+                  onChange={(event) => {
+                    const { value } = event.target;
+                    setFieldValue("lastName", value, false);
+                    memoizeDebounceFieldValue("lastName", value, setFieldValue);
+                  }}
+                />
               </SimpleGrid>
 
               <SimpleGrid columns={6} spacing={6}>
@@ -314,102 +273,43 @@ const General = ({ setIsLoading }) => {
                   </InputGroup>
                 </FormControl>
               </SimpleGrid>
-              <SimpleGrid columns={6} spacing={6}>
-                <FormControl as={GridItem} colSpan={2}>
-                  <FormLabel
-                    htmlFor="address"
-                    fontSize="sm"
-                    fontWeight="md"
-                    color="gray.700"
-                    mb={3}
-                  >
-                    Adresse de la rue
-                  </FormLabel>
-                  <Input
-                    as={Field}
-                    type="text"
-                    name="address"
-                    id="address"
-                    autoComplete="street-address"
-                    focusBorderColor="secondary.500"
-                    shadow="sm"
-                    size="sm"
-                    w="full"
-                    rounded="md"
-                    value={values.address || ""}
-                    onChange={(event) => {
-                      const { value } = event.target;
-                      setFieldValue("address", value, false);
-                      memoizeDebounceFieldValue(
-                        "address",
-                        value,
-                        setFieldValue
-                      );
-                    }}
-                  />
-                </FormControl>
+              <SimpleGrid columns={3} spacing={6}>
+                <TextFormControl
+                  label="Adresse de la rue"
+                  autoComplete="street-address"
+                  value={values?.address || ""}
+                  name="address"
+                  onChange={(event) => {
+                    const { value } = event.target;
+                    setFieldValue("address", value, false);
+                    memoizeDebounceFieldValue("address", value, setFieldValue);
+                  }}
+                />
+                <TextFormControl
+                  label="Ville"
+                  autoComplete="home city"
+                  value={values?.city || ""}
+                  name="city"
+                  onChange={(event) => {
+                    const { value } = event.target;
+                    setFieldValue("city", value, false);
+                    memoizeDebounceFieldValue("city", value, setFieldValue);
+                  }}
+                />
 
-                <FormControl as={GridItem} colSpan={2}>
-                  <FormLabel
-                    htmlFor="city"
-                    fontSize="sm"
-                    fontWeight="md"
-                    color="gray.700"
-                    mb={3}
-                  >
-                    Ville
-                  </FormLabel>
-                  <Input
-                    as={Field}
-                    type="text"
-                    name="city"
-                    id="city"
-                    autoComplete="city"
-                    focusBorderColor="secondary.500"
-                    shadow="sm"
-                    size="sm"
-                    w="full"
-                    rounded="md"
-                    value={values.city || ""}
-                    onChange={(event) => {
-                      const { value } = event.target;
-                      setFieldValue("city", value, false);
-                      memoizeDebounceFieldValue("city", value, setFieldValue);
-                    }}
-                  />
-                </FormControl>
-
-                <FormControl as={GridItem} colSpan={2}>
-                  <FormLabel
-                    htmlFor="zip"
-                    fontSize="sm"
-                    fontWeight="md"
-                    color="gray.700"
-                    mb={3}
-                  >
-                    Code postal / Poste
-                  </FormLabel>
-                  <Input
-                    as={Field}
-                    type="text"
-                    name="zip"
-                    id="zip"
-                    autoComplete="postal-code"
-                    focusBorderColor="secondary.500"
-                    shadow="sm"
-                    size="sm"
-                    w="full"
-                    rounded="md"
-                    value={values.zip || ""}
-                    onChange={(event) => {
-                      const { value } = event.target;
-                      setFieldValue("zip", value, false);
-                      memoizeDebounceFieldValue("zip", value, setFieldValue);
-                    }}
-                  />
-                </FormControl>
+                <TextFormControl
+                  label="Code postal / Poste"
+                  autoComplete="postal-code"
+                  value={values?.zip || ""}
+                  name="zip"
+                  onChange={(event) => {
+                    const { value } = event.target;
+                    setFieldValue("zip", value, false);
+                    memoizeDebounceFieldValue("zip", value, setFieldValue);
+                  }}
+                />
               </SimpleGrid>
-              <FormControl mt={1}>
+              <FormControl>
                 <FormLabel
                   fontSize="sm"
                   fontWeight="md"
@@ -600,7 +500,7 @@ const General = ({ setIsLoading }) => {
                               </Flex>
                             ))}
                           </Stack>
-                          <Flex gap={2} mt={2}>
+                          <Flex gap={2} mt={values.degrees?.length > 0 ? 4 : 2}>
                             <IconButton
                               size="xs"
                               type="button"
@@ -671,7 +571,10 @@ const General = ({ setIsLoading }) => {
                               </Flex>
                             ))}
                           </Stack>
-                          <Flex gap={2} mt={2}>
+                          <Flex
+                            gap={2}
+                            mt={values.certifications?.length > 0 ? 4 : 2}
+                          >
                             <IconButton
                               size="xs"
                               type="button"

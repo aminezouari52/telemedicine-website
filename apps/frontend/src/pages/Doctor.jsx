@@ -21,10 +21,10 @@ import {
 import React from "react";
 import { IoMdSettings } from "react-icons/io";
 
-import Avatar1 from "../images/avatars/10.jpg";
-import Avatar2 from "../images/avatars/7.jpg";
-import Avatar3 from "../images/avatars/11.jpg";
-import Avatar4 from "../images/avatars/12.jpg";
+import Avatar1 from "@/images/avatars/10.jpg";
+import Avatar2 from "@/images/avatars/7.jpg";
+import Avatar3 from "@/images/avatars/11.jpg";
+import Avatar4 from "@/images/avatars/12.jpg";
 
 const Doctor = () => {
   return (

@@ -30,13 +30,13 @@ import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { IoMdSettings } from "react-icons/io";
 import { IoMdPerson } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
-import Avatar1 from "../../images/avatars/1.jpg";
-import Avatar2 from "../../images/avatars/2.jpg";
-import Avatar3 from "../../images/avatars/3.jpg";
-import Avatar4 from "../../images/avatars/4.jpg";
-import Avatar5 from "../../images/avatars/5.jpg";
-import Avatar6 from "../../images/avatars/6.jpg";
-import Avatar7 from "../../images/avatars/8.jpg";
+import Avatar1 from "@/images/avatars/1.jpg";
+import Avatar2 from "@/images/avatars/2.jpg";
+import Avatar3 from "@/images/avatars/3.jpg";
+import Avatar4 from "@/images/avatars/4.jpg";
+import Avatar5 from "@/images/avatars/5.jpg";
+import Avatar6 from "@/images/avatars/6.jpg";
+import Avatar7 from "@/images/avatars/8.jpg";
 
 function PatientList() {
   const navigate = useNavigate();

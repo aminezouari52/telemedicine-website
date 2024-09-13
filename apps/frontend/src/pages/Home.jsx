@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 import { Heading, Flex, Box, Text, Button, Spinner } from "@chakra-ui/react";
 
 // ASSETS
-import HeroVid from "../images/hero-video2.mp4";
+import HeroVid from "@/images/hero-video2.mp4";
 
 const videoStyle = {
   width: "100%",

@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 // ASSETS
 import { RxArrowTopRight } from "react-icons/rx";
-import patientHome from "../../images/patient-home.jpeg";
+import patientHome from "@/images/patient-home.jpeg";
 import { FaRegHospital } from "react-icons/fa";
 import { GiMedicalPackAlt } from "react-icons/gi";
 import { FaHandHoldingMedical } from "react-icons/fa";

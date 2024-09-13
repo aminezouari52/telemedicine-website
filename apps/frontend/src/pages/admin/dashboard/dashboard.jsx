@@ -18,10 +18,10 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-import Avatar1 from "../../../images/avatars/6.jpg";
-import Avatar2 from "../../../images/avatars/7.jpg";
-import Avatar3 from "../../../images/avatars/8.jpg";
-import Avatar4 from "../../../images/avatars/9.jpg";
+import Avatar1 from "@/images/avatars/6.jpg";
+import Avatar2 from "@/images/avatars/7.jpg";
+import Avatar3 from "@/images/avatars/8.jpg";
+import Avatar4 from "@/images/avatars/9.jpg";
 
 function Dashboard() {
   return (

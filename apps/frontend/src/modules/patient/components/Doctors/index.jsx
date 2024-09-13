@@ -1,25 +1,32 @@
+// HOOKS
+import { useState, useEffect } from "react";
+
+// FUNCTIONS
+import { paginate } from "@/components/pagination/Pagination";
+import { getAllDoctors } from "@/functions/doctor";
+
 // COMPONENTS
-import Search from "./Search";
+import Search from "@/components/Search";
 import DoctorCard from "./DoctorCard";
+import { Pagination } from "@/components/pagination";
 
 // STYLE
 import { Heading, Flex, Select, Text } from "@chakra-ui/react";
 
 // ASSETS
-import doctor1 from "../../images/avatars/doctors/1.avif";
-import doctor2 from "../../images/avatars/doctors/2.avif";
-import doctor3 from "../../images/avatars/doctors/3.avif";
-import doctor4 from "../../images/avatars/doctors/4.avif";
-import doctor5 from "../../images/avatars/doctors/5.avif";
-import doctor6 from "../../images/avatars/doctors/6.avif";
-import doctor7 from "../../images/avatars/doctors/7.avif";
-import doctor8 from "../../images/avatars/doctors/8.avif";
-import doctor9 from "../../images/avatars/doctors/9.avif";
-import doctor10 from "../../images/avatars/doctors/10.avif";
+import doctor1 from "@/images/avatars/doctors/1.avif";
+import doctor2 from "@/images/avatars/doctors/2.avif";
+import doctor3 from "@/images/avatars/doctors/3.avif";
+import doctor4 from "@/images/avatars/doctors/4.avif";
+import doctor5 from "@/images/avatars/doctors/5.avif";
+import doctor6 from "@/images/avatars/doctors/6.avif";
+import doctor7 from "@/images/avatars/doctors/7.avif";
+import doctor8 from "@/images/avatars/doctors/8.avif";
+import doctor9 from "@/images/avatars/doctors/9.avif";
+import doctor10 from "@/images/avatars/doctors/10.avif";
 import { ArrowUpDownIcon } from "@chakra-ui/icons";
-import Pagination, { paginate } from "./Pagination";
-import { useState } from "react";
-const doctors = [
+
+const doctors2 = [
   {
     id: 1,
     title: "Dr. Mohamed Amine",
@@ -204,19 +211,28 @@ const doctors = [
 
 const Doctors = () => {
   const [currentPage, setCurrentPage] = useState(0);
-
+  const [doctors, setDoctors] = useState();
   const nextPageHandler = () => {
     setCurrentPage((prev) => prev + 1);
   };
-
   const prevPageHandler = () => {
     setCurrentPage((prev) => prev - 1);
   };
 
+  useEffect(() => {
+    const getAllDoctorsEffect = async () => {
+      const response = await getAllDoctors();
+      [currentPage];
+      const paginatedData = paginate(response.data.results);
+      setDoctors(paginatedData[currentPage]);
+    };
+    getAllDoctorsEffect();
+  }, []);
+
   return (
-    <Flex flexDirection="column" gap={10} p={10}>
+    <Flex flexDirection="column" gap={10} p={10} bg="gray.100">
       <Heading fontSize="xl">Trouver un docteur</Heading>
-      <Flex bg="#fff" direction="column" gap={8} p={10}>
+      <Flex bg="#fff" direction="column" gap={8} p={10} borderRadius={4}>
         <Flex justifyContent="space-between">
           <Flex gap={10}>
             <Flex direction="column" gap={4}>
@@ -234,6 +250,7 @@ const Doctors = () => {
                 variant="outline"
                 focusBorderColor="primary.500"
               >
+                <option value="">Tous</option>
                 <option value="Généraliste">Généraliste</option>
                 <option value="Cardiologue">Cardiologue</option>
                 <option value="Dermatologue">Dermatologue</option>
@@ -254,9 +271,24 @@ const Doctors = () => {
                 variant="outline"
                 focusBorderColor="primary.500"
               >
-                <option value="recent">tous</option>
-                <option value="recent">hospital1</option>
-                <option value="recent">hospital2</option>
+                <option value="">Tous</option>
+                <option value="Hôpital Mongi Slim">Hôpital Mongi Slim</option>
+                <option value="Hôpital Charles Nicolle">
+                  Hôpital Charles Nicolle
+                </option>
+                <option value="Hôpital La Rabta">Hôpital La Rabta</option>
+                <option value="Hôpital Razi">Hôpital Razi</option>
+                <option value="Hôpital Sahloul">Hôpital Sahloul</option>
+                <option value="Hôpital Farhat Hached">
+                  Hôpital Farhat Hached
+                </option>
+                <option value="Hôpital Fattouma Bourguiba">
+                  Hôpital Fattouma Bourguiba
+                </option>
+                <option value="Hôpital Hédi Chaker">Hôpital Hédi Chaker</option>
+                <option value="Hôpital Habib Bourguiba">
+                  Hôpital Habib Bourguiba
+                </option>
               </Select>
             </Flex>
           </Flex>
@@ -287,23 +319,24 @@ const Doctors = () => {
           </Flex>
         </Flex>
         <Flex gap={20} py={4} flexWrap="wrap">
-          {paginate(doctors)[currentPage].map((doc) => (
+          {doctors?.map((doctor) => (
             <DoctorCard
-              key={doc.id}
+              key={doctor._id}
               doctor={{
-                id: doc.id,
-                title: doc.title,
-                price: doc.price,
-                images: doc.images,
-                patients: doc.patients,
-                hospital: doc.hospital,
+                id: doctor._id,
+                firstName: doctor.firstName,
+                lastName: doctor.lastName,
+                price: doctor.price,
+                photo: doctor.photo,
+                patients: doctor.patients,
+                hospital: doctor.hospital,
               }}
             />
           ))}
         </Flex>
       </Flex>
       <Pagination
-        doctors={paginate(doctors)}
+        items={doctors}
         currentPage={currentPage}
         nextPage={nextPageHandler}
         prevPage={prevPageHandler}

@@ -2,7 +2,7 @@
 import { useDisclosure } from "@chakra-ui/react";
 
 // FUNCTIONS
-import { submitConsultation } from "../../functions/patient";
+import { submitConsultation } from "@/functions/patient";
 
 // COMPONENTS
 import VerifyData from "./VerifyData";
@@ -14,7 +14,7 @@ import OtherInformation from "./Forms/OtherInformation";
 import { Flex, chakra, Box, Heading } from "@chakra-ui/react";
 
 // ASSETS
-import doctor from "../../images/avatars/doctors/1.avif";
+import doctor from "@/images/avatars/doctors/1.avif";
 
 // PACKAGES
 import { Steps, Step, useSteps } from "chakra-ui-steps";

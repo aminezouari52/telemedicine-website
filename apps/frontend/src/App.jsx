@@ -3,33 +3,32 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 // FIREBASE
-import { auth } from "./firebase";
+import { auth } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 
 // FUNCTIONS
-import { setLoggedInUser } from "./reducers/userReducer";
-import { getCurrentUser } from "./functions/auth";
+import { setLoggedInUser } from "@/reducers/userReducer";
+import { getCurrentUser } from "@/functions/auth";
 
 // COMPONENTS
 import { Routes, Route, Navigate } from "react-router-dom";
-import DoctorRoute from "./components/routes/DoctorRoute";
-import PatientRoute from "./components/routes/PatientRoute";
-import Home from "./pages/Home";
-import Login from "./pages/auth/Login";
-import Register from "./pages/auth/Register";
-import ForgotPassword from "./pages/auth/ForgotPassword";
-import Patient from "./pages/Patient/Patient";
-import Consultations from "./pages/Patient/Consultations";
-import Doctors from "./pages/Patient/Doctors";
-import DoctorDetails from "./pages/Patient/DoctorDetails";
-import VideoCall from "./pages/Patient/VideoCall";
-import NotFound from "./components/NotFound";
-import Consultation from "./pages/consultation/Consultation.jsx";
-import Doctor from "./pages/Doctor";
-import DoctorProfile from "./modules/doctor/components/DoctorProfile";
-import ListConsultation from "./pages/doctor/ListConsultation.jsx";
-import PatientList from "./pages/doctor/PatientList.jsx";
-import PatientProfile from "./pages/doctor/PatientProfile.jsx";
+import { DoctorRoute, PatientRoute } from "@/components/routes";
+import Home from "@/pages/Home";
+import Login from "@/pages/auth/Login";
+import Register from "@/pages/auth/Register";
+import ForgotPassword from "@/pages/auth/ForgotPassword";
+import Patient from "@/pages/Patient/Patient";
+import Consultations from "@/pages/Patient/Consultations";
+import Doctors from "@/modules/patient/components/Doctors";
+import DoctorDetails from "@/pages/Patient/DoctorDetails";
+import VideoCall from "@/pages/Patient/VideoCall";
+import NotFound from "@/components/NotFound";
+import Consultation from "@/pages/consultation/Consultation.jsx";
+import Doctor from "@/pages/Doctor";
+import DoctorProfile from "@/modules/doctor/components/DoctorProfile";
+import ListConsultation from "@/pages/doctor/ListConsultation.jsx";
+import PatientList from "@/pages/doctor/PatientList.jsx";
+import PatientProfile from "@/pages/doctor/PatientProfile.jsx";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -71,7 +70,7 @@ const App = () => {
           <Route path="home" element={<Patient />} />
           <Route path="consultation/:id" element={<Consultation />} />
           <Route path="consultations" element={<Consultations />} />
-          <Route path="doctors" element={<Doctors />} />{" "}
+          <Route path="doctors" element={<Doctors />} />
           <Route path="doctors/:id" element={<DoctorDetails />} />
           <Route path="call" element={<VideoCall />} />
           <Route path="*" element={<Navigate to="/patient/home" />} />

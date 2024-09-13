@@ -11,7 +11,14 @@ import { IoPeopleOutline } from "react-icons/io5";
 
 const DoctorCard = ({ doctor }) => {
   const navigate = useNavigate();
-  const { images, title, price, patients, hospital } = doctor;
+  const {
+    photo,
+    firstName = "first name",
+    lastName = "last name",
+    price = 0,
+    patients = 0,
+    hospital = "hospital",
+  } = doctor;
 
   return (
     <Flex
@@ -34,13 +41,19 @@ const DoctorCard = ({ doctor }) => {
             zIndex: 1,
           }}
         >
-          <Image borderTopRadius={6} src={images[0]} w="340px" h="380px" />
+          <Image
+            borderTopRadius={6}
+            src={photo}
+            alt="profile image"
+            w="340px"
+            h="380px"
+          />
         </motion.div>
       </Flex>
 
       <Flex direction="column" justifyContent="space-around" gap={2} py={4}>
         <Heading textAlign="center" fontSize="lg">
-          {title}
+          {firstName} {lastName}
         </Heading>
         <Flex justifyContent="center" alignItems="center" gap={2}>
           <Icon as={FaRegHospital} color="gray" />

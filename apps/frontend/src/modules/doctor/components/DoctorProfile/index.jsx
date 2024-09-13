@@ -21,7 +21,7 @@ import Calendar from "./Calendar";
 import General from "./General";
 
 const DoctorProfile = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   return isLoading ? (
     <Box

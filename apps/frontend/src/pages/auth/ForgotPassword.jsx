@@ -4,7 +4,7 @@ import { useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
 // FIREBASE
-import { auth } from "../../firebase";
+import { auth } from "@/firebase";
 import { sendPasswordResetEmail } from "firebase/auth";
 
 // COMPONENTS

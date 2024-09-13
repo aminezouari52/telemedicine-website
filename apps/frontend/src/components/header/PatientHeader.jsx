@@ -19,7 +19,6 @@ import {
   Image,
   IconButton,
   SimpleGrid,
-  Button,
   Menu,
   MenuButton,
   MenuList,
@@ -32,6 +31,7 @@ import { useEffect } from "react";
 import { ArrowForwardIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import loginLogo from "../../images/login-logo.png";
 import { FaRegBell } from "react-icons/fa";
+import { TbLogout } from "react-icons/tb";
 
 export const PatientHeader = () => {
   const navigate = useNavigate();
@@ -115,7 +115,7 @@ export const PatientHeader = () => {
           </HeaderButton>
         </Flex>
         <Flex
-          gap={4}
+          gap={1}
           alignItems="center"
           justifyContent="flex-end"
           height="100%"
@@ -124,7 +124,7 @@ export const PatientHeader = () => {
             <MenuButton
               size="md"
               as={IconButton}
-              aria-label="label"
+              aria-label="notification"
               isRound
               bg="transparent"
               _hover={{
@@ -158,19 +158,28 @@ export const PatientHeader = () => {
               </MenuItem>
             </MenuList>
           </Menu>
-          <Button
-            size="sm"
-            color="#fff"
-            bg="secondary.500"
-            variant="solid"
-            rightIcon={<ArrowForwardIcon />}
+
+          <IconButton
+            size="md"
+            aria-label="logout"
+            isRound
+            bg="transparent"
             _hover={{
-              opacity: 0.8,
+              opacity: 0.6,
+            }}
+            _active={{
+              opacity: 0.6,
             }}
             onClick={logoutHandler}
-          >
-            Déconnecter
-          </Button>
+            icon={
+              <TbLogout
+                style={{
+                  height: "20px",
+                  width: "20px",
+                }}
+              />
+            }
+          />
         </Flex>
       </SimpleGrid>
     </Box>

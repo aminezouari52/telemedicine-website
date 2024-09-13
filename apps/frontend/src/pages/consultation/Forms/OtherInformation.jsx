@@ -1,6 +1,6 @@
 // STYLED
 import { Stack, Flex, Text, Select, Button } from "@chakra-ui/react";
-import InputField from "../../../components/InputField";
+import InputField from "@/components/InputField";
 import { useFormikContext } from "formik";
 
 const OtherInformation = ({ prevForm, nextForm }) => {

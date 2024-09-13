@@ -21,3 +21,7 @@ export const uploadProfilePicture = async (user, formData) =>
       },
     }
   );
+
+export const getAllDoctors = async () => {
+  return await axios.get(`${import.meta.env.VITE_REACT_APP_API}/doctors/`);
+};

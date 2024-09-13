@@ -7,8 +7,8 @@ import { useSelector } from "react-redux";
 import { Flex, Image, Spinner } from "@chakra-ui/react";
 
 // ASSETS
-import loginImg from "../../images/login.webp";
-import loginLogo from "../../images/login-logo.png";
+import loginImg from "@/images/login.webp";
+import loginLogo from "@/images/login-logo.png";
 
 const AuthWrapper = ({ children }) => {
   const navigate = useNavigate();

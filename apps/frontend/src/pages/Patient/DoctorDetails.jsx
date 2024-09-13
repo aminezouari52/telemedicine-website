@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 
 // ASSETS
-import doctor from "../../images/avatars/doctors/1.avif";
+import doctor from "@/images/avatars/doctors/1.avif";
 
 function DoctorDetails() {
   const params = useParams();

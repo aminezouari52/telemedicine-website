@@ -21,6 +21,7 @@ import {
 import { Field, Formik } from "formik";
 import { Form } from "react-router-dom";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
+
 function RdvModal({ mode, data, gestion }) {
   const gestionnaire = gestion ? gestion : "";
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -44,7 +45,8 @@ function RdvModal({ mode, data, gestion }) {
         size={mode == "edit" ? "sm" : `md`}
         colorScheme={mode == "edit" ? "yellow" : `blue`}
         mr={2}
-        onClick={onOpen}>
+        onClick={onOpen}
+      >
         {mode == "edit" ? <Icon as={AiFillEdit} /> : `Creer un ${gestionnaire}`}
       </Button>
       <Formik
@@ -54,7 +56,8 @@ function RdvModal({ mode, data, gestion }) {
             alert(JSON.stringify(values, null, 2));
             actions.setSubmitting(false);
           }, 1000);
-        }}>
+        }}
+      >
         {(props) => (
           <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
@@ -68,7 +71,8 @@ function RdvModal({ mode, data, gestion }) {
                   <Field name="fname" validate={validateName}>
                     {({ field, form }) => (
                       <FormControl
-                        isInvalid={form.errors.name && form.touched.name}>
+                        isInvalid={form.errors.name && form.touched.name}
+                      >
                         <FormLabel>Nom</FormLabel>
                         <Input
                           defaultValue={data?.fname}
@@ -82,7 +86,8 @@ function RdvModal({ mode, data, gestion }) {
                   <Field name="lname" validate={validateName}>
                     {({ field, form }) => (
                       <FormControl
-                        isInvalid={form.errors.name && form.touched.name}>
+                        isInvalid={form.errors.name && form.touched.name}
+                      >
                         <FormLabel>PreNom</FormLabel>
                         <Input
                           defaultValue={data?.lname}
@@ -96,7 +101,8 @@ function RdvModal({ mode, data, gestion }) {
                   <Field name="email" validate={validateName}>
                     {({ field, form }) => (
                       <FormControl
-                        isInvalid={form.errors.name && form.touched.name}>
+                        isInvalid={form.errors.name && form.touched.name}
+                      >
                         <FormLabel>Email</FormLabel>
                         <Input
                           defaultValue={data?.email}
@@ -110,7 +116,8 @@ function RdvModal({ mode, data, gestion }) {
                   <Field name="address" validate={validateName}>
                     {({ field, form }) => (
                       <FormControl
-                        isInvalid={form.errors.name && form.touched.name}>
+                        isInvalid={form.errors.name && form.touched.name}
+                      >
                         <FormLabel>Adresse</FormLabel>
                         <Input
                           defaultValue={data?.address}
@@ -124,7 +131,8 @@ function RdvModal({ mode, data, gestion }) {
                   <Field name="speciality" validate={validateName}>
                     {({ field, form }) => (
                       <FormControl
-                        isInvalid={form.errors.name && form.touched.name}>
+                        isInvalid={form.errors.name && form.touched.name}
+                      >
                         <FormLabel>Specialite</FormLabel>
                         <Input
                           defaultValue={data?.speciality}
@@ -138,7 +146,8 @@ function RdvModal({ mode, data, gestion }) {
                   <Field name="role" validate={validateName}>
                     {({ field, form }) => (
                       <FormControl
-                        isInvalid={form.errors.name && form.touched.name}>
+                        isInvalid={form.errors.name && form.touched.name}
+                      >
                         <FormLabel>Role</FormLabel>
                         <Input
                           defaultValue={data?.role}
@@ -158,7 +167,8 @@ function RdvModal({ mode, data, gestion }) {
                   mr={3}
                   onClick={onClose}
                   isLoading={props.isSubmitting}
-                  type="submit">
+                  type="submit"
+                >
                   Fermer
                 </Button>
                 <Button colorScheme="blue" color="primary.500">

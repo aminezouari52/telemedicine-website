@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 // FIREBASE
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase";
+import { auth } from "@/firebase";
 
 // COMPONENTS
 import { Outlet } from "react-router-dom";
@@ -14,7 +14,7 @@ import { PatientHeader } from "../header";
 // STYLE
 import { Box, Spinner } from "@chakra-ui/react";
 
-const PatientRoute = () => {
+export const PatientRoute = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.loggedInUser);
   const [isLoading, setIsLoading] = useState(true);
@@ -22,8 +22,6 @@ const PatientRoute = () => {
   // redirect if user is not logged in
   useEffect(() => {
     onAuthStateChanged(auth, async (authUser) => {
-      console.log("user", authUser);
-
       if (!authUser) {
         navigate("/login");
       }
@@ -33,8 +31,6 @@ const PatientRoute = () => {
 
   // redirect if user is not a patient
   useEffect(() => {
-    console.log("user", user);
-
     if (user && user?.role !== "patient") {
       navigate("/login");
     }
@@ -57,5 +53,3 @@ const PatientRoute = () => {
     </Box>
   );
 };
-
-export default PatientRoute;
