@@ -1,11 +1,12 @@
 // HOOKS
 import { useState, useEffect, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 // FUNCTIONS
 import { updateDoctor, uploadProfilePicture } from "@/functions/doctor";
 import { debounceFieldValue } from "@/utils";
 import { getCurrentUser } from "@/functions/auth";
+import { setLoggedInUser } from "@/reducers/userReducer";
 
 // PACKAGES
 import { Field, FieldArray, Form, Formik } from "formik";
@@ -52,6 +53,7 @@ import { FaUser } from "react-icons/fa";
 import { AddIcon, CloseIcon } from "@chakra-ui/icons";
 
 const General = ({ setIsLoading }) => {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.loggedInUser);
   const memoizeDebounceFieldValue = useCallback(debounceFieldValue, []);
   const [currentUser, setCurrentUser] = useState();
@@ -98,6 +100,7 @@ const General = ({ setIsLoading }) => {
         certifications: currentUser?.certifications,
         schedule: currentUser?.schedule,
         experience: currentUser?.experience,
+        isProfileCompleted: true,
       }}
       onSubmit={async (values) => {
         setIsLoading(true);
@@ -106,6 +109,7 @@ const General = ({ setIsLoading }) => {
           { id: user._id, token: user.token },
           { ...values, photo: imageResponse.data.url }
         );
+        dispatch(setLoggedInUser({ ...user, isProfileCompleted: true }));
         setIsLoading(false);
       }}
     >

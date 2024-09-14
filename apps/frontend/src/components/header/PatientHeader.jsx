@@ -27,8 +27,7 @@ import {
 } from "@chakra-ui/react";
 
 // ASSETS
-import { useEffect } from "react";
-import { ArrowForwardIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 import loginLogo from "../../images/login-logo.png";
 import { FaRegBell } from "react-icons/fa";
 import { TbLogout } from "react-icons/tb";
@@ -37,18 +36,6 @@ export const PatientHeader = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const toast = useToast();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop =
-        document.documentElement.scrollTop || document.body.scrollTop;
-      setIsAtTop(scrollTop === 0);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   const logoutHandler = async () => {
     try {
@@ -89,7 +76,7 @@ export const PatientHeader = () => {
         w="100%"
         alignItems="center"
         px="56px"
-        shadow="0px 2px 4px rgba(0, 0, 0, 0.2)"
+        shadow="md"
       >
         <Image
           objectFit="cover"

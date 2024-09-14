@@ -1,14 +1,20 @@
 // HOOKS
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+// FUNCTIONS
+import { signOut } from "firebase/auth";
+import { logout } from "@/reducers/userReducer";
+import { auth } from "@/firebase";
+import { useSelector } from "react-redux";
 
 // COMPONENTS
 import HeaderButton from "./HeaderButton";
 
-import loginLogo from "../../images/login-logo.png";
-
 // STYLE
 import {
+  chakra,
   Box,
   Flex,
   Text,
@@ -23,32 +29,16 @@ import {
 } from "@chakra-ui/react";
 
 // ASSETS
-import { useEffect, useState } from "react";
 import { ChevronRightIcon } from "@chakra-ui/icons";
-import { FaRegUser } from "react-icons/fa";
-
-import { signOut } from "firebase/auth";
-import { logout } from "../../reducers/userReducer";
-import { auth } from "../../firebase";
+import { FaRegUser, FaRegBell } from "react-icons/fa";
+import loginLogo from "@/images/login-logo.png";
 
 export const DoctorHeader = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.loggedInUser);
+  const [isProfileCompleted, setIsProfileCompleted] = useState();
   const toast = useToast();
-  const [isAtTop, setIsAtTop] = useState(false);
-  const location = useLocation();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop =
-        document.documentElement.scrollTop || document.body.scrollTop;
-      setIsAtTop(scrollTop === 0);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
 
   const logoutHandler = async () => {
     try {
@@ -66,13 +56,21 @@ export const DoctorHeader = () => {
     }
   };
 
+  useEffect(() => {
+    const isProfileCompletedEffect = async () => {
+      if (user && user.token) {
+        setIsProfileCompleted(user.isProfileCompleted);
+      }
+    };
+    isProfileCompletedEffect();
+  }, [isProfileCompleted, user]);
+
   return (
     <Box pos="sticky" top="0" zIndex="5">
       <Flex
         justifyContent="center"
         alignItems="center"
-        background="linear-gradient(15deg, #7E8EF1 0%, #615EFC 50%, #7E8EF1 100%)
-        "
+        bgGradient="linear(to-r, #7E8EF1, #615EFC)"
         _hover={{ bg: "#7E8EF1" }}
         cursor="pointer"
         color="white"
@@ -87,18 +85,10 @@ export const DoctorHeader = () => {
         as="header"
         columns={3}
         background="#fff"
-        h={{
-          sm: "header.sm",
-          md: "header.md",
-          lg: "header.lg",
-        }}
         w="100%"
         alignItems="center"
         px="56px"
-        boxShadow={
-          (location.pathname !== "/" || !isAtTop) &&
-          "0px 2px 4px rgba(0, 0, 0, 0.2)"
-        }
+        shadow="md"
       >
         <Image
           objectFit="cover"
@@ -124,10 +114,64 @@ export const DoctorHeader = () => {
           </HeaderButton>
         </Flex>
         <Flex alignItems="center" justifyContent="flex-end" height="100%">
+          <Menu>
+            <MenuButton
+              size="md"
+              as={IconButton}
+              aria-label="notification"
+              isRound
+              bg="transparent"
+              _hover={{
+                opacity: 0.6,
+              }}
+              _active={{
+                opacity: 0.6,
+              }}
+              icon={
+                <>
+                  <FaRegBell />
+                  {!isProfileCompleted && (
+                    <chakra.span
+                      pos="absolute"
+                      top="10px"
+                      right="10px"
+                      p="4px"
+                      fontSize="xs"
+                      fontWeight="bold"
+                      lineHeight="none"
+                      color="red.100"
+                      transform="translate(50%,-50%)"
+                      bg="red.600"
+                      rounded="full"
+                    />
+                  )}
+                </>
+              }
+            ></MenuButton>
+            <MenuList>
+              {isProfileCompleted ? (
+                <Text px={2}>vous n'avez pas de notifications</Text>
+              ) : (
+                <MenuItem onClick={() => navigate("/doctor/profile")}>
+                  Complèter votre profil pour attirez les patients
+                </MenuItem>
+              )}
+            </MenuList>
+          </Menu>
+
           <Menu size="xs">
             <MenuButton
-              size="xs"
+              size="md"
               as={IconButton}
+              aria-label="toggle profile menu"
+              isRound
+              bg="transparent"
+              _hover={{
+                opacity: 0.6,
+              }}
+              _active={{
+                opacity: 0.6,
+              }}
               icon={<FaRegUser />}
             ></MenuButton>
             <MenuList>
