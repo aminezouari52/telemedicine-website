@@ -10,6 +10,7 @@ import { setLoggedInUser } from "@/reducers/userReducer";
 
 // PACKAGES
 import { Field, FieldArray, Form, Formik } from "formik";
+import * as Yup from "yup";
 
 // COMPONENTS
 import ImageUpload from "@/components/ImageUpload";
@@ -59,6 +60,100 @@ const General = ({ setIsLoading }) => {
   const [currentUser, setCurrentUser] = useState();
   const [imageSrc, setImageSrc] = useState();
 
+  const initialValues = {
+    firstName: currentUser?.firstName,
+    lastName: currentUser?.lastName,
+    age: currentUser?.age,
+    phone: currentUser?.phone,
+    address: currentUser?.address,
+    city: currentUser?.city,
+    zip: currentUser?.zip,
+    description: currentUser?.description,
+    hospital: currentUser?.hospital,
+    specialty: currentUser?.specialty,
+    degrees: currentUser?.degrees,
+    certifications: currentUser?.certifications,
+    experience: currentUser?.experience,
+    price: currentUser?.price,
+    schedule: currentUser?.schedule,
+  };
+
+  const validationSchema = Yup.object().shape({
+    firstName: Yup.string()
+      .required("Le prénom est requis")
+      .max(50, "Le prénom ne peut pas dépasser 50 caractères"),
+    lastName: Yup.string()
+      .required("Le nom de famille est requis")
+      .max(50, "Le nom de famille ne peut pas dépasser 50 caractères"),
+    age: Yup.number()
+      .required("L'âge est requis")
+      .min(18, "Vous devez avoir au moins 18 ans")
+      .max(100, "L'âge ne peut pas dépasser 100 ans"),
+    phone: Yup.string()
+      .required("Le numéro de téléphone est requis")
+      .matches(
+        /^\+?[1-9]\d{8,15}$/,
+        "Le numéro de téléphone n'nest pas valide"
+      ),
+    address: Yup.string()
+      .required("L'adresse est requise")
+      .max(50, "L'adresse ne peut pas dépasser 50 caractères"),
+    city: Yup.string()
+      .required("La ville est requise")
+      .max(50, "La ville ne peut pas dépasser 50 caractères"),
+    zip: Yup.string()
+      .required("Le code postal est requis")
+      .matches(/^[0-9]+$/, "Le code postal doit être un nombre")
+      .min(4, "Le code postal doit comporter au moins 4 chiffres")
+      .max(5, "Le code postal ne peut pas dépasser 5 chiffres"),
+    description: Yup.string()
+      .required("La description est requise")
+      .max(500, "La description ne peut pas dépasser 500 caractères"),
+    hospital: Yup.string()
+      .oneOf(
+        [
+          "Hôpital Mongi Slim",
+          "Hôpital Charles Nicolle",
+          "Hôpital La Rabta",
+          "Hôpital Razi",
+          "Hôpital Sahloul",
+          "Hôpital Farhat Hached",
+          "Hôpital Fattouma Bourguiba",
+          "Hôpital Hédi Chaker",
+          "Hôpital Habib Bourguiba",
+        ],
+        "L'hôpital sélectionné n'est pas valide"
+      )
+      .required("L'hôpital est requis"),
+    specialty: Yup.string()
+      .oneOf(
+        [
+          "Généraliste",
+          "Cardiologue",
+          "Dermatologue",
+          "Endocrinologue",
+          "Gastro-entérologue",
+          "Neurologue",
+          "Pédiatre",
+          "Psychiatre",
+        ],
+        "La spécialité sélectionné n'est pas valide"
+      )
+      .required("La spécialité est requis"),
+    degrees: Yup.array()
+      .of(Yup.string())
+      .min(1, "Choisir au moins un dîplome")
+      .max(10, "Maximum 10 dîplomes"),
+    certifications: Yup.array()
+      .of(Yup.string())
+      .min(1, "Choisir au moins une certificat")
+      .max(10, "Maximum 10 certificats"),
+    price: Yup.number()
+      .required("Le prix est requis")
+      .min(0, "Le prix ne peut pas être négatif"),
+    schedule: Yup.array().of(Yup.string()).min(1, "Choisir au moins un jour"),
+  });
+
   const profileImageHandler = (uri) => {
     setIsLoading(true);
     setImageSrc(uri);
@@ -84,36 +179,25 @@ const General = ({ setIsLoading }) => {
   return (
     <Formik
       enableReinitialize
-      initialValues={{
-        firstName: currentUser?.firstName,
-        lastName: currentUser?.lastName,
-        age: currentUser?.age,
-        phone: currentUser?.phone,
-        address: currentUser?.address,
-        city: currentUser?.city,
-        zip: currentUser?.zip,
-        description: currentUser?.description,
-        hospital: currentUser?.hospital,
-        specialty: currentUser?.specialty,
-        price: currentUser?.price,
-        degrees: currentUser?.degrees,
-        certifications: currentUser?.certifications,
-        schedule: currentUser?.schedule,
-        experience: currentUser?.experience,
-        isProfileCompleted: true,
-      }}
+      initialValues={initialValues}
+      validationSchema={validationSchema}
       onSubmit={async (values) => {
         setIsLoading(true);
         const imageResponse = await uploadProfilePicture(user, imageSrc);
         updateDoctor(
           { id: user._id, token: user.token },
-          { ...values, photo: imageResponse.data.url }
+          { ...values, photo: imageResponse.data.url, isProfileCompleted: true }
         );
-        dispatch(setLoggedInUser({ ...user, isProfileCompleted: true }));
+        dispatch(
+          setLoggedInUser({
+            ...user,
+            isProfileCompleted: true,
+          })
+        );
         setIsLoading(false);
       }}
     >
-      {({ handleChange, setFieldValue, values }) => {
+      {({ handleChange, setFieldValue, values, errors }) => {
         return (
           <Flex as={Form} direction="column" gap={8}>
             <Box>
@@ -183,26 +267,30 @@ const General = ({ setIsLoading }) => {
               </FormControl>
 
               <SimpleGrid columns={2} spacing={6}>
-                <TextFormControl
-                  label="Prénom"
-                  autoComplete="given-name"
-                  value={values?.firstName || ""}
-                  name="firstName"
-                  onChange={(event) => {
-                    const { value } = event.target;
-                    setFieldValue("firstName", value, false);
-                    memoizeDebounceFieldValue(
-                      "firstName",
-                      value,
-                      setFieldValue
-                    );
-                  }}
-                />
+                <Box>
+                  <TextFormControl
+                    label="Prénom"
+                    autoComplete="given-name"
+                    value={values?.firstName || ""}
+                    name="firstName"
+                    error={errors.firstName}
+                    onChange={(event) => {
+                      const { value } = event.target;
+                      setFieldValue("firstName", value, false);
+                      memoizeDebounceFieldValue(
+                        "firstName",
+                        value,
+                        setFieldValue
+                      );
+                    }}
+                  />
+                </Box>
                 <TextFormControl
                   label="Nom"
                   autoComplete="family-name"
                   value={values?.lastName || ""}
                   name="lastName"
+                  error={errors.lastName}
                   onChange={(event) => {
                     const { value } = event.target;
                     setFieldValue("lastName", value, false);
@@ -213,33 +301,61 @@ const General = ({ setIsLoading }) => {
 
               <SimpleGrid columns={6} spacing={6}>
                 <FormControl as={GridItem} colSpan={3}>
-                  <FormLabel
-                    htmlFor="age"
-                    fontSize="sm"
-                    fontWeight="md"
-                    color="gray.700"
-                    mb={3}
-                  >
-                    Age
-                  </FormLabel>
-                  <NumberInput
-                    name="age"
-                    size="sm"
-                    value={values?.age}
-                    min={1}
-                    max={100}
-                    focusBorderColor="secondary.500"
-                    onChange={(value) => {
-                      setFieldValue("age", value, false);
-                      memoizeDebounceFieldValue("age", +value, setFieldValue);
-                    }}
-                  >
-                    <NumberInputField rounded="md" shadow="sm" />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
+                  <Box>
+                    <FormLabel
+                      htmlFor="age"
+                      fontSize="sm"
+                      fontWeight="md"
+                      color="gray.700"
+                      mb={3}
+                    >
+                      Age
+                    </FormLabel>
+                    <NumberInput
+                      isValidCharacter={(value) => {
+                        const regex = /^\d+$/;
+                        return regex.test(value);
+                      }}
+                      name="age"
+                      size="sm"
+                      value={values?.age}
+                      min={18}
+                      max={100}
+                      borderColor={errors?.age ? "red.300" : "inherit"}
+                      focusBorderColor={
+                        errors?.age ? "red.500" : "secondary.500"
+                      }
+                      onChange={(value) => {
+                        setFieldValue("age", +value, false);
+                        memoizeDebounceFieldValue("age", +value, setFieldValue);
+                      }}
+                      errorBorderColor="red"
+                    >
+                      <NumberInputField
+                        rounded="md"
+                        shadow="sm"
+                        _hover={{
+                          borderColor: errors?.age ? "red.400" : "gray.300",
+                        }}
+                        _focus={{
+                          _hover: {
+                            borderColor: errors?.age
+                              ? "red.400"
+                              : "secondary.500",
+                          },
+                        }}
+                      />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                  </Box>
+                  {errors && errors?.age && (
+                    <Text mt={1} color="red.400" fontSize="xs">
+                      {errors?.age}
+                    </Text>
+                  )}
                 </FormControl>
                 <FormControl as={GridItem} colSpan={3}>
                   <FormLabel
@@ -259,7 +375,10 @@ const General = ({ setIsLoading }) => {
                       name="phone"
                       id="phone"
                       autoComplete="tel"
-                      focusBorderColor="secondary.500"
+                      borderColor={errors?.phone ? "red.300" : "inherit"}
+                      focusBorderColor={
+                        errors?.phone ? "red.500" : "secondary.500"
+                      }
                       shadow="sm"
                       w="full"
                       rounded="md"
@@ -273,8 +392,23 @@ const General = ({ setIsLoading }) => {
                           setFieldValue
                         );
                       }}
+                      _hover={{
+                        borderColor: errors?.phone ? "red.400" : "gray.300",
+                      }}
+                      _focus={{
+                        _hover: {
+                          borderColor: errors?.phone
+                            ? "red.400"
+                            : "secondary.500",
+                        },
+                      }}
                     />
                   </InputGroup>
+                  {errors && errors?.phone && (
+                    <Text mt={1} color="red.400" fontSize="xs">
+                      {errors?.phone}
+                    </Text>
+                  )}
                 </FormControl>
               </SimpleGrid>
               <SimpleGrid columns={3} spacing={6}>
@@ -283,6 +417,7 @@ const General = ({ setIsLoading }) => {
                   autoComplete="street-address"
                   value={values?.address || ""}
                   name="address"
+                  error={errors?.address}
                   onChange={(event) => {
                     const { value } = event.target;
                     setFieldValue("address", value, false);
@@ -294,6 +429,7 @@ const General = ({ setIsLoading }) => {
                   autoComplete="home city"
                   value={values?.city || ""}
                   name="city"
+                  error={errors?.city}
                   onChange={(event) => {
                     const { value } = event.target;
                     setFieldValue("city", value, false);
@@ -306,6 +442,7 @@ const General = ({ setIsLoading }) => {
                   autoComplete="postal-code"
                   value={values?.zip || ""}
                   name="zip"
+                  error={errors?.zip}
                   onChange={(event) => {
                     const { value } = event.target;
                     setFieldValue("zip", value, false);
@@ -327,7 +464,10 @@ const General = ({ setIsLoading }) => {
                   placeholder="Brève description de votre profil."
                   rows={3}
                   shadow="sm"
-                  focusBorderColor="secondary.500"
+                  borderColor={errors?.description ? "red.300" : "inherit"}
+                  focusBorderColor={
+                    errors?.description ? "red.500" : "secondary.500"
+                  }
                   fontSize="sm"
                   value={values.description || ""}
                   onChange={(event) => {
@@ -339,7 +479,22 @@ const General = ({ setIsLoading }) => {
                       setFieldValue
                     );
                   }}
+                  _hover={{
+                    borderColor: errors?.description ? "red.400" : "gray.300",
+                  }}
+                  _focus={{
+                    _hover: {
+                      borderColor: errors?.description
+                        ? "red.400"
+                        : "secondary.500",
+                    },
+                  }}
                 />
+                {errors && errors?.description && (
+                  <Text mt={1} color="red.400" fontSize="xs">
+                    {errors?.description}
+                  </Text>
+                )}
               </FormControl>
             </Stack>
 
@@ -392,10 +547,23 @@ const General = ({ setIsLoading }) => {
                       name="hospital"
                       size="sm"
                       variant="outline"
-                      focusBorderColor="secondary.500"
                       rounded="md"
                       shadow="sm"
                       onChange={handleChange}
+                      borderColor={errors?.hospital ? "red.300" : "inherit"}
+                      focusBorderColor={
+                        errors?.hospital ? "red.500" : "secondary.500"
+                      }
+                      _hover={{
+                        borderColor: errors?.hospital ? "red.400" : "gray.300",
+                      }}
+                      _focus={{
+                        _hover: {
+                          borderColor: errors?.hospital
+                            ? "red.400"
+                            : "secondary.500",
+                        },
+                      }}
                       value={values?.hospital}
                     >
                       <option value="">Selectionnez un hôpital...</option>
@@ -421,6 +589,11 @@ const General = ({ setIsLoading }) => {
                         Hôpital Habib Bourguiba
                       </option>
                     </Select>
+                    {errors && errors?.hospital && (
+                      <Text mt={1} color="red.400" fontSize="xs">
+                        {errors?.hospital}
+                      </Text>
+                    )}
                   </FormControl>
                   <FormControl as={Flex} direction="column">
                     <FormLabel
@@ -434,12 +607,25 @@ const General = ({ setIsLoading }) => {
                     <Select
                       size="sm"
                       variant="outline"
-                      focusBorderColor="secondary.500"
                       rounded="md"
                       shadow="sm"
                       name="specialty"
                       value={values?.specialty}
                       onChange={handleChange}
+                      borderColor={errors?.specialty ? "red.300" : "inherit"}
+                      focusBorderColor={
+                        errors?.specialty ? "red.500" : "secondary.500"
+                      }
+                      _hover={{
+                        borderColor: errors?.specialty ? "red.400" : "gray.300",
+                      }}
+                      _focus={{
+                        _hover: {
+                          borderColor: errors?.specialty
+                            ? "red.400"
+                            : "secondary.500",
+                        },
+                      }}
                     >
                       <option value="Généraliste">Généraliste</option>
                       <option value="Cardiologue">Cardiologue</option>
@@ -504,24 +690,31 @@ const General = ({ setIsLoading }) => {
                               </Flex>
                             ))}
                           </Stack>
-                          <Flex gap={2} mt={values.degrees?.length > 0 ? 4 : 2}>
-                            <IconButton
-                              size="xs"
-                              type="button"
-                              borderColor="secondary.500"
-                              variant="outline"
-                              isRound={true}
-                              onClick={() => push("")}
-                              _hover={{
-                                bg: "secondary.500",
-                                "& svg": { color: "white" },
-                              }}
-                              icon={<AddIcon color="secondary.500" />}
-                            />
-                            <Text fontSize="md" color="gray.500">
-                              Ajouter un dîplome
-                            </Text>
-                          </Flex>
+                          <Box mt={values.degrees?.length > 0 ? 4 : 2}>
+                            <Flex gap={2}>
+                              <IconButton
+                                size="xs"
+                                type="button"
+                                borderColor="secondary.500"
+                                variant="outline"
+                                isRound={true}
+                                onClick={() => push("")}
+                                _hover={{
+                                  bg: "secondary.500",
+                                  "& svg": { color: "white" },
+                                }}
+                                icon={<AddIcon color="secondary.500" />}
+                              />
+                              <Text fontSize="md" color="gray.500">
+                                Ajouter un dîplome
+                              </Text>
+                            </Flex>
+                            {errors && errors?.degrees && (
+                              <Text mt={2} color="red.400" fontSize="sm">
+                                {errors?.degrees}
+                              </Text>
+                            )}
+                          </Box>
                         </>
                       )}
                     />
@@ -575,29 +768,33 @@ const General = ({ setIsLoading }) => {
                               </Flex>
                             ))}
                           </Stack>
-                          <Flex
-                            gap={2}
-                            mt={values.certifications?.length > 0 ? 4 : 2}
-                          >
-                            <IconButton
-                              size="xs"
-                              type="button"
-                              borderColor="secondary.500"
-                              variant="outline"
-                              isRound={true}
-                              onClick={() => push("")}
-                              _hover={{
-                                bg: "secondary.500",
-                                "& svg": {
-                                  color: "white",
-                                },
-                              }}
-                              icon={<AddIcon color="secondary.500" />}
-                            />
-                            <Text fontSize="md" color="gray.500">
-                              Ajouter une certificat
-                            </Text>
-                          </Flex>
+                          <Box mt={values.certifications?.length > 0 ? 4 : 2}>
+                            <Flex gap={2}>
+                              <IconButton
+                                size="xs"
+                                type="button"
+                                borderColor="secondary.500"
+                                variant="outline"
+                                isRound={true}
+                                onClick={() => push("")}
+                                _hover={{
+                                  bg: "secondary.500",
+                                  "& svg": {
+                                    color: "white",
+                                  },
+                                }}
+                                icon={<AddIcon color="secondary.500" />}
+                              />
+                              <Text fontSize="md" color="gray.500">
+                                Ajouter une certificat
+                              </Text>
+                            </Flex>
+                            {errors && errors?.certifications && (
+                              <Text mt={2} color="red.400" fontSize="sm">
+                                {errors?.certifications}
+                              </Text>
+                            )}
+                          </Box>
                         </>
                       )}
                     />
@@ -747,6 +944,11 @@ const General = ({ setIsLoading }) => {
                       </Flex>
                     ))}
                   </Flex>
+                  {errors && errors?.schedule && (
+                    <Text mt={2} color="red.400" fontSize="sm">
+                      {errors?.schedule}
+                    </Text>
+                  )}
                 </chakra.fieldset>
               </Stack>
             </GridItem>

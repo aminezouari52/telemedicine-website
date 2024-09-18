@@ -1,7 +1,15 @@
 import { Field } from "formik";
-import { FormControl, FormLabel, Input } from "@chakra-ui/react";
+import { FormControl, FormLabel, Input, Text } from "@chakra-ui/react";
+import { useEffect } from "react";
 
-const TextFormControl = ({ onChange, name, label, value, autoComplete }) => {
+const TextFormControl = ({
+  onChange,
+  name,
+  label,
+  value,
+  autoComplete,
+  error,
+}) => {
   return (
     <FormControl>
       <FormLabel
@@ -19,14 +27,28 @@ const TextFormControl = ({ onChange, name, label, value, autoComplete }) => {
         name={name}
         id={name}
         autoComplete={autoComplete}
-        focusBorderColor="secondary.500"
+        borderColor={error ? "red.300" : "inherit"}
+        focusBorderColor={error ? "red.500" : "secondary.500"}
         shadow="sm"
         size="sm"
         w="full"
         rounded="md"
         value={value}
         onChange={onChange}
+        _hover={{
+          borderColor: error ? "red.400" : "gray.300",
+        }}
+        _focus={{
+          _hover: {
+            borderColor: error ? "red.400" : "secondary.500",
+          },
+        }}
       />
+      {error && (
+        <Text mt={1} color="red.400" fontSize="xs">
+          {error}
+        </Text>
+      )}
     </FormControl>
   );
 };

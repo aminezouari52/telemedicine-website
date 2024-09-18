@@ -7,14 +7,14 @@ const doctorSchema = new mongoose.Schema({
   lastName: String,
   age: {
     type: Number,
-    min: [0, "Age must be a positive number"],
-    max: [120, "Age cannot exceed 120"],
+    min: [18, "Age must be greater than 17"],
+    max: [120, "Age cannot exceed 100"],
   },
   phone: {
     type: String,
     unique: true,
     match: [
-      /^\+?[1-9]\d{1,14}$/,
+      /^\+?[1-9]\d{8,15}$/,
       "Please enter a valid phone number with an optional leading + sign.",
     ],
   },
@@ -22,6 +22,11 @@ const doctorSchema = new mongoose.Schema({
   city: String,
   zip: {
     type: Number,
+    match: [
+      /^[0-9]+$/,
+      "Please enter a valid zip code which contains only numbers",
+    ],
+    minlength: 5,
     maxlength: 5,
   },
   description: String,

@@ -58,11 +58,8 @@ const DoctorProfile = () => {
             color: "gray.400",
           }}
         >
-          Remplissez ou modifiez les informations de votre profil pour offrir
-          aux patients des détails complets et à jour.
-          <br />
-          Consultez ainsi votre calendrier pour visualiser vos rendez-vous en
-          détails.
+          Compléter votre profil être visible aux patients et pour offrir des
+          détails complets et à jour.
         </Text>
       </Box>
       <Tabs variant="line" size="sm">
