@@ -8,7 +8,7 @@ const doctorSchema = new mongoose.Schema({
   age: {
     type: Number,
     min: [18, "Age must be greater than 17"],
-    max: [120, "Age cannot exceed 100"],
+    max: [100, "Age cannot exceed 100"],
   },
   phone: {
     type: String,
@@ -59,7 +59,11 @@ const doctorSchema = new mongoose.Schema({
     ],
     default: "Généraliste",
   },
-  price: Number,
+  price: {
+    type: Number,
+    min: [0, "Le prix ne peut pas être négatif"],
+    max: [1000, "Le prix ne doit pas dépasser 1000dt/hr"],
+  },
   degrees: [String],
   certifications: [String],
   schedule: [String],

@@ -7,8 +7,6 @@ const pick = require("../utils/pick");
 cloudinary.config(config.cloudinary);
 
 const getAllDoctors = catchAsync(async (req, res) => {
-  console.log("req.query", req.query);
-
   const filter = pick(req.query, ["hospital", "specialty"]);
   const options = pick(req.query, ["sortBy"]);
   const doctors = await doctorService.getAllDoctors(filter, options);

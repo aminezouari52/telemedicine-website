@@ -35,7 +35,9 @@ const paginate = async function (Schema, filter, options) {
     sort = "createdAt";
   }
 
-  let docsPromise = Schema.find(filter).sort(sort);
+  let docsPromise = Schema.find({ ...filter, isProfileCompleted: true }).sort(
+    sort,
+  );
 
   if (options.populate) {
     options.populate.split(",").forEach((populateOption) => {

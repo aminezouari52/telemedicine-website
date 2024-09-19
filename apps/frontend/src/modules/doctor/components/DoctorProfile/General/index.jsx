@@ -150,7 +150,8 @@ const General = ({ setIsLoading }) => {
       .max(10, "Maximum 10 certificats"),
     price: Yup.number()
       .required("Le prix est requis")
-      .min(0, "Le prix ne peut pas être négatif"),
+      .min(0, "Le prix ne peut pas être négatif")
+      .max(1000, "Le prix ne doit pas dépasser 1000dt/hr"),
     schedule: Yup.array().of(Yup.string()).min(1, "Choisir au moins un jour"),
   });
 
