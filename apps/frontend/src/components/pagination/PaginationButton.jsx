@@ -9,16 +9,14 @@ const PaginationButton = (props) => {
   return (
     <Button
       size="xs"
-      bg="#fff"
-      color="gray.700"
+      bg={!props.active ? "#fff" : "primary.500"}
+      color={!props.active ? "#gray.700" : "#fff"}
       borderRadius={4}
       isDisabled={props.disabled}
       opacity={props.disabled && 0.6}
       _hover={!props.disabled && activeStyle}
       cursor={props.disabled && "not-allowed"}
-      {...(props.active && activeStyle)}
       onClick={props.onClick}
-      {...props}
     >
       {props.children}
     </Button>

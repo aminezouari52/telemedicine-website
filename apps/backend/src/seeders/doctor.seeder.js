@@ -106,7 +106,8 @@ async function seedDB() {
           );
           const hospitalIndex = Math.floor(Math.random() * hospitals.length);
           const randomParam = Math.random();
-          const profileUrl = `https://xsgames.co/randomusers/avatar.php?g=male&random=${randomParam}`;
+          const gender = randomParam > 0.3 ? "male" : "female";
+          const profileUrl = `https://xsgames.co/randomusers/avatar.php?g=${gender}&random=${randomParam}`;
 
           let newDoctor = {
             specialty: specialities[specialtyIndex],

@@ -1,4 +1,4 @@
-const Consultation = require("../models/consultation");
+const Consultation = require("../models/consultation.model");
 
 exports.submitConsultation = async (req, res) => {
   try {

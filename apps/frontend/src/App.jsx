@@ -20,10 +20,10 @@ import ForgotPassword from "@/pages/auth/ForgotPassword";
 import Patient from "@/pages/Patient/Patient";
 import Consultations from "@/pages/Patient/Consultations";
 import Doctors from "@/modules/patient/components/Doctors";
-import DoctorDetails from "@/pages/Patient/DoctorDetails";
+import DoctorDetails from "@/modules/patient/components/DoctorDetails";
 import VideoCall from "@/pages/Patient/VideoCall";
 import NotFound from "@/components/NotFound";
-import Consultation from "@/pages/consultation/Consultation.jsx";
+import BookConsultation from "@/modules/patient/components/bookConsultation";
 import Doctor from "@/pages/Doctor";
 import DoctorProfile from "@/modules/doctor/components/DoctorProfile";
 import ListConsultation from "@/pages/doctor/ListConsultation.jsx";
@@ -37,16 +37,18 @@ const App = () => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         const idTokenResult = await user.getIdTokenResult();
-
         try {
           const res = await getCurrentUser(idTokenResult.token);
+          if (!res.data) {
+            throw new Error("user not found");
+          }
           dispatch(
             setLoggedInUser({
               email: res.data.email,
               token: idTokenResult.token,
               role: res.data.role,
               _id: res.data._id,
-              isProfileCompleted: res.data.isProfileCompleted,
+              isProfileCompleted: res.data?.isProfileCompleted,
             })
           );
         } catch (err) {
@@ -68,7 +70,7 @@ const App = () => {
 
         <Route path="/patient/*" element={<PatientRoute />}>
           <Route path="home" element={<Patient />} />
-          <Route path="consultation/:id" element={<Consultation />} />
+          <Route path="consultation/:id" element={<BookConsultation />} />
           <Route path="consultations" element={<Consultations />} />
           <Route path="doctors" element={<Doctors />} />
           <Route path="doctors/:id" element={<DoctorDetails />} />

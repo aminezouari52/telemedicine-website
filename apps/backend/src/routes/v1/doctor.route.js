@@ -13,4 +13,6 @@ router
   .route("/profile-image")
   .post(authCheck, doctorController.uploadProfilePicture);
 
+router.route("/:doctorId").get(doctorController.getDoctor);
+
 module.exports = router;

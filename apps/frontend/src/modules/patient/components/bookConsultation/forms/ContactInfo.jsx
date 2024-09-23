@@ -2,8 +2,10 @@
 import { useState, useEffect } from "react";
 import { useFormikContext } from "formik";
 
-// STYLED COMPONENTS
+// COMPONENTS
 import InputField from "@/components/InputField";
+
+// STYLE
 import { Flex, Button } from "@chakra-ui/react";
 
 const ContactInfo = ({ nextForm, prevForm }) => {

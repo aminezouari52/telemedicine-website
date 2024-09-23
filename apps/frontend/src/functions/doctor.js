@@ -22,6 +22,10 @@ export const uploadProfilePicture = async (user, formData) =>
     }
   );
 
-export const getAllDoctors = async () => {
-  return await axios.get(`${import.meta.env.VITE_REACT_APP_API}/doctors/`);
-};
+export const getAllDoctors = async (filters, options) =>
+  await axios.get(
+    `${import.meta.env.VITE_REACT_APP_API}/doctors?${filters}&sortBy=${options}`
+  );
+
+export const getDoctorById = async (id) =>
+  await axios.get(`${import.meta.env.VITE_REACT_APP_API}/doctors/${id}`);

@@ -7,7 +7,7 @@ const pick = require("../utils/pick");
 cloudinary.config(config.cloudinary);
 
 const getAllDoctors = catchAsync(async (req, res) => {
-  const filter = pick(req.query, ["hospital", "specialty"]);
+  const filter = pick(req.query, ["hospital", "specialty", "text"]);
   const options = pick(req.query, ["sortBy"]);
   const doctors = await doctorService.getAllDoctors(filter, options);
   res.json(doctors);
@@ -23,8 +23,17 @@ const uploadProfilePicture = catchAsync(async (req, res) => {
   res.json(image);
 });
 
+const getDoctor = catchAsync(async (req, res) => {
+  const doctor = await doctorService.getDoctorById(req.params.doctorId);
+  if (!doctor) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Doctor not found");
+  }
+  res.send(doctor);
+});
+
 module.exports = {
   updateDoctor,
   uploadProfilePicture,
   getAllDoctors,
+  getDoctor,
 };

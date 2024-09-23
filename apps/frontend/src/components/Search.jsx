@@ -1,8 +1,8 @@
 // HOOKS
-// import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 
 // // FUNCTIONS
-// import { setSearchText } from 'modules/Admin/redux';
+import { setSearchText } from "@/reducers/searchReducer";
 
 // STYLE
 import { Input, IconButton, Flex } from "@chakra-ui/react";
@@ -12,14 +12,15 @@ import { Search2Icon } from "@chakra-ui/icons";
 import React from "react";
 
 const Search = () => {
-  //   const dispatch = useDispatch();
-  //   const handleChange = (event: any) => {
-  //     dispatch(
-  //       setSearchText({
-  //         text: event.target.value,
-  //       })
-  //     );
-  //   };
+  const dispatch = useDispatch();
+
+  const handleChange = (event) => {
+    dispatch(
+      setSearchText({
+        text: event.target.value,
+      })
+    );
+  };
 
   return (
     <Flex>
@@ -37,7 +38,7 @@ const Search = () => {
         type="text"
         focusBorderColor="primary.500"
         placeholder="Chercher..."
-        // onChange={handleChange}
+        onChange={handleChange}
         color="#000"
         borderTopLeftRadius="0"
         borderBottomLeftRadius="0"

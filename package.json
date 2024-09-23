@@ -4,6 +4,7 @@
   "scripts": {
     "start": "turbo dev",
     "build": "turbo build",
+    "seed": "turbo seed --filter=@monorepo/backend",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },

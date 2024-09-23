@@ -1,20 +1,21 @@
 // HOOKS
 import { useDisclosure } from "@chakra-ui/react";
+import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 // FUNCTIONS
 import { submitConsultation } from "@/functions/patient";
+import { getDoctorById } from "@/functions/doctor";
+import { useSelector } from "react-redux";
 
 // COMPONENTS
 import VerifyData from "./VerifyData";
-import DateStep from "./Forms/Date";
-import ContactInfo from "./Forms/ContactInfo";
-import OtherInformation from "./Forms/OtherInformation";
+import DateStep from "./forms/Date";
+import ContactInfo from "./forms/ContactInfo";
+import OtherInformation from "./forms/OtherInformation";
 
 // STYLE
 import { Flex, chakra, Box, Heading } from "@chakra-ui/react";
-
-// ASSETS
-import doctor from "@/images/avatars/doctors/1.avif";
 
 // PACKAGES
 import { Steps, Step, useSteps } from "chakra-ui-steps";
@@ -23,6 +24,19 @@ import * as Yup from "yup";
 import moment from "moment";
 
 const Consultation = () => {
+  const user = useSelector((state) => state.user.loggedInUser);
+  const params = useParams();
+  const [doctor, setDoctor] = useState();
+
+  const getDoctorByIdFunction = async () => {
+    const response = await getDoctorById(params.id);
+    setDoctor(response.data);
+  };
+
+  useEffect(() => {
+    getDoctorByIdFunction();
+  }, []);
+
   const { onClose } = useDisclosure();
 
   // FORMS METHODS
@@ -61,7 +75,8 @@ const Consultation = () => {
           dateInsurance: "",
           provider: "",
           police: "",
-          doctor: "",
+          patient: user?._id,
+          doctor: params?.id,
         }}
         validationSchema={Yup.object({
           date: Yup.string().required("La date est requis"),
@@ -77,21 +92,7 @@ const Consultation = () => {
             ),
         })}
         onSubmit={(values) => {
-          submitConsultation({
-            date: values.date,
-            time: values.time,
-            firstName: values.firstName,
-            lastName: values.lastName,
-            address: values.address,
-            phone: values.phone,
-            age: values.age,
-            weight: values.weight,
-            type: values.type,
-            dateInsurance: values.dateInsurance,
-            provider: values.provider,
-            police: values.police,
-            doctor: values.doctor,
-          });
+          submitConsultation(values);
         }}
       >
         <Form>
@@ -109,7 +110,7 @@ const Consultation = () => {
                       <Box
                         h={64}
                         bgSize="cover"
-                        bgImage={`url('${doctor}')`}
+                        bgImage={`url('${doctor?.photo}')`}
                         borderRadius="md"
                       ></Box>
                       <Box py={8} maxW="xl">
@@ -119,12 +120,10 @@ const Consultation = () => {
                           fontWeight="bold"
                         >
                           <chakra.span color="primary.600">Dr.</chakra.span>{" "}
-                          Ahmed Mohsen
+                          {doctor?.firstName} {doctor?.lastName}
                         </chakra.h2>
                         <chakra.p mt={4} color="gray.600">
-                          Lorem, ipsum dolor sit amet consectetur adipisicing
-                          elit. Quidem modi reprehenderit vitae exercitationem
-                          aliquid dolores ullam
+                          {doctor?.description}
                         </chakra.p>
                       </Box>
                     </Flex>

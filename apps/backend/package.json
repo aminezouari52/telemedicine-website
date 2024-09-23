@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon src/index.js"
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js",
+    "seed": "node src/seeders/doctor.seeder.js"
   },
   "dependencies": {
     "body-parser": "^1.20.2",

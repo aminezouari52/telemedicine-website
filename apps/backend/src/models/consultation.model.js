@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema;
 
 const consultationSchema = new mongoose.Schema({
-  consultation: {
-    type: ObjectId,
-    ref: "Consultation",
-  },
   date: String,
   time: String,
   firstName: String,
@@ -18,7 +14,10 @@ const consultationSchema = new mongoose.Schema({
   dateInsurance: String,
   provider: String,
   police: String,
-  doctor: String,
+  doctor: { type: ObjectId, ref: "Doctor" },
+  patient: { type: ObjectId, ref: "Patient" },
 });
 
-module.exports = mongoose.model("Consultation", consultationSchema);
+const Consultation = mongoose.model("Consultation", consultationSchema);
+
+module.exports = Consultation;

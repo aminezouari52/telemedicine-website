@@ -7,7 +7,7 @@ const getUserById = async (id) => {
   return User.findById(id);
 };
 
-const paginate = async function (Schema, filter, options) {
+const query = async function (Schema, filter, options) {
   /**
    * @typedef {Object} QueryResult
    * @property {Document[]} results - Results found
@@ -35,9 +35,30 @@ const paginate = async function (Schema, filter, options) {
     sort = "createdAt";
   }
 
-  let docsPromise = Schema.find({ ...filter, isProfileCompleted: true }).sort(
-    sort,
-  );
+  const { specialty, hospital, text } = filter;
+
+  let queryString = {
+    isProfileCompleted: true,
+  };
+
+  // Add filters only if they are provided and not empty
+  if (specialty && specialty.trim()) {
+    queryString.specialty = specialty;
+  }
+
+  if (hospital && hospital.trim()) {
+    queryString.hospital = hospital;
+  }
+
+  if (text && text.trim()) {
+    queryString.$or = [
+      { firstName: { $regex: text, $options: "i" } },
+      { lastName: { $regex: text, $options: "i" } },
+      { email: { $regex: text, $options: "i" } },
+    ];
+  }
+
+  let docsPromise = Schema.find(queryString).sort(sort);
 
   if (options.populate) {
     options.populate.split(",").forEach((populateOption) => {
@@ -52,16 +73,14 @@ const paginate = async function (Schema, filter, options) {
 
   docsPromise = docsPromise.exec();
 
-  const totalResults = await Schema.countDocuments(filter).exec();
-
   return docsPromise.then((results) => ({
     results,
-    totalResults,
+    totalResults: results.length,
   }));
 };
 
 const getAllDoctors = async (filter, options) => {
-  const doctors = await paginate(Doctor, filter, options);
+  const doctors = await query(Doctor, filter, options);
   return doctors;
 };
 
@@ -87,8 +106,13 @@ const uploadProfilePicture = async (image) => {
   };
 };
 
+const getDoctorById = async (id) => {
+  return Doctor.findById(id);
+};
+
 module.exports = {
   updateDoctorById,
   uploadProfilePicture,
   getAllDoctors,
+  getDoctorById,
 };
