@@ -13,7 +13,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { validateEmail } from "@/utils";
 
 // FUNCTIONS
-import { createOrUpdateUser } from "@/functions/auth";
+import { createOrUpdateUser } from "@/modules/auth/functions/auth";
 
 // STYLE
 import {
@@ -25,7 +25,6 @@ import {
   Link,
   Select,
 } from "@chakra-ui/react";
-import AuthWrapper from "./AuthWrapper";
 
 const Register = () => {
   let dispatch = useDispatch();
@@ -98,90 +97,88 @@ const Register = () => {
   };
 
   return (
-    <AuthWrapper>
+    <Flex
+      as="form"
+      h="100vh"
+      w="325px"
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      gap={4}
+      onSubmit={handleSubmit}
+    >
       <Flex
-        as="form"
-        h="100vh"
-        w="325px"
+        gap="6px"
         direction="column"
-        alignItems="center"
         justifyContent="center"
-        gap={4}
-        onSubmit={handleSubmit}
+        alignItems="center"
       >
-        <Flex
-          gap="6px"
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Heading size="lg">Bienvenue!</Heading>
-          <Text color="darkgray">Bienvenue! Merci de créer votre compte</Text>
-        </Flex>
-        <Flex w="100%" direction="column" gap={2}>
-          <Input
-            focusBorderColor="primary.500"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Votre email"
-            autoFocus
-            size={{ sm: "sm", md: "md" }}
-            mt={2}
-          />
+        <Heading size="lg">Bienvenue!</Heading>
+        <Text color="darkgray">Bienvenue! Merci de créer votre compte</Text>
+      </Flex>
+      <Flex w="100%" direction="column" gap={2}>
+        <Input
+          focusBorderColor="primary.500"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Votre email"
+          autoFocus
+          size={{ sm: "sm", md: "md" }}
+          mt={2}
+        />
 
-          <Input
-            focusBorderColor="primary.500"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Votre mot de passe"
-            size={{ sm: "sm", md: "md" }}
-          />
-          <Flex w="100%" gap={4} alignItems="center">
-            <Text flexWrap="nowrap" whiteSpace="nowrap">
-              Vous êtes un{" "}
-            </Text>
-            <Select
-              onChange={(e) => setRole(e.target.value)}
-              focusBorderColor="primary.500"
-            >
-              <option value="patient">Patient</option>
-              <option value="doctor">Docteur</option>
-            </Select>
-          </Flex>
-        </Flex>
-        <Flex direction="column" gap={2} w="100%">
-          <Button
-            type="submit"
-            isDisabled={!email || password.length < 6}
-            isLoading={loading}
-            colorScheme="primary"
-            size="sm"
-            _hover={{
-              opacity: email && password.length >= 6 && "0.8",
-            }}
-          >
-            S'inscrire
-          </Button>
-        </Flex>
-
-        <Flex fontSize="sm">
-          <Text color="gray" mr={1}>
-            Vous avez déjà un compte?
+        <Input
+          focusBorderColor="primary.500"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Votre mot de passe"
+          size={{ sm: "sm", md: "md" }}
+        />
+        <Flex w="100%" gap={4} alignItems="center">
+          <Text flexWrap="nowrap" whiteSpace="nowrap">
+            Vous êtes un{" "}
           </Text>
-          <Link
-            as={NavLink}
-            to="/login"
-            color="primary.500"
-            fontWeight="semibold"
-            _hover={{ textDecoration: "underline" }}
+          <Select
+            onChange={(e) => setRole(e.target.value)}
+            focusBorderColor="primary.500"
           >
-            Se connecter
-          </Link>
+            <option value="patient">Patient</option>
+            <option value="doctor">Docteur</option>
+          </Select>
         </Flex>
       </Flex>
-    </AuthWrapper>
+      <Flex direction="column" gap={2} w="100%">
+        <Button
+          type="submit"
+          isDisabled={!email || password.length < 6}
+          isLoading={loading}
+          colorScheme="primary"
+          size="sm"
+          _hover={{
+            opacity: email && password.length >= 6 && "0.8",
+          }}
+        >
+          S'inscrire
+        </Button>
+      </Flex>
+
+      <Flex fontSize="sm">
+        <Text color="gray" mr={1}>
+          Vous avez déjà un compte?
+        </Text>
+        <Link
+          as={NavLink}
+          to="/auth/login"
+          color="primary.500"
+          fontWeight="semibold"
+          _hover={{ textDecoration: "underline" }}
+        >
+          Se connecter
+        </Link>
+      </Flex>
+    </Flex>
   );
 };
 

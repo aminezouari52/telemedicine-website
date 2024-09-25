@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 // FUNCTIONS
 import { paginate } from "@/components/pagination/Pagination";
-import { getAllDoctors } from "@/functions/doctor";
+import { getAllDoctors } from "@/modules/doctor/functions/doctor";
 import { useSelector } from "react-redux";
 
 // COMPONENTS

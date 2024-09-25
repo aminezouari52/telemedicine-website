@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema;
+const Schema = mongoose.Schema;
 
-const consultationSchema = new mongoose.Schema({
+const consultationSchema = new Schema({
   date: String,
   time: String,
   firstName: String,
@@ -14,8 +14,8 @@ const consultationSchema = new mongoose.Schema({
   dateInsurance: String,
   provider: String,
   police: String,
-  doctor: { type: ObjectId, ref: "Doctor" },
-  patient: { type: ObjectId, ref: "Patient" },
+  doctor: { type: Schema.Types.ObjectId, ref: "doctor", required: true },
+  patient: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });
 
 const Consultation = mongoose.model("Consultation", consultationSchema);

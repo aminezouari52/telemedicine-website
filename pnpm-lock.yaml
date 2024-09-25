@@ -65,6 +65,9 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.0
         version: 9.0.2
+      luxon:
+        specifier: ^3.5.0
+        version: 3.5.0
       mongoose:
         specifier: ^7.2.1
         version: 7.7.0
@@ -83,6 +86,9 @@ importers:
       swagger-ui-express:
         specifier: ^5.0.1
         version: 5.0.1(express@4.19.2)
+      validator:
+        specifier: ^13.12.0
+        version: 13.12.0
       winston:
         specifier: ^3.13.1
         version: 3.13.1
@@ -96,9 +102,6 @@ importers:
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
-      validator:
-        specifier: ^13.12.0
-        version: 13.12.0
 
   apps/frontend:
     dependencies:
@@ -8766,6 +8769,11 @@ packages:
       lru-cache: 6.0.0
     dev: false
 
+  /luxon@3.5.0:
+    resolution: {integrity: sha512-rh+Zjr6DNfUYR3bPwJEnuwDdqMbxZW7LOQfUN4B54+Cl+0o5zaU9RJ6bcidfDtC1cWCZXQ+nvX8bf6bAji37QQ==}
+    engines: {node: '>=12'}
+    dev: false
+
   /markdown-it-anchor@8.6.7(@types/markdown-it@14.1.1)(markdown-it@14.1.0):
     resolution: {integrity: sha512-FlCHFwNnutLgVTflOYHPW2pPcl2AACqVzExlkGQNsi4CJgqOHN7YTgDd4LuhgN1BFO3TS0vLAruV1Td6dwWPJA==}
     requiresBuild: true
@@ -10839,6 +10847,7 @@ packages:
   /validator@13.12.0:
     resolution: {integrity: sha512-c1Q0mCiPlgdTVVVIJIrBuxNicYE+t/7oKeI9MWLj3fh/uq2Pxh/3eeWbVZ4OcGW1TUf53At0njHw5SMdA3tmMg==}
     engines: {node: '>= 0.10'}
+    dev: false
 
   /vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}

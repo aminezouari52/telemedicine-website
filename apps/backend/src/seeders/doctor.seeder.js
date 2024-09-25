@@ -14,7 +14,7 @@ function randomIntFromInterval(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-// Generate a random phone number that matches the pattern /^\+?[1-9]\d{8,15}$/
+// Generate a random phone number
 function generateRandomNumber() {
   const countryCode = faker.datatype.boolean() ? "+" : "";
   const randomNumber = faker.string.numeric(
@@ -80,7 +80,7 @@ const schedule = [
   "Dimanche",
 ];
 
-async function seedDB() {
+async function seedDoctorCollection() {
   let server;
   try {
     mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
@@ -88,11 +88,8 @@ async function seedDB() {
       server = app.listen(config.port, async () => {
         logger.info(`Listening to port ${config.port}`);
 
-        //  The drop() command destroys all data from a collection.
-        //   Make sure you run it against proper database and collection.
         await Doctor.collection.drop();
 
-        // make a bunch doctors
         let doctors = [];
 
         for (let i = 0; i < documentNumbers; i++) {
@@ -171,4 +168,4 @@ async function seedDB() {
   }
 }
 
-seedDB();
+seedDoctorCollection();

@@ -3,9 +3,12 @@ import { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 // FUNCTIONS
-import { updateDoctor, uploadProfilePicture } from "@/functions/doctor";
+import {
+  updateDoctor,
+  uploadProfilePicture,
+} from "@/modules/doctor/functions/doctor";
 import { debounceFieldValue } from "@/utils";
-import { getCurrentUser } from "@/functions/auth";
+import { getCurrentUser } from "@/modules/auth/functions/auth";
 import { setLoggedInUser } from "@/reducers/userReducer";
 
 // PACKAGES

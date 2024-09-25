@@ -1,6 +1,6 @@
 // HOOKS
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // STYLE
@@ -10,7 +10,7 @@ import { Flex, Image, Spinner } from "@chakra-ui/react";
 import loginImg from "@/images/login.webp";
 import loginLogo from "@/images/login-logo.png";
 
-const AuthWrapper = ({ children }) => {
+export const AuthLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
@@ -69,7 +69,7 @@ const AuthWrapper = ({ children }) => {
         />
       </Flex>
       <Flex justifyContent="center" alignItems="center" w="50%">
-        {children}
+        <Outlet />
       </Flex>
       <Flex h="100vh" w="50%">
         <Image objectFit="cover" src={loginImg} alt="product image" />
@@ -77,5 +77,3 @@ const AuthWrapper = ({ children }) => {
     </Flex>
   );
 };
-
-export default AuthWrapper;

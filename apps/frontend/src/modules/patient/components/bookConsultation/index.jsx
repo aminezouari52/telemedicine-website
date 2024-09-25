@@ -4,8 +4,8 @@ import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 // FUNCTIONS
-import { submitConsultation } from "@/functions/patient";
-import { getDoctorById } from "@/functions/doctor";
+import { submitConsultation } from "@/modules/patient/functions/patient";
+import { getDoctorById } from "@/modules/doctor/functions/doctor";
 import { useSelector } from "react-redux";
 
 // COMPONENTS

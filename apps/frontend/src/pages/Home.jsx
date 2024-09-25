@@ -61,7 +61,7 @@ const Home = () => {
           colorScheme="blackAlpha"
           color="#fff"
           size="sm"
-          onClick={() => navigate("/register")}
+          onClick={() => navigate("/auth/register")}
         >
           S'inscrire
         </Button>
@@ -71,7 +71,7 @@ const Home = () => {
           }}
           colorScheme="blackAlpha"
           color="#fff"
-          onClick={() => navigate("/login")}
+          onClick={() => navigate("/auth/login")}
           size="sm"
         >
           Se connecter

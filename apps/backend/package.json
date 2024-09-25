@@ -4,7 +4,9 @@
   "description": "",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon src/index.js",
-    "seed": "node src/seeders/doctor.seeder.js"
+    "seed": "node src/seeders/.seeder.js",
+    "seed:doctor": "node src/seeders/doctor.seeder.js",
+    "seed:consultation": "node src/seeders/consultation.seeder.js"
   },
   "dependencies": {
     "body-parser": "^1.20.2",
@@ -23,15 +25,16 @@
     "http-status": "^1.7.4",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.0",
+    "luxon": "^3.5.0",
     "mongoose": "^7.2.1",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.22",
     "slugify": "^1.6.6",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
+    "validator": "^13.12.0",
     "winston": "^3.13.1",
-    "xss": "^1.0.15",
-    "validator": "^13.12.0"
+    "xss": "^1.0.15"
   },
   "keywords": [],
   "author": "amine",

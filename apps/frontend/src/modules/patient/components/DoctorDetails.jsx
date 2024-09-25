@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 // FUNCTIONS
-import { getDoctorById } from "@/functions/doctor";
+import { getDoctorById } from "@/modules/doctor/functions/doctor";
 
 // STYLE
 import {
