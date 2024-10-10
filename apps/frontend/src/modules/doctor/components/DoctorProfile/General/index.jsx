@@ -182,7 +182,7 @@ const General = ({ setIsLoading }) => {
 
   return (
     <Formik
-      enableReinitialize
+      // enableReinitialize
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={async (values) => {
@@ -201,9 +201,19 @@ const General = ({ setIsLoading }) => {
         setIsLoading(false);
       }}
     >
-      {({ handleChange, setFieldValue, values, errors }) => {
+      {({
+        handleChange,
+        setFieldValue,
+        values,
+        errors,
+        handleBlur,
+        touched,
+      }) => {
         return (
-          <Flex as={Form} direction="column" gap={8}>
+          <Form as={Flex} direction="column" gap={8}>
+            <button type="button" onClick={() => console.log(touched)}>
+              touched
+            </button>
             <Box>
               <Heading fontSize="lg" lineHeight="6">
                 Personelles
@@ -227,8 +237,7 @@ const General = ({ setIsLoading }) => {
               overflow="hidden"
               bg="#fff"
               spacing={6}
-              py={6}
-              px={6}
+              p={6}
             >
               <FormControl>
                 <FormLabel
@@ -277,7 +286,8 @@ const General = ({ setIsLoading }) => {
                     autoComplete="given-name"
                     value={values?.firstName || ""}
                     name="firstName"
-                    error={errors.firstName}
+                    onBlur={handleBlur}
+                    error={touched.firstName && errors.firstName}
                     onChange={(event) => {
                       const { value } = event.target;
                       setFieldValue("firstName", value, false);
@@ -294,7 +304,8 @@ const General = ({ setIsLoading }) => {
                   autoComplete="family-name"
                   value={values?.lastName || ""}
                   name="lastName"
-                  error={errors.lastName}
+                  error={touched.lastName && errors.lastName}
+                  onBlur={handleBlur}
                   onChange={(event) => {
                     const { value } = event.target;
                     setFieldValue("lastName", value, false);
@@ -315,7 +326,8 @@ const General = ({ setIsLoading }) => {
                     >
                       Age
                     </FormLabel>
-                    <NumberInput
+                    <Field
+                      as={NumberInput}
                       isValidCharacter={(value) => {
                         const regex = /^\d+$/;
                         return regex.test(value);
@@ -325,9 +337,11 @@ const General = ({ setIsLoading }) => {
                       value={values?.age}
                       min={18}
                       max={100}
-                      borderColor={errors?.age ? "red.300" : "inherit"}
+                      borderColor={
+                        touched.age && errors?.age ? "red.300" : "inherit"
+                      }
                       focusBorderColor={
-                        errors?.age ? "red.500" : "secondary.500"
+                        touched.age && errors?.age ? "red.500" : "secondary.500"
                       }
                       onChange={(value) => {
                         setFieldValue("age", +value, false);
@@ -339,13 +353,15 @@ const General = ({ setIsLoading }) => {
                         rounded="md"
                         shadow="sm"
                         _hover={{
-                          borderColor: errors?.age ? "red.400" : "gray.300",
+                          borderColor:
+                            touched.age && errors?.age ? "red.400" : "gray.300",
                         }}
                         _focus={{
                           _hover: {
-                            borderColor: errors?.age
-                              ? "red.400"
-                              : "secondary.500",
+                            borderColor:
+                              touched.age && errors?.age
+                                ? "red.400"
+                                : "secondary.500",
                           },
                         }}
                       />
@@ -353,9 +369,9 @@ const General = ({ setIsLoading }) => {
                         <NumberIncrementStepper />
                         <NumberDecrementStepper />
                       </NumberInputStepper>
-                    </NumberInput>
+                    </Field>
                   </Box>
-                  {errors && errors?.age && (
+                  {touched.age && errors?.age && (
                     <Text mt={1} color="red.400" fontSize="xs">
                       {errors?.age}
                     </Text>
@@ -373,15 +389,19 @@ const General = ({ setIsLoading }) => {
                   </FormLabel>
                   <InputGroup size="sm">
                     <InputLeftAddon>+216</InputLeftAddon>
-                    <Input
-                      as={Field}
+                    <Field
+                      as={Input}
                       type="tel"
                       name="phone"
                       id="phone"
                       autoComplete="tel"
-                      borderColor={errors?.phone ? "red.300" : "inherit"}
+                      borderColor={
+                        touched.phone && errors?.phone ? "red.300" : "inherit"
+                      }
                       focusBorderColor={
-                        errors?.phone ? "red.500" : "secondary.500"
+                        touched.phone && errors?.phone
+                          ? "red.500"
+                          : "secondary.500"
                       }
                       shadow="sm"
                       w="full"
@@ -397,18 +417,22 @@ const General = ({ setIsLoading }) => {
                         );
                       }}
                       _hover={{
-                        borderColor: errors?.phone ? "red.400" : "gray.300",
+                        borderColor:
+                          touched.phone && errors?.phone
+                            ? "red.400"
+                            : "gray.300",
                       }}
                       _focus={{
                         _hover: {
-                          borderColor: errors?.phone
-                            ? "red.400"
-                            : "secondary.500",
+                          borderColor:
+                            touched.phone && errors?.phone
+                              ? "red.400"
+                              : "secondary.500",
                         },
                       }}
                     />
                   </InputGroup>
-                  {errors && errors?.phone && (
+                  {touched.phone && errors?.phone && (
                     <Text mt={1} color="red.400" fontSize="xs">
                       {errors?.phone}
                     </Text>
@@ -421,7 +445,7 @@ const General = ({ setIsLoading }) => {
                   autoComplete="street-address"
                   value={values?.address || ""}
                   name="address"
-                  error={errors?.address}
+                  error={touched.address && errors?.address}
                   onChange={(event) => {
                     const { value } = event.target;
                     setFieldValue("address", value, false);
@@ -433,7 +457,7 @@ const General = ({ setIsLoading }) => {
                   autoComplete="home city"
                   value={values?.city || ""}
                   name="city"
-                  error={errors?.city}
+                  error={touched.city && errors?.city}
                   onChange={(event) => {
                     const { value } = event.target;
                     setFieldValue("city", value, false);
@@ -446,7 +470,7 @@ const General = ({ setIsLoading }) => {
                   autoComplete="postal-code"
                   value={values?.zip || ""}
                   name="zip"
-                  error={errors?.zip}
+                  error={touched.zip && errors?.zip}
                   onChange={(event) => {
                     const { value } = event.target;
                     setFieldValue("zip", value, false);
@@ -463,14 +487,21 @@ const General = ({ setIsLoading }) => {
                 >
                   Description
                 </FormLabel>
-                <Textarea
+                <Field
+                  as={Textarea}
                   name="description"
                   placeholder="Brève description de votre profil."
                   rows={3}
                   shadow="sm"
-                  borderColor={errors?.description ? "red.300" : "inherit"}
+                  borderColor={
+                    touched.description && errors?.description
+                      ? "red.300"
+                      : "inherit"
+                  }
                   focusBorderColor={
-                    errors?.description ? "red.500" : "secondary.500"
+                    touched.description && errors?.description
+                      ? "red.500"
+                      : "secondary.500"
                   }
                   fontSize="sm"
                   value={values.description || ""}
@@ -484,17 +515,21 @@ const General = ({ setIsLoading }) => {
                     );
                   }}
                   _hover={{
-                    borderColor: errors?.description ? "red.400" : "gray.300",
+                    borderColor:
+                      touched.description && errors?.description
+                        ? "red.400"
+                        : "gray.300",
                   }}
                   _focus={{
                     _hover: {
-                      borderColor: errors?.description
-                        ? "red.400"
-                        : "secondary.500",
+                      borderColor:
+                        touched.description && errors?.description
+                          ? "red.400"
+                          : "secondary.500",
                     },
                   }}
                 />
-                {errors && errors?.description && (
+                {touched.description && errors?.description && (
                   <Text mt={1} color="red.400" fontSize="xs">
                     {errors?.description}
                   </Text>
@@ -547,25 +582,36 @@ const General = ({ setIsLoading }) => {
                       Hôpital
                     </FormLabel>
 
-                    <Select
+                    <Field
+                      as={Select}
                       name="hospital"
                       size="sm"
                       variant="outline"
                       rounded="md"
                       shadow="sm"
                       onChange={handleChange}
-                      borderColor={errors?.hospital ? "red.300" : "inherit"}
+                      borderColor={
+                        touched.hospital && errors?.hospital
+                          ? "red.300"
+                          : "inherit"
+                      }
                       focusBorderColor={
-                        errors?.hospital ? "red.500" : "secondary.500"
+                        touched.hospital && errors?.hospital
+                          ? "red.500"
+                          : "secondary.500"
                       }
                       _hover={{
-                        borderColor: errors?.hospital ? "red.400" : "gray.300",
+                        borderColor:
+                          touched.hospital && errors?.hospital
+                            ? "red.400"
+                            : "gray.300",
                       }}
                       _focus={{
                         _hover: {
-                          borderColor: errors?.hospital
-                            ? "red.400"
-                            : "secondary.500",
+                          borderColor:
+                            touched.hospital && errors?.hospital
+                              ? "red.400"
+                              : "secondary.500",
                         },
                       }}
                       value={values?.hospital}
@@ -592,8 +638,8 @@ const General = ({ setIsLoading }) => {
                       <option value="Hôpital Habib Bourguiba">
                         Hôpital Habib Bourguiba
                       </option>
-                    </Select>
-                    {errors && errors?.hospital && (
+                    </Field>
+                    {touched.hospital && errors?.hospital && (
                       <Text mt={1} color="red.400" fontSize="xs">
                         {errors?.hospital}
                       </Text>
@@ -608,7 +654,8 @@ const General = ({ setIsLoading }) => {
                     >
                       Spécialité
                     </FormLabel>
-                    <Select
+                    <Field
+                      as={Select}
                       size="sm"
                       variant="outline"
                       rounded="md"
@@ -616,18 +663,28 @@ const General = ({ setIsLoading }) => {
                       name="specialty"
                       value={values?.specialty}
                       onChange={handleChange}
-                      borderColor={errors?.specialty ? "red.300" : "inherit"}
+                      borderColor={
+                        touched.specialty && errors?.specialty
+                          ? "red.300"
+                          : "inherit"
+                      }
                       focusBorderColor={
-                        errors?.specialty ? "red.500" : "secondary.500"
+                        touched.specialty && errors?.specialty
+                          ? "red.500"
+                          : "secondary.500"
                       }
                       _hover={{
-                        borderColor: errors?.specialty ? "red.400" : "gray.300",
+                        borderColor:
+                          touched.specialty && errors?.specialty
+                            ? "red.400"
+                            : "gray.300",
                       }}
                       _focus={{
                         _hover: {
-                          borderColor: errors?.specialty
-                            ? "red.400"
-                            : "secondary.500",
+                          borderColor:
+                            touched.specialty && errors?.specialty
+                              ? "red.400"
+                              : "secondary.500",
                         },
                       }}
                     >
@@ -641,7 +698,7 @@ const General = ({ setIsLoading }) => {
                       <option value="Neurologue">Neurologue</option>
                       <option value="Pédiatre">Pédiatre</option>
                       <option value="Psychiatre">Psychiatre</option>
-                    </Select>
+                    </Field>
                   </FormControl>
                 </Flex>
 
@@ -969,7 +1026,7 @@ const General = ({ setIsLoading }) => {
                 Sauveguarder
               </Button>
             </GridItem>
-          </Flex>
+          </Form>
         );
       }}
     </Formik>

@@ -1,6 +1,5 @@
 import { Field } from "formik";
 import { FormControl, FormLabel, Input, Text } from "@chakra-ui/react";
-import { useEffect } from "react";
 
 const TextFormControl = ({
   onChange,
@@ -21,8 +20,8 @@ const TextFormControl = ({
       >
         {label}
       </FormLabel>
-      <Input
-        as={Field}
+      <Field
+        as={Input}
         type="text"
         name={name}
         id={name}
