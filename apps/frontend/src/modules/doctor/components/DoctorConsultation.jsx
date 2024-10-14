@@ -1,21 +1,11 @@
-import React, { useState } from "react";
 import {
   Box,
   Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Textarea,
-  VStack,
-  HStack,
   Heading,
-  List,
   ListItem,
-  ListIcon,
   Card,
   CardHeader,
   CardBody,
-  Center,
   Flex,
   Avatar,
   Text,
@@ -24,15 +14,14 @@ import {
   Divider,
   UnorderedList,
 } from "@chakra-ui/react";
-import { MdCheckCircle } from "react-icons/md";
-import { ArrowForwardIcon, CalendarIcon } from "@chakra-ui/icons";
+import { CalendarIcon } from "@chakra-ui/icons";
 import { FaMapPin } from "react-icons/fa";
 import { CiPill } from "react-icons/ci";
 import { CiViewList } from "react-icons/ci";
 import Avatar1 from "@/images/avatars/1.jpg";
 import Avatar2 from "@/images/avatars/5.jpg";
 
-const ListConsultation = () => {
+const DoctorConsultation = () => {
   return (
     <Flex>
       <Card my={4} mx={8} w="40%">
@@ -234,4 +223,4 @@ const ListConsultation = () => {
   );
 };
 
-export default ListConsultation;
+export default DoctorConsultation;

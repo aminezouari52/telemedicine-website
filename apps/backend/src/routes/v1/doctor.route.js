@@ -15,4 +15,8 @@ router
 
 router.route("/:doctorId").get(doctorController.getDoctor);
 
+router
+  .route("/patients/:doctorId")
+  .get(doctorController.getDoctorPatientsCount);
+
 module.exports = router;

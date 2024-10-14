@@ -1,7 +1,8 @@
 const httpStatus = require("http-status");
-const { Doctor, User } = require("../models");
+const { Doctor, User, Consultation } = require("../models");
 const ApiError = require("../utils/ApiError");
 const cloudinary = require("cloudinary");
+const mongoose = require("mongoose");
 
 const getUserById = async (id) => {
   return User.findById(id);
@@ -110,9 +111,37 @@ const getDoctorById = async (id) => {
   return Doctor.findById(id);
 };
 
+const getDoctorPatientsCount = async (doctorId) => {
+  const match = {
+    $match: {
+      doctor: new mongoose.Types.ObjectId(doctorId),
+      status: { $in: ["completed"] },
+    },
+  };
+
+  const group = {
+    $group: {
+      _id: "$patient",
+    },
+  };
+
+  const count = {
+    $count: "uniquePatientCount",
+  };
+
+  const uniquePatientCount = await Consultation.aggregate([
+    match,
+    group,
+    count,
+  ]);
+
+  return uniquePatientCount[0]?.uniquePatientCount || 0;
+};
+
 module.exports = {
   updateDoctorById,
   uploadProfilePicture,
   getAllDoctors,
   getDoctorById,
+  getDoctorPatientsCount,
 };

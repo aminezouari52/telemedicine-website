@@ -28,4 +28,14 @@ export const getAllDoctors = async (filters, options) =>
   );
 
 export const getDoctorById = async (id) =>
-  await axios.get(`${import.meta.env.VITE_REACT_APP_API}/doctors/${id}`);
+  await axios.get(`${import.meta.env.VITE_REACT_APP_API}/doctor/${id}`);
+
+export const getDoctorPatientsCount = async (id) =>
+  await axios.get(
+    `${import.meta.env.VITE_REACT_APP_API}/doctor/patients/${id}`
+  );
+
+export const getDoctorConsultations = async (id) =>
+  await axios.get(
+    `${import.meta.env.VITE_REACT_APP_API}/consultation/doctor/${id}`
+  );

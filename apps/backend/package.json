@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon src/index.js",
-    "seed": "node src/seeders/.seeder.js",
+    "seed": "run-p -s \"seed:*\"",
     "seed:doctor": "node src/seeders/doctor.seeder.js",
     "seed:consultation": "node src/seeders/consultation.seeder.js"
   },
@@ -41,6 +41,7 @@
   "license": "ISC",
   "devDependencies": {
     "@faker-js/faker": "^9.0.1",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "npm-run-all": "^4.1.5"
   }
 }

@@ -31,9 +31,17 @@ const getDoctor = catchAsync(async (req, res) => {
   res.send(doctor);
 });
 
+const getDoctorPatientsCount = catchAsync(async (req, res) => {
+  const patientsCount = await doctorService.getDoctorPatientsCount(
+    req.params.doctorId,
+  );
+  res.send({ patientsCount });
+});
+
 module.exports = {
   updateDoctor,
   uploadProfilePicture,
   getAllDoctors,
   getDoctor,
+  getDoctorPatientsCount,
 };

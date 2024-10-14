@@ -211,9 +211,6 @@ const General = ({ setIsLoading }) => {
       }) => {
         return (
           <Form as={Flex} direction="column" gap={8}>
-            <button type="button" onClick={() => console.log(touched)}>
-              touched
-            </button>
             <Box>
               <Heading fontSize="lg" lineHeight="6">
                 Personelles

@@ -66,12 +66,13 @@ async function seedConsultationCollection() {
             type: "type",
             provider: "provider",
             police: "police",
+            status: "pending",
           };
 
           consultations.push(newConsultation);
         }
 
-        await Consultation.collection.insertMany(consultations);
+        await Consultation.create(consultations);
 
         console.log("Consultation collection seeded! :)");
 

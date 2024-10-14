@@ -113,8 +113,6 @@ async function seedDoctorCollection() {
             schedule: [],
             email: faker.internet.email(firstName, lastName),
             role: "doctor",
-            createdAt: faker.date.anytime(),
-            updatedAt: faker.date.anytime(),
             address: faker.location.streetAddress(true),
             age: faker.number.int({ min: 18, max: 100 }),
             city: faker.location.city(),
@@ -154,7 +152,7 @@ async function seedDoctorCollection() {
           doctors.push(newDoctor);
         }
 
-        await Doctor.collection.insertMany(doctors);
+        await Doctor.create(doctors);
 
         console.log("Doctor model seeded! :)");
 

@@ -3,14 +3,17 @@ const express = require("express");
 const router = express.Router();
 
 // middlewares
-const {
-  submitConsultation,
-  getPatientConsultations,
-} = require("../../controllers/consultation.controller");
+const consultationController = require("../../controllers/consultation.controller");
 
 // routes
-router.post("/", submitConsultation);
+router.route("/").post(consultationController.submitConsultation);
 
-router.get("/:patientId", getPatientConsultations);
+router
+  .route("/patient/:patientId")
+  .get(consultationController.getPatientConsultations);
+
+router
+  .route("/doctor/:doctorId")
+  .get(consultationController.getDoctorConsultations);
 
 module.exports = router;

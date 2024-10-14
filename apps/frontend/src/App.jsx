@@ -24,9 +24,9 @@ import DoctorDetails from "@/modules/patient/components/DoctorDetails";
 import VideoCall from "@/pages/Patient/VideoCall";
 import NotFound from "@/components/NotFound";
 import BookConsultation from "@/modules/patient/components/bookConsultation";
-import Doctor from "@/pages/Doctor";
+import DoctorHome from "@/modules/doctor/components/DoctorHome";
 import DoctorProfile from "@/modules/doctor/components/DoctorProfile";
-import ListConsultation from "@/pages/doctor/ListConsultation.jsx";
+import DoctorConsultation from "@/modules/doctor/components/DoctorConsultation.jsx";
 import PatientList from "@/pages/doctor/PatientList.jsx";
 import PatientProfile from "@/pages/doctor/PatientProfile.jsx";
 
@@ -83,9 +83,9 @@ const App = () => {
         </Route>
 
         <Route path="/doctor/*" element={<DoctorLayout />}>
-          <Route path="home" element={<Doctor />} />
+          <Route path="home" element={<DoctorHome />} />
           <Route path="profile" element={<DoctorProfile />} />
-          <Route path="consultations" element={<ListConsultation />} />
+          <Route path="consultations" element={<DoctorConsultation />} />
           <Route path="patients" element={<PatientList />} />
           <Route path="patientDetails" element={<PatientProfile />} />
           <Route path="*" element={<Navigate to="/doctor/home" />} />

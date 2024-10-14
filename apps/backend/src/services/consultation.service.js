@@ -1,5 +1,4 @@
-const { Consultation, Doctor } = require("../models");
-var ObjectId = require("mongoose").Types.ObjectId;
+const { Consultation } = require("../models");
 
 const getPatientConsultations = async (patientId) => {
   const consultations = await Consultation.find({
@@ -8,6 +7,14 @@ const getPatientConsultations = async (patientId) => {
   return consultations;
 };
 
+const getDoctorConsultations = async (doctorId) => {
+  const consultations = await Consultation.find({
+    doctor: doctorId,
+  });
+  return consultations;
+};
+
 module.exports = {
   getPatientConsultations,
+  getDoctorConsultations,
 };

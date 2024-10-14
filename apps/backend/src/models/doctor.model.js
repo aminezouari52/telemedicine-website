@@ -75,8 +75,6 @@ const doctorSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-
-  patients: Number,
 });
 
 const Doctor = User.discriminator("doctor", doctorSchema);
