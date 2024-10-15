@@ -1,3 +1,4 @@
+// STYLE
 import {
   Box,
   Flex,
@@ -7,6 +8,7 @@ import {
   Button,
   Image,
 } from "@chakra-ui/react";
+
 // ASSETS
 import { RxArrowTopRight } from "react-icons/rx";
 import patientHome from "@/images/patient-home.jpeg";
@@ -15,7 +17,7 @@ import { GiMedicalPackAlt } from "react-icons/gi";
 import { FaHandHoldingMedical } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-const Patient = () => {
+const PatientHome = () => {
   const navigate = useNavigate();
   return (
     <Box w="100%" bg="white">
@@ -185,4 +187,4 @@ const Patient = () => {
   );
 };
 
-export default Patient;
+export default PatientHome;

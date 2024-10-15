@@ -13,22 +13,21 @@ import { getCurrentUser } from "@/modules/auth/functions/auth";
 // COMPONENTS
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthLayout, DoctorLayout, PatientLayout } from "@/components/layout";
-import Home from "@/pages/Home";
+import Home from "@/components/Home";
 import Login from "@/modules/auth/components/Login";
 import Register from "@/modules/auth/components/Register";
 import ForgotPassword from "@/modules/auth/components/ForgotPassword";
-import Patient from "@/pages/Patient/Patient";
-import Consultations from "@/modules/patient/components/Consultations";
+import PatientHome from "@/modules/patient/components/PatientHome";
+import PatientConsultations from "@/modules/patient/components/PatientConsultations";
 import Doctors from "@/modules/patient/components/Doctors";
 import DoctorDetails from "@/modules/patient/components/DoctorDetails";
 import VideoCall from "@/pages/Patient/VideoCall";
 import NotFound from "@/components/NotFound";
-import BookConsultation from "@/modules/patient/components/bookConsultation";
+import BookConsultation from "@/modules/patient/components/BookConsultation";
 import DoctorHome from "@/modules/doctor/components/DoctorHome";
 import DoctorProfile from "@/modules/doctor/components/DoctorProfile";
-import DoctorConsultation from "@/modules/doctor/components/DoctorConsultation.jsx";
-import PatientList from "@/pages/doctor/PatientList.jsx";
-import PatientProfile from "@/pages/doctor/PatientProfile.jsx";
+import DoctorConsultations from "@/modules/doctor/components/DoctorConsultations.jsx";
+import DoctorPatients from "@/modules/doctor/components/DoctorPatients.jsx";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -73,9 +72,9 @@ const App = () => {
         </Route>
 
         <Route path="/patient/*" element={<PatientLayout />}>
-          <Route path="home" element={<Patient />} />
+          <Route path="home" element={<PatientHome />} />
           <Route path="consultation/:id" element={<BookConsultation />} />
-          <Route path="consultations" element={<Consultations />} />
+          <Route path="consultations" element={<PatientConsultations />} />
           <Route path="doctors" element={<Doctors />} />
           <Route path="doctors/:id" element={<DoctorDetails />} />
           <Route path="call" element={<VideoCall />} />
@@ -85,9 +84,8 @@ const App = () => {
         <Route path="/doctor/*" element={<DoctorLayout />}>
           <Route path="home" element={<DoctorHome />} />
           <Route path="profile" element={<DoctorProfile />} />
-          <Route path="consultations" element={<DoctorConsultation />} />
-          <Route path="patients" element={<PatientList />} />
-          <Route path="patientDetails" element={<PatientProfile />} />
+          <Route path="consultations" element={<DoctorConsultations />} />
+          <Route path="patients" element={<DoctorPatients />} />
           <Route path="*" element={<Navigate to="/doctor/home" />} />
         </Route>
 

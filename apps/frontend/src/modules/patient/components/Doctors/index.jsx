@@ -152,7 +152,6 @@ const Doctors = () => {
                   lastName: doctor.lastName,
                   price: doctor.price,
                   photo: doctor.photo,
-                  patients: doctor.patients,
                   hospital: doctor.hospital,
                 }}
               />

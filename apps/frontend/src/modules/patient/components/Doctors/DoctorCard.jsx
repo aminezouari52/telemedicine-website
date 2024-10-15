@@ -1,5 +1,9 @@
 // HOOKS
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+
+// FUNCTIONS
+import { getDoctorPatientsCount } from "@/modules/doctor/functions/doctor";
 
 // STYLE
 import { Flex, Image, Heading, Text, Button, Icon } from "@chakra-ui/react";
@@ -11,14 +15,26 @@ import { IoPeopleOutline } from "react-icons/io5";
 
 const DoctorCard = ({ doctor }) => {
   const navigate = useNavigate();
+  const [patientsCount, setPatientsCount] = useState(0);
   const {
     photo,
     firstName = "first name",
     lastName = "last name",
     price = 0,
-    patients = 0,
     hospital = "hospital",
+    id,
   } = doctor;
+
+  const fetchData = async () => {
+    if (id) {
+      const response = (await getDoctorPatientsCount(id)).data.patientsCount;
+      setPatientsCount(response);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [patientsCount]);
 
   return (
     <Flex
@@ -62,7 +78,7 @@ const DoctorCard = ({ doctor }) => {
         <Flex justifyContent="center" alignItems="center" gap={2}>
           <Icon as={IoPeopleOutline} color="gray" />
           <Text fontWeight="bolder" color="#000">
-            {patients}
+            {patientsCount}
           </Text>
           <Text color="gray">Patients</Text>
         </Flex>
