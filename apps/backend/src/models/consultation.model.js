@@ -17,7 +17,7 @@ const consultationSchema = new Schema(
     police: String,
     status: {
       type: String,
-      enum: ["completed", "pending", "canceled"],
+      enum: ["completed", "pending", "in-progress", "canceled"],
       default: "pending",
     },
     doctor: { type: Schema.Types.ObjectId, ref: "doctor", required: true },

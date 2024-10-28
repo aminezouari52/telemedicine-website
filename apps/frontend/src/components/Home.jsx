@@ -134,7 +134,7 @@ const Home = () => {
                 background: "white",
                 color: "primary.500",
               }}
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/auth/login")}
             >
               S'inscrire maintenant!
             </Button>

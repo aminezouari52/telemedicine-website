@@ -57,6 +57,9 @@ const DoctorConsultations = () => {
             Voir tous
           </Button>
         </Flex>
+        {!sortedUpcomingConsultations()?.length && (
+          <div>vous n'avez pas de consultations</div>
+        )}
 
         <Stack spacing={6}>
           {sortedUpcomingConsultations()

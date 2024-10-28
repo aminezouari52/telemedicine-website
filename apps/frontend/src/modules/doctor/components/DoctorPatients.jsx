@@ -40,6 +40,7 @@ const DoctorPatients = () => {
 
   return (
     <Box mx={6} mt={5}>
+      {!uniquePatients?.length && <Text>Vous n'avez pas de patients</Text>}
       <SimpleGrid color="white" columns={4} gap={4}>
         {uniquePatients?.map((patient, index) => {
           return (

@@ -22,9 +22,7 @@ export const DoctorLayout = () => {
   // redirect if user is not logged in
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        navigate("/login");
-      }
+      if (!user) navigate("/auth/login");
       setIsLoading(false);
     });
   }, []);
@@ -32,7 +30,7 @@ export const DoctorLayout = () => {
   // redirect if user is not a doctor
   useEffect(() => {
     if (user && user?.role !== "doctor") {
-      navigate("/login");
+      navigate("/auth/login");
     }
   }, [user]);
 
