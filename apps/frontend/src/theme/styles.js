@@ -12,6 +12,7 @@ export const globalStyles = {
     deepBlue: { 500: "#000080" },
     error: { 500: "red" },
     lightgray: { 500: "#DBD8C9." },
+    loading: "#615EFC80",
   },
   fonts: {
     body: '"Montserrat", Helvetica, sans-serif',

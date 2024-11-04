@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const createOrUpdateUser = async (user) => {
   return await axios.post(
-    `${import.meta.env.VITE_REACT_APP_API}/auth/create-or-update-user`,
+    `${import.meta.env.VITE_API_V1_URL}/auth/create-or-update-user`,
     { role: user.role },
     {
       headers: {
@@ -14,7 +14,7 @@ export const createOrUpdateUser = async (user) => {
 
 export const getCurrentUser = async (authtoken) => {
   return await axios.post(
-    `${import.meta.env.VITE_REACT_APP_API}/auth/current-user`,
+    `${import.meta.env.VITE_API_V1_URL}/auth/current-user`,
     {},
     {
       headers: {

@@ -6,8 +6,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 // LIBRARYES
 import { motion } from "framer-motion";
 
+// COMPONENTS
+import Spinner from "@/components/Spinner";
+
 // STYLE
-import { Heading, Flex, Box, Text, Button, Spinner } from "@chakra-ui/react";
+import { Heading, Flex, Box, Text, Button } from "@chakra-ui/react";
 
 // ASSETS
 import HeroVid from "@/images/hero-video2.mp4";
@@ -42,15 +45,7 @@ const Home = () => {
   }, [loggedInUser, navigate, location]);
 
   return isLoading ? (
-    <Spinner
-      pos="absolute"
-      top="50%"
-      right="50%"
-      thickness="4px"
-      emptyColor="gray.200"
-      color="primary.500"
-      size="xl"
-    />
+    <Spinner />
   ) : (
     <Box flexDirection="column" justifyContent="center" pos="relative">
       <Flex gap="10px" pos="absolute" right="20px" top="10px" zIndex="6">

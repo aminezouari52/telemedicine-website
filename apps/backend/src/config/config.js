@@ -11,6 +11,7 @@ const envVarsSchema = Joi.object()
       .required(),
     PORT: Joi.number().default(3000),
     MONGODB_URL: Joi.string().required().description("Mongo DB url"),
+    WEB_FRONTEND_URL: Joi.string().required().description("The frontend url"),
     CLOUDINARY_CLOUD_NAME: Joi.string()
       .required()
       .description("Cloudinary Cloud Name"),
@@ -53,6 +54,12 @@ module.exports = {
     options: {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+    },
+  },
+  socket: {
+    cors: {
+      origin:
+        envVars.NODE_ENV === "production" ? false : [envVars.WEB_FRONTEND_URL],
     },
   },
   cloudinary: {

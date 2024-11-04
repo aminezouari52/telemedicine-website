@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
+    firstName: String,
     role: {
       type: String,
       enum: roles,

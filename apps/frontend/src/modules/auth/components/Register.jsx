@@ -63,7 +63,7 @@ const Register = () => {
       // redux store
       dispatch(
         setLoggedInUser({
-          name: res.data.name,
+          firstName: res.data.firstName,
           email: res.data.email,
           token: idTokenResult.token,
           role: res.data.role,

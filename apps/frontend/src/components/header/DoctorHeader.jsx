@@ -2,12 +2,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 // FUNCTIONS
 import { signOut } from "firebase/auth";
 import { logout } from "@/reducers/userReducer";
 import { auth } from "@/firebase";
-import { useSelector } from "react-redux";
 
 // COMPONENTS
 import HeaderButton from "./HeaderButton";
@@ -15,6 +15,7 @@ import HeaderButton from "./HeaderButton";
 // STYLE
 import {
   chakra,
+  Button,
   Box,
   Flex,
   Text,
@@ -30,7 +31,7 @@ import {
 
 // ASSETS
 import { ChevronRightIcon } from "@chakra-ui/icons";
-import { FaRegUser, FaRegBell } from "react-icons/fa";
+import { FaRegUser, FaRegBell, FaVideo } from "react-icons/fa";
 import loginLogo from "@/images/login-logo.png";
 
 export const DoctorHeader = () => {
@@ -56,13 +57,14 @@ export const DoctorHeader = () => {
     }
   };
 
+  const loadIsProfileCompleted = async () => {
+    if (user && user.token) {
+      setIsProfileCompleted(user.isProfileCompleted);
+    }
+  };
+
   useEffect(() => {
-    const isProfileCompletedEffect = async () => {
-      if (user && user.token) {
-        setIsProfileCompleted(user.isProfileCompleted);
-      }
-    };
-    isProfileCompletedEffect();
+    loadIsProfileCompleted();
   }, [isProfileCompleted, user]);
 
   return (
@@ -70,8 +72,8 @@ export const DoctorHeader = () => {
       <Flex
         justifyContent="center"
         alignItems="center"
-        bgGradient="linear(to-r, #7E8EF1, #615EFC)"
-        _hover={{ bg: "#7E8EF1" }}
+        bgGradient="linear(to-r, secondary.500, primary.500)"
+        _hover={{ bg: "secondary.500" }}
         cursor="pointer"
         color="white"
       >
@@ -110,10 +112,25 @@ export const DoctorHeader = () => {
             <Text fontSize="sm">Consultations</Text>
           </HeaderButton>
           <HeaderButton pathname="/doctor/patients">
-            <Text fontSize="sm">patiens</Text>
+            <Text fontSize="sm">Patiens</Text>
           </HeaderButton>
         </Flex>
         <Flex alignItems="center" justifyContent="flex-end" height="100%">
+          {user && user?.consultationId && (
+            <Button
+              size="sm"
+              colorScheme="primary"
+              rightIcon={<FaVideo />}
+              _hover={{
+                opacity: 0.8,
+              }}
+              onClick={() => {
+                navigate(`/${user?.consultationId}`);
+              }}
+            >
+              Rejoindre
+            </Button>
+          )}
           <Menu>
             <MenuButton
               size="md"

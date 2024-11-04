@@ -1,6 +1,9 @@
 // HOOKS
 import { useState } from "react";
 
+// COMPONENTS
+import Spinner from "@/components/Spinner";
+
 // STYLE
 import {
   Box,
@@ -13,7 +16,6 @@ import {
   TabPanel,
   Flex,
   TabIndicator,
-  Spinner,
 } from "@chakra-ui/react";
 
 // ASSETS
@@ -24,26 +26,7 @@ const DoctorProfile = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   return isLoading ? (
-    <Box
-      h="100%"
-      w="100%"
-      position="absolute"
-      zIndex={6}
-      top={0}
-      left={0}
-      backgroundColor="#00000033"
-    >
-      <Spinner
-        pos="absolute"
-        top="50%"
-        right="50%"
-        thickness="4px"
-        emptyColor="gray.200"
-        color="primary.500"
-        size="xl"
-        transform="translate(50ox, 50%)"
-      />
-    </Box>
+    <Spinner />
   ) : (
     <Flex direction="column" gap={8} py={10} px="260px">
       <Box>

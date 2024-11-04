@@ -10,14 +10,12 @@ import {
 import { debounceFieldValue } from "@/utils";
 import { getCurrentUser } from "@/modules/auth/functions/auth";
 import { setLoggedInUser } from "@/reducers/userReducer";
-
-// PACKAGES
-import { Field, FieldArray, Form, Formik } from "formik";
 import * as Yup from "yup";
 
 // COMPONENTS
 import ImageUpload from "@/components/ImageUpload";
 import TextFormControl from "./TextFormControl";
+import { Field, FieldArray, Form, Formik } from "formik";
 
 // STYLE
 import {

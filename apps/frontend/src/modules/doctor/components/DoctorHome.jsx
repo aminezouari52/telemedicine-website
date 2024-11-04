@@ -60,7 +60,7 @@ const DoctorHome = () => {
   return (
     <Box p={10}>
       <Flex alignItems="center" gap={4}>
-        <Avatar size="lg" src="https://bit.ly/broken-link" />
+        <Avatar size="lg" />
         <Flex flexDirection="column" gap={3}>
           <Heading size="md">Bonjour, Dr {doctor?.firstName}</Heading>
           {!user?.isProfileCompleted && (

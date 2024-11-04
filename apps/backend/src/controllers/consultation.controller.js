@@ -1,13 +1,18 @@
 const Consultation = require("../models/consultation.model");
 const catchAsync = require("../utils/catchAsync");
 const { consultationService } = require("../services");
+const httpStatus = require("http-status");
 
-const submitConsultation = async (req, res) => {
-  try {
-    res.json(await new Consultation(req.body).save());
-  } catch (err) {
-    res.status(400).send("Create category failed");
-  }
+const updateConsultation = async (req, res, next) => {
+  const consultation = await consultationService.updateConsultationById(
+    req.params.id,
+    req.body,
+  );
+  res.json(consultation);
+};
+
+const submitConsultation = async (req, res, next) => {
+  res.status(httpStatus.CREATED).send(await new Consultation(req.body).save());
 };
 
 const getPatientConsultations = catchAsync(async (req, res) => {
@@ -27,5 +32,6 @@ const getDoctorConsultations = catchAsync(async (req, res) => {
 module.exports = {
   submitConsultation,
   getPatientConsultations,
+  updateConsultation,
   getDoctorConsultations,
 };

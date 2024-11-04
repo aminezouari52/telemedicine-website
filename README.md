@@ -17,13 +17,13 @@ cd telemedecin-app
 pnpm build
 ```
 
-### Start
+### Dev
 
-To start all apps and packages, run the following command:
+To dev all apps and packages, run the following command:
 
 ```
 cd my-turborepo
-pnpm start
+pnpm dev
 ```
 
 ## Add a package

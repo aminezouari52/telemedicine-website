@@ -2,26 +2,25 @@
 import { useDisclosure } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useSteps } from "chakra-ui-steps";
 
 // FUNCTIONS
 import { submitConsultation } from "@/modules/patient/functions/patient";
 import { getDoctorById } from "@/modules/doctor/functions/doctor";
 import { useSelector } from "react-redux";
+import * as Yup from "yup";
+import moment from "moment";
 
 // COMPONENTS
 import VerifyData from "./VerifyData";
 import DateStep from "./forms/Date";
 import ContactInfo from "./forms/ContactInfo";
 import OtherInformation from "./forms/OtherInformation";
+import { Formik, Form } from "formik";
+import { Steps, Step } from "chakra-ui-steps";
 
 // STYLE
 import { Flex, chakra, Box, Heading } from "@chakra-ui/react";
-
-// PACKAGES
-import { Steps, Step, useSteps } from "chakra-ui-steps";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import moment from "moment";
 
 const Consultation = () => {
   const user = useSelector((state) => state.user.loggedInUser);

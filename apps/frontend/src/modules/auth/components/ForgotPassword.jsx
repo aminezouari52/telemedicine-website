@@ -24,7 +24,7 @@ const ForgotPassword = () => {
     setLoading(true);
     try {
       const config = {
-        url: import.meta.env.VITE_REACT_APP_FORGOT_PASSWORD_REDIRECT,
+        url: import.meta.env.VITE_FORGOT_PASSWORD_REDIRECT,
         handleCodeInApp: true,
       };
       await sendPasswordResetEmail(auth, email, config);

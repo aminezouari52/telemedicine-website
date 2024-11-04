@@ -2,15 +2,17 @@ const mongoose = require("mongoose");
 const app = require("./app");
 const config = require("./config/config");
 const logger = require("./config/logger");
-
-// dotenv.config({ path: './config.env' });
+const initializeSocket = require("./socket");
 
 let server;
+
 mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
   logger.info("Connected to MongoDB");
   server = app.listen(config.port, () => {
     logger.info(`Listening to port ${config.port}`);
   });
+
+  initializeSocket(server);
 });
 
 const exitHandler = () => {

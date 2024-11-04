@@ -31,7 +31,7 @@ const DoctorConsultations = () => {
   const [consultations, setConsultations] = useState([]);
   const user = useSelector((state) => state.user.loggedInUser);
 
-  const fetchData = async () => {
+  const loadConsultations = async () => {
     if (user) {
       const consultationsData = (await getDoctorConsultations(user?._id)).data;
       setConsultations(consultationsData);
@@ -39,7 +39,7 @@ const DoctorConsultations = () => {
   };
 
   useEffect(() => {
-    fetchData();
+    loadConsultations();
   }, [user]);
 
   const sortedUpcomingConsultations = () => {
@@ -117,7 +117,7 @@ const DoctorConsultations = () => {
 
       <Box w="50%">
         <Flex alignItems="center" justifyContent="space-between" py={5}>
-          <Heading size="md">prôchaine consultation</Heading>
+          <Heading size="md">Prôchaine consultation</Heading>
           <Button size="xs" colorScheme="secondary" _hover={{ opacity: "0.5" }}>
             Voir Details
           </Button>

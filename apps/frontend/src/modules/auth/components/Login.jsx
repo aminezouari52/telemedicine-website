@@ -56,7 +56,7 @@ const Login = () => {
       const res = await createOrUpdateUser({ token: idTokenResult.token });
       dispatch(
         setLoggedInUser({
-          name: res.data.name,
+          firstName: res.data.firstName,
           email: res.data.email,
           token: idTokenResult.token,
           role: res.data.role,

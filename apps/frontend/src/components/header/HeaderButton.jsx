@@ -20,7 +20,7 @@ const HeaderButton = ({ pathname, children }) => {
     <Button
       variant="transparent-with-icon"
       size="lg"
-      display={{ sm: "none", md: "flex", lg: "flex" }}
+      display="flex"
       h="100%"
       color={color}
       style={{

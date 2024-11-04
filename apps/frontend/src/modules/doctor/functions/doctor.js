@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const updateDoctor = async (user, body) =>
   await axios.patch(
-    `${import.meta.env.VITE_REACT_APP_API}/doctor/${user.id}`,
+    `${import.meta.env.VITE_API_V1_URL}/doctor/${user.id}`,
     body,
     {
       headers: {
@@ -13,7 +13,7 @@ export const updateDoctor = async (user, body) =>
 
 export const uploadProfilePicture = async (user, formData) =>
   await axios.post(
-    `${import.meta.env.VITE_REACT_APP_API}/doctor/profile-image`,
+    `${import.meta.env.VITE_API_V1_URL}/doctor/profile-image`,
     { image: formData },
     {
       headers: {
@@ -24,18 +24,16 @@ export const uploadProfilePicture = async (user, formData) =>
 
 export const getAllDoctors = async (filters, options) =>
   await axios.get(
-    `${import.meta.env.VITE_REACT_APP_API}/doctor?${filters}&sortBy=${options}`
+    `${import.meta.env.VITE_API_V1_URL}/doctor?${filters}&sortBy=${options}`
   );
 
 export const getDoctorById = async (id) =>
-  await axios.get(`${import.meta.env.VITE_REACT_APP_API}/doctor/${id}`);
+  await axios.get(`${import.meta.env.VITE_API_V1_URL}/doctor/${id}`);
 
 export const getDoctorPatientsCount = async (id) =>
-  await axios.get(
-    `${import.meta.env.VITE_REACT_APP_API}/doctor/patients/${id}`
-  );
+  await axios.get(`${import.meta.env.VITE_API_V1_URL}/doctor/patients/${id}`);
 
 export const getDoctorConsultations = async (id) =>
   await axios.get(
-    `${import.meta.env.VITE_REACT_APP_API}/consultation/doctor/${id}`
+    `${import.meta.env.VITE_API_V1_URL}/consultation/doctor/${id}`
   );

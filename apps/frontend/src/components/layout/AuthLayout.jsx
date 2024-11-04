@@ -3,8 +3,11 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+// COMPONENTS
+import Spinner from "@/components/Spinner";
+
 // STYLE
-import { Flex, Image, Spinner } from "@chakra-ui/react";
+import { Flex, Image } from "@chakra-ui/react";
 
 // ASSETS
 import loginImg from "@/images/login.webp";
@@ -34,15 +37,7 @@ export const AuthLayout = () => {
   }, [user, navigate, location]);
 
   return isLoading ? (
-    <Spinner
-      pos="absolute"
-      top="50%"
-      right="50%"
-      thickness="4px"
-      emptyColor="gray.200"
-      color="primary.500"
-      size="xl"
-    />
+    <Spinner />
   ) : (
     <Flex
       justifyContent="space-between"

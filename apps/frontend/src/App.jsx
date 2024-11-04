@@ -2,13 +2,11 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-// FIREBASE
-import { auth } from "@/firebase";
-import { onAuthStateChanged } from "firebase/auth";
-
 // FUNCTIONS
 import { setLoggedInUser } from "@/reducers/userReducer";
 import { getCurrentUser } from "@/modules/auth/functions/auth";
+import { auth } from "@/firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 // COMPONENTS
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -21,41 +19,44 @@ import PatientHome from "@/modules/patient/components/PatientHome";
 import PatientConsultations from "@/modules/patient/components/PatientConsultations";
 import Doctors from "@/modules/patient/components/Doctors";
 import DoctorDetails from "@/modules/patient/components/DoctorDetails";
-import VideoCall from "@/pages/Patient/VideoCall";
 import NotFound from "@/components/NotFound";
 import BookConsultation from "@/modules/patient/components/BookConsultation";
 import DoctorHome from "@/modules/doctor/components/DoctorHome";
 import DoctorProfile from "@/modules/doctor/components/DoctorProfile";
 import DoctorConsultations from "@/modules/doctor/components/DoctorConsultations.jsx";
 import DoctorPatients from "@/modules/doctor/components/DoctorPatients.jsx";
+import VideoCall from "@/modules/consultation/components/VideoCall";
 
 const App = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const idTokenResult = await user.getIdTokenResult();
+    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+      if (authUser) {
+        const idTokenResult = await authUser.getIdTokenResult();
         try {
           const res = await getCurrentUser(idTokenResult.token);
           if (!res.data) {
             throw new Error("user not found");
           }
-          dispatch(
-            setLoggedInUser({
-              email: res.data.email,
-              token: idTokenResult.token,
-              role: res.data.role,
-              _id: res.data._id,
-              isProfileCompleted: res.data?.isProfileCompleted,
-            })
-          );
+
+          const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+          if (storedUser) {
+            dispatch(setLoggedInUser(storedUser));
+          } else {
+            dispatch(
+              setLoggedInUser({
+                ...res.data,
+                token: idTokenResult.token,
+              })
+            );
+          }
         } catch (err) {
           console.log(err);
         }
       }
     });
-    // cleanup
+
     return () => unsubscribe();
   }, [dispatch]);
 
@@ -77,7 +78,6 @@ const App = () => {
           <Route path="consultations" element={<PatientConsultations />} />
           <Route path="doctors" element={<Doctors />} />
           <Route path="doctors/:id" element={<DoctorDetails />} />
-          <Route path="call" element={<VideoCall />} />
           <Route path="*" element={<Navigate to="/patient/home" />} />
         </Route>
 
@@ -88,6 +88,8 @@ const App = () => {
           <Route path="patients" element={<DoctorPatients />} />
           <Route path="*" element={<Navigate to="/doctor/home" />} />
         </Route>
+
+        <Route path="/:consultationId" element={<VideoCall />} />
 
         <Route path="*" element={<NotFound />} />
 

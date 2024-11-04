@@ -5,21 +5,22 @@ import { useNavigate } from "react-router-dom";
 
 // FIREBASE
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase";
+import { auth } from "@/firebase";
 
 // COMPONENTS
 import { Outlet } from "react-router-dom";
-import { DoctorHeader } from "../header";
+import { DoctorHeader } from "@/components/header";
+import Spinner from "@/components/Spinner";
+import ConsultationAlert from "./ConsultationAlert";
 
 // STYLE
-import { Box, Spinner } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 
 export const DoctorLayout = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.loggedInUser);
   const [isLoading, setIsLoading] = useState(true);
 
-  // redirect if user is not logged in
   useEffect(() => {
     onAuthStateChanged(auth, async (user) => {
       if (!user) navigate("/auth/login");
@@ -27,7 +28,6 @@ export const DoctorLayout = () => {
     });
   }, []);
 
-  // redirect if user is not a doctor
   useEffect(() => {
     if (user && user?.role !== "doctor") {
       navigate("/auth/login");
@@ -35,17 +35,10 @@ export const DoctorLayout = () => {
   }, [user]);
 
   return isLoading ? (
-    <Spinner
-      pos="absolute"
-      top="50%"
-      right="50%"
-      thickness="4px"
-      emptyColor="gray.200"
-      color="primary.500"
-      size="xl"
-    />
+    <Spinner />
   ) : (
     <Box h="100vh" overflowX="hidden">
+      <ConsultationAlert />
       <DoctorHeader />
       <Outlet />
     </Box>
