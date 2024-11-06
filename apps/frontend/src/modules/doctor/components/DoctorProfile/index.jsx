@@ -3,6 +3,8 @@ import { useState } from "react";
 
 // COMPONENTS
 import Spinner from "@/components/Spinner";
+import Calendar from "./Calendar";
+import General from "./General";
 
 // STYLE
 import {
@@ -17,10 +19,6 @@ import {
   Flex,
   TabIndicator,
 } from "@chakra-ui/react";
-
-// ASSETS
-import Calendar from "./Calendar";
-import General from "./General";
 
 const DoctorProfile = () => {
   const [isLoading, setIsLoading] = useState(false);

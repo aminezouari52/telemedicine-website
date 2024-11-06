@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "@chakra-ui/react";
 
 // FUNCTIONS
-import { auth } from "../../firebase";
+import { auth } from "@/firebase";
 import { signOut } from "firebase/auth";
-import { logout } from "../../reducers/userReducer";
+import { logout } from "@/reducers/userReducer";
 
 // COMPONENTS
 import HeaderButton from "./HeaderButton";

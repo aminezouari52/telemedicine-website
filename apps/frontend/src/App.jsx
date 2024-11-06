@@ -42,7 +42,9 @@ const App = () => {
 
           const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
           if (storedUser) {
-            dispatch(setLoggedInUser(storedUser));
+            dispatch(
+              setLoggedInUser({ ...storedUser, token: idTokenResult.token })
+            );
           } else {
             dispatch(
               setLoggedInUser({
