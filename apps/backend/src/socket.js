@@ -7,11 +7,12 @@ const config = require("./config/config");
 const logger = require("./config/logger");
 
 const scheduleCronJob = (io) => {
-  cron.schedule("* * * * *", async () => {
-    logger.info("Cron job run");
+  cron.schedule("*/5 * * * * *", async () => {
+    logger.info("Cron job: Schedule consultation");
 
     const { currentDate, currentTime } = getCurrentDateAndTime();
     const consultations = await Consultation.find({
+      // TODO: make sure this works after the dates updates
       date: currentDate,
       time: { $lte: currentTime },
       status: "pending",
@@ -30,6 +31,32 @@ const scheduleCronJob = (io) => {
       consultation.save();
     });
   });
+
+  /* TODO: update date in all the app
+   * - make sure dates are stored in `Date` format in mongoDB (and mongoose)
+   * - make sure in frontend all dates are stored in the database in the javascript Date format
+   * - when consumed dates should be formatted in the approriate way
+   * - ideally in frontend dates should be displayed as "DD-MM-YYYY" , "HH:MM"
+   * - after that done make sure the  "Cron job: Clean old consultations" works as expected
+   */
+
+  // cron.schedule("*/5 * * * * *", async () => {
+  //   logger.info("Cron job: Clean old consultations");
+
+  //   const { currentDate } = getCurrentDateAndTime();
+
+  //   const consultations = await Consultation.find({
+  //     date: { $lte: currentDate },
+  //     status: "pending",
+  //   });
+
+  //   consultations.forEach((consultation) => {
+  //     console.log(consultation.date);
+
+  //     consultation.status = "canceled";
+  //     consultation.save();
+  //   });
+  // });
 };
 
 function initializeSocket(server) {
@@ -42,23 +69,17 @@ function initializeSocket(server) {
 
     socket.on("joinConsultation", ({ consultationId, userId }) => {
       socket.join(consultationId);
-      logger.info(`User ${userId} joined consultation: ${consultationId}`);
-      socket.to(consultationId).emit("notifyJoin", userId);
     });
 
-    socket.on("sendMessage", ({ consultationId, message, user }) => {
+    socket.on("sendMessage", ({ consultationId, message, userId }) => {
       io.to(consultationId).emit("receiveMessage", {
-        user: user,
-        message: message,
+        userId,
+        message,
       });
     });
 
-    socket.on("leaveConsultation", ({ consultationId, userId }) => {
-      socket.leave(consultationId);
-      io.to(consultationId).emit("otherUserLeft", {
-        userId,
-      });
-      logger.info(`User left consultation: ${consultationId}`);
+    socket.on("leaveConsultation", ({ consultationId }) => {
+      io.to(consultationId).emit("userLeft");
     });
 
     socket.on("disconnect", () => {

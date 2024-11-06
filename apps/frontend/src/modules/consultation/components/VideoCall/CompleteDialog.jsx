@@ -2,21 +2,20 @@ import {
   Button,
   AlertDialog,
   AlertDialogBody,
-  AlertDialogCloseButton,
   AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogOverlay,
 } from "@chakra-ui/react";
 
-const CompleteDialog = ({ onClose, leaveConsultation, isOpen }) => {
+const CompleteDialog = ({ onClose, completeConsultation, isOpen }) => {
   return (
     <AlertDialog
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={() => {
         onClose();
-        leaveConsultation();
+        completeConsultation();
       }}
       isCentered
     >
@@ -24,7 +23,6 @@ const CompleteDialog = ({ onClose, leaveConsultation, isOpen }) => {
 
       <AlertDialogContent>
         <AlertDialogHeader>Consultation est complète 🙂</AlertDialogHeader>
-        <AlertDialogCloseButton />
         <AlertDialogBody>
           La personne avec qui vous aviez une consultation a mis fin à la
           consultation, ce qui signifie que vous allez être redirigé vers la
@@ -37,7 +35,7 @@ const CompleteDialog = ({ onClose, leaveConsultation, isOpen }) => {
             ml={3}
             onClick={() => {
               onClose();
-              leaveConsultation();
+              completeConsultation();
             }}
             _hover={{
               opacity: 0.8,

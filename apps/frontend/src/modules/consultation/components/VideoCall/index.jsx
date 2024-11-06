@@ -21,7 +21,7 @@ import {
   Flex,
   Heading,
   InputGroup,
-  InputRightAddon,
+  InputRightElement,
   IconButton,
   Stack,
   Button,
@@ -32,12 +32,13 @@ import {
 import { IoSend } from "react-icons/io5";
 
 const VideoCall = () => {
+  const user = useSelector((state) => state.user.loggedInUser);
   const params = useParams();
   const message = useRef();
-  const [messages, setMessages] = useState([]);
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user.loggedInUser);
   const dispatch = useDispatch();
+  const [messages, setMessages] = useState([]);
+
   const {
     isOpen: isOpenLeave,
     onOpen: onOpenLeave,
@@ -46,22 +47,15 @@ const VideoCall = () => {
 
   const {
     isOpen: isOpenComplete,
-    onOpenComplete,
-    onCloseComplete,
+    onOpen: onOpenComplete,
+    onClose: onCloseComplete,
   } = useDisclosure();
-
-  const [leftUser, setLeftUser] = useState();
 
   useEffect(() => {
     if (user) {
       socket.emit("joinConsultation", {
         consultationId: params.consultationId,
         userId: user?._id,
-      });
-
-      socket.on("notifyJoin", ({ consultation, user }) => {
-        console.log("USER JOINED!");
-        console.log(user, consultation);
       });
 
       socket.on("receiveMessage", (message) => {
@@ -71,10 +65,7 @@ const VideoCall = () => {
         ]);
       });
 
-      socket.on("otherUserLeft", ({ consultationId, userId }) => {
-        setLeftUser(userId);
-        onOpenLeave();
-      });
+      socket.on("userLeft", onOpenComplete);
 
       return () => {
         socket.off("receiveMessage");
@@ -94,10 +85,10 @@ const VideoCall = () => {
   };
 
   const leaveConsultation = () => {
+    onCloseLeave();
     const { consultationId, ...restUser } = user;
     socket.emit("leaveConsultation", {
       consultationId: params.consultationId,
-      userId: user._id,
     });
     dispatch(setLoggedInUser(restUser));
     updateConsultation(params.consultationId, {
@@ -106,10 +97,18 @@ const VideoCall = () => {
     navigate("/");
   };
 
+  const completeConsultation = () => {
+    onCloseComplete();
+    const { consultationId, ...restUser } = user;
+    dispatch(setLoggedInUser(restUser));
+    navigate("/");
+  };
+
   useEffect(() => {
     if (
-      user &&
-      (!user?.consultationId || user?.consultationId !== params.consultationId)
+      !user ||
+      !user?.consultationId ||
+      user?.consultationId !== params.consultationId
     )
       navigate("/");
   }, [user]);
@@ -118,14 +117,14 @@ const VideoCall = () => {
     <>
       <Portal>
         <CompleteDialog
+          onClose={onCloseComplete}
+          completeConsultation={completeConsultation}
+          isOpen={isOpenComplete}
+        />
+        <LeaveDialog
           onClose={onCloseLeave}
           leaveConsultation={leaveConsultation}
           isOpen={isOpenLeave}
-        />
-        <LeaveDialog
-          onClose={onCloseComplete}
-          leaveConsultation={leaveConsultation}
-          isOpen={isOpenComplete}
         />
       </Portal>
       <Box h="100vh" p={8}>
@@ -153,21 +152,28 @@ const VideoCall = () => {
                 focusBorderColor="primary.500"
                 type="text"
                 placeholder="type a message"
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") sendMessage();
+                }}
               />
-              <InputRightAddon p={0}>
+              <InputRightElement p={0}>
                 <IconButton
                   colorScheme="primary"
                   onClick={sendMessage}
+                  size="sm"
+                  h="25px"
                   icon={<IoSend />}
-                  borderLeftRadius={0}
+                  _hover={{
+                    opacity: 0.8,
+                  }}
                 ></IconButton>
-              </InputRightAddon>
+              </InputRightElement>
             </InputGroup>
           </Flex>
 
           <Flex w="70%" direction="column" alignItems="end">
             <Flex>
-              <Button size="sm" colorScheme="red" onClick={onOpenComplete}>
+              <Button size="sm" colorScheme="red" onClick={onOpenLeave}>
                 Quitter
               </Button>
             </Flex>

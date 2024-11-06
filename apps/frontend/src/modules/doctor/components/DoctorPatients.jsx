@@ -33,9 +33,10 @@ const DoctorPatients = () => {
     fetchData();
   }, [user]);
 
+  // TODO: fix this
   const uniquePatients = consultations?.filter(
     (obj, index, self) =>
-      index === self.findIndex((o) => o.patientId === obj.patientId)
+      index === self.findIndex((o) => o.patient?._id === obj.doctor?._id)
   );
 
   return (

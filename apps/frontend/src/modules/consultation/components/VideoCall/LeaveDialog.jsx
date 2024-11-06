@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import {
   Button,
   AlertDialog,
@@ -10,11 +11,14 @@ import {
 } from "@chakra-ui/react";
 
 const LeaveDialog = ({ onClose, isOpen, leaveConsultation }) => {
+  const cancelRef = useRef();
+
   return (
     <AlertDialog
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={onClose}
+      leastDestructiveRef={cancelRef}
       isCentered
     >
       <AlertDialogOverlay />
@@ -23,16 +27,11 @@ const LeaveDialog = ({ onClose, isOpen, leaveConsultation }) => {
         <AlertDialogHeader>Terminer la consultation</AlertDialogHeader>
         <AlertDialogCloseButton />
         <AlertDialogBody>
-          Vous êtes sûr de terminer la consultation?
+          Si vous quittez la consultation va être terminer. Vous êtes sûr de
+          terminer la consultation?
         </AlertDialogBody>
         <AlertDialogFooter>
-          <Button
-            size="sm"
-            ml={3}
-            onClick={() => {
-              onClose();
-            }}
-          >
+          <Button size="sm" ml={3} ref={cancelRef} onClick={onClose}>
             Annuler
           </Button>
           <Button
@@ -40,8 +39,8 @@ const LeaveDialog = ({ onClose, isOpen, leaveConsultation }) => {
             size="sm"
             ml={3}
             onClick={() => {
-              leaveConsultation();
               onClose();
+              leaveConsultation();
             }}
           >
             Terminer

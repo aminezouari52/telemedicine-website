@@ -29,9 +29,15 @@ const getDoctorConsultations = catchAsync(async (req, res) => {
   res.send(consultations);
 });
 
+const getConsultation = catchAsync(async (req, res) => {
+  const consultation = await consultationService.getConsultation(req.params.id);
+  res.json(consultation);
+});
+
 module.exports = {
   submitConsultation,
   getPatientConsultations,
   updateConsultation,
   getDoctorConsultations,
+  getConsultation,
 };

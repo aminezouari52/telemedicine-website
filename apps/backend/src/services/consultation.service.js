@@ -12,17 +12,25 @@ const updateConsultationById = async (consultationId, updateBody) => {
   return consultation;
 };
 
+const getConsultation = async (consultationId) => {
+  const consultation = await Consultation.findById(consultationId);
+  if (!consultation) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Consultation not found");
+  }
+  return consultation;
+};
+
 const getPatientConsultations = async (patientId) => {
   const consultations = await Consultation.find({
     patient: patientId,
-  }).populate("doctor");
+  }).populate(["doctor", "patient"]);
   return consultations;
 };
 
 const getDoctorConsultations = async (doctorId) => {
   const consultations = await Consultation.find({
     doctor: doctorId,
-  });
+  }).populate(["doctor", "patient"]);
   return consultations;
 };
 
@@ -30,4 +38,5 @@ module.exports = {
   updateConsultationById,
   getPatientConsultations,
   getDoctorConsultations,
+  getConsultation,
 };

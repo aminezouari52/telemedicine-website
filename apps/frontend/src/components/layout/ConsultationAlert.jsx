@@ -7,6 +7,8 @@ import { setLoggedInUser } from "@/reducers/userReducer";
 
 // FUNCTIONS
 import { socket } from "@/socket";
+import { getPatientConsultations } from "@/modules/patient/functions/patient";
+import { getDoctorConsultations } from "@/modules/doctor/functions/doctor";
 
 // STYLE
 import {
@@ -28,24 +30,56 @@ const ConsultationAlert = () => {
   const user = useSelector((state) => state.user.loggedInUser);
   const cancelRef = useRef();
 
-  useEffect(() => {
-    const handleStartConsultation = (consultation) => {
-      if ([consultation.patientId, consultation.doctorId].includes(user?._id)) {
-        onOpen();
-        dispatch(
-          setLoggedInUser({
-            ...user,
-            consultationId: consultation.consultationId,
-          })
-        );
-      }
-    };
+  const handleStartConsultation = (consultation) => {
+    if ([consultation.patientId, consultation.doctorId].includes(user?._id)) {
+      onOpen();
+      dispatch(
+        setLoggedInUser({
+          ...user,
+          consultationId: consultation.consultationId,
+        })
+      );
+    }
+  };
 
+  useEffect(() => {
     socket.on("startConsultation", handleStartConsultation);
 
     return () => {
       socket.off("startConsultation", handleStartConsultation);
     };
+  }, []);
+
+  const fetchConsultation = async () => {
+    if (user) {
+      let consultations = [];
+      if (user.role === "patient") {
+        consultations = await getPatientConsultations(user?._id);
+      }
+      if (user.role === "doctor") {
+        consultations = await getDoctorConsultations(user?._id);
+      }
+
+      const inProgressconsultation = consultations.data.find(
+        (c) => c.status === "in-progress"
+      );
+
+      if (
+        inProgressconsultation &&
+        inProgressconsultation?.doctor?._id &&
+        inProgressconsultation?.patient?._id
+      ) {
+        handleStartConsultation({
+          consultationId: inProgressconsultation?._id,
+          doctorId: inProgressconsultation?.doctor?._id,
+          patientId: inProgressconsultation?.patient?._id,
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchConsultation();
   }, []);
 
   const handleConfirm = () => {
@@ -79,6 +113,9 @@ const ConsultationAlert = () => {
               size="sm"
               ml={3}
               onClick={handleConfirm}
+              _hover={{
+                opacity: 0.8,
+              }}
             >
               Rejoindre
             </Button>

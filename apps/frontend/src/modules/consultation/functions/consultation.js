@@ -5,3 +5,6 @@ export const updateConsultation = async (id, body) =>
     `${import.meta.env.VITE_API_V1_URL}/consultation/${id}`,
     body
   );
+
+export const getConsultation = async (id) =>
+  await axios.get(`${import.meta.env.VITE_API_V1_URL}/consultation/${id}`);

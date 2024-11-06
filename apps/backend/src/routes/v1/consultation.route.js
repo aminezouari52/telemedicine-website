@@ -8,7 +8,10 @@ const consultationController = require("../../controllers/consultation.controlle
 // routes
 router.route("/").post(consultationController.submitConsultation);
 
-router.route("/:id").patch(consultationController.updateConsultation);
+router
+  .route("/:id")
+  .patch(consultationController.updateConsultation)
+  .get(consultationController.getConsultation);
 
 router
   .route("/patient/:patientId")
