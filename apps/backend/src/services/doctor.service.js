@@ -85,7 +85,7 @@ const getAllDoctors = async (filter, options) => {
   return doctors;
 };
 
-const updateDoctorById = async (doctorId, updateBody) => {
+const updateDoctor = async (doctorId, updateBody) => {
   const doctor = await getUserById(doctorId);
   if (!doctor) {
     throw new ApiError(httpStatus.NOT_FOUND, "Doctor not found");
@@ -139,7 +139,7 @@ const getDoctorPatientsCount = async (doctorId) => {
 };
 
 module.exports = {
-  updateDoctorById,
+  updateDoctor,
   uploadProfilePicture,
   getAllDoctors,
   getDoctorById,

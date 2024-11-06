@@ -90,8 +90,8 @@ const Consultation = () => {
               "Le numéro de téléphone doit contenir exactement 8 chiffres"
             ),
         })}
-        onSubmit={(values) => {
-          submitConsultation(values);
+        onSubmit={async (values) => {
+          await submitConsultation(values);
         }}
       >
         <Form>

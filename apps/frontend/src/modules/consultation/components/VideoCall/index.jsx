@@ -84,14 +84,14 @@ const VideoCall = () => {
     message.current.value = "";
   };
 
-  const leaveConsultation = () => {
+  const leaveConsultation = async () => {
     onCloseLeave();
     const { consultationId, ...restUser } = user;
     socket.emit("leaveConsultation", {
       consultationId: params.consultationId,
     });
     dispatch(setLoggedInUser(restUser));
-    updateConsultation(params.consultationId, {
+    await updateConsultation(params.consultationId, {
       status: "completed",
     });
     navigate("/");

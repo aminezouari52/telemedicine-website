@@ -14,7 +14,7 @@ const getAllDoctors = catchAsync(async (req, res) => {
 });
 
 const updateDoctor = catchAsync(async (req, res) => {
-  const doctor = await doctorService.updateDoctorById(req.params.id, req.body);
+  const doctor = await doctorService.updateDoctor(req.params.id, req.body);
   res.json(doctor);
 });
 

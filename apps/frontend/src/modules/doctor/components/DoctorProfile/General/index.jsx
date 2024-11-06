@@ -186,7 +186,7 @@ const General = ({ setIsLoading }) => {
       onSubmit={async (values) => {
         setIsLoading(true);
         const imageResponse = await uploadProfilePicture(user, imageSrc);
-        updateDoctor(
+        await updateDoctor(
           { id: user._id, token: user.token },
           { ...values, photo: imageResponse.data.url, isProfileCompleted: true }
         );
