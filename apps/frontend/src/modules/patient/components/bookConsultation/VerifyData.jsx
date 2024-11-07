@@ -16,8 +16,8 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import moment from "moment";
 import { useFormikContext } from "formik";
+import { DateTime } from "luxon";
 
 const VerifyData = ({ isOpen, onClose }) => {
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -48,7 +48,11 @@ const VerifyData = ({ isOpen, onClose }) => {
               <Stack spacing={4} mt={2}>
                 <Text mr={2}>
                   <strong> Date de l'évenement:</strong> le{" "}
-                  {moment(values?.date).format("DD MMM YYYY")}, {values?.time}
+                  {values?.date
+                    ? DateTime.fromJSDate(new Date(values.date)).toFormat(
+                        "dd-MM-yyyy 'à' HH:mm"
+                      )
+                    : null}
                 </Text>
                 <Text mr={2}>
                   <strong> Nom complet:</strong> {values?.firstName}{" "}
@@ -78,7 +82,11 @@ const VerifyData = ({ isOpen, onClose }) => {
                 </Text>
                 <Text mr={2}>
                   <strong>Date d'assurance: </strong>
-                  {moment(values?.dateInsurance).format("DD-MM-YYYY")}
+                  {values?.dateInsurance
+                    ? DateTime.fromJSDate(
+                        new Date(values?.dateInsurance)
+                      ).toFormat("dd-MM-yyyy")
+                    : null}
                 </Text>
                 <Text mr={2}>
                   <strong>Fournisseur: </strong>

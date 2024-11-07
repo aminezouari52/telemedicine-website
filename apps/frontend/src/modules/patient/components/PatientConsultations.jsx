@@ -21,6 +21,7 @@ import {
 // FUNCTIONS
 import { useSelector } from "react-redux";
 import { getPatientConsultations } from "@/modules/patient/functions/patient";
+import { DateTime } from "luxon";
 
 // ASSETS
 import { CalendarIcon } from "@chakra-ui/icons";
@@ -90,7 +91,12 @@ const PatientConsultations = () => {
                       <Flex fontSize="12px" flexDirection="column">
                         <Text color="gray">Votre consultation</Text>
                         <Text>
-                          {consultation?.date} à {consultation?.time}
+                          le{" "}
+                          {consultation?.date
+                            ? DateTime.fromJSDate(
+                                new Date(consultation.date)
+                              ).toFormat("dd-MM-yyyy 'à' HH:mm")
+                            : null}
                         </Text>
                       </Flex>
                     </Flex>
@@ -128,13 +134,21 @@ const PatientConsultations = () => {
                     <Text mr={2} color="gray">
                       Date:{" "}
                     </Text>
-                    <Text>{sortedUpcomingConsultations()[0]?.date}</Text>
+                    <Text>
+                      {DateTime.fromJSDate(
+                        new Date(sortedUpcomingConsultations()[0]?.date)
+                      ).toFormat("dd-MM-yyyy")}
+                    </Text>
                   </Flex>
                   <Flex>
                     <Text mr={2} color="gray">
                       Heure:{" "}
                     </Text>
-                    <Text>{sortedUpcomingConsultations()[0]?.time}</Text>
+                    <Text>
+                      {DateTime.fromJSDate(
+                        new Date(sortedUpcomingConsultations()[0]?.date)
+                      ).toFormat("HH:mm")}
+                    </Text>
                   </Flex>
                 </Flex>
                 <Icon as={CalendarIcon} color="gray.500" />

@@ -1,7 +1,7 @@
 // socket.js
 const { Server } = require("socket.io");
 const cron = require("node-cron");
-const getCurrentDateAndTime = require("./utils/utils");
+// const getCurrentDateAndTime = require("./utils/utils");
 const { Consultation } = require("./models");
 const config = require("./config/config");
 const logger = require("./config/logger");
@@ -10,11 +10,17 @@ const scheduleCronJob = (io) => {
   cron.schedule("*/5 * * * * *", async () => {
     logger.info("Cron job: Schedule consultation");
 
-    const { currentDate, currentTime } = getCurrentDateAndTime();
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    // TODO: make sure this works after the dates updates
+    const now = new Date();
+
     const consultations = await Consultation.find({
-      // TODO: make sure this works after the dates updates
-      date: currentDate,
-      time: { $lte: currentTime },
+      date: {
+        $gte: startOfDay,
+        $lt: now,
+      },
       status: "pending",
     });
 
@@ -43,16 +49,15 @@ const scheduleCronJob = (io) => {
   // cron.schedule("*/5 * * * * *", async () => {
   //   logger.info("Cron job: Clean old consultations");
 
-  //   const { currentDate } = getCurrentDateAndTime();
+  //   const startOfDay = new Date();
+  //   startOfDay.setHours(0, 0, 0, 0);
 
   //   const consultations = await Consultation.find({
-  //     date: { $lte: currentDate },
+  //     date: { $lt: startOfDay },
   //     status: "pending",
   //   });
 
   //   consultations.forEach((consultation) => {
-  //     console.log(consultation.date);
-
   //     consultation.status = "canceled";
   //     consultation.save();
   //   });

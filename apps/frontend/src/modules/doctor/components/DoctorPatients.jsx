@@ -64,7 +64,6 @@ const DoctorPatients = () => {
                   </Text>
                 </Stack>
               </CardBody>
-              <Divider />
             </Card>
           );
         })}

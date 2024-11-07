@@ -9,7 +9,6 @@ import { submitConsultation } from "@/modules/patient/functions/patient";
 import { getDoctorById } from "@/modules/doctor/functions/doctor";
 import { useSelector } from "react-redux";
 import * as Yup from "yup";
-import moment from "moment";
 
 // COMPONENTS
 import VerifyData from "./VerifyData";
@@ -62,8 +61,7 @@ const Consultation = () => {
     <Flex direction="column" bg="#fff" p={4} w="100%">
       <Formik
         initialValues={{
-          date: moment(new Date()).format("DD-MM-YYYY"),
-          time: moment(new Date()).format("HH:mm"),
+          date: new Date(),
           firstName: "",
           lastName: "",
           address: "",
@@ -79,7 +77,6 @@ const Consultation = () => {
         }}
         validationSchema={Yup.object({
           date: Yup.string().required("La date est requis"),
-          time: Yup.string().required("Le temps est requis"),
           firstName: Yup.string().required("Le prenom est requis").trim(),
           lastName: Yup.string().required("Le nom est requis").trim(),
           phone: Yup.string()

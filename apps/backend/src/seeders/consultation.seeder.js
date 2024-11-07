@@ -48,10 +48,7 @@ async function seedConsultationCollection() {
           const patientIndex = Math.floor(Math.random() * patientsIds.length);
 
           let newConsultation = {
-            date: DateTime.fromJSDate(faker.date.anytime()).toFormat(
-              "dd-MM-yyyy",
-            ),
-            time: DateTime.now(faker.date.anytime()).toFormat("HH:mm"),
+            date: new Date(faker.date.anytime()),
             firstName,
             lastName,
             address: faker.location.streetAddress(true),

@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 
 // FUNCTIONS
 import { getDoctorConsultations } from "@/modules/doctor/functions/doctor";
+import { DateTime } from "luxon";
 
 // STYLE
 import {
@@ -91,7 +92,12 @@ const DoctorConsultations = () => {
                       <Flex fontSize="12px" flexDirection="column">
                         <Text color="gray">Votre consultation</Text>
                         <Text>
-                          le {consultation?.date} à {consultation?.time}
+                          le{" "}
+                          {consultation?.date
+                            ? DateTime.fromJSDate(
+                                new Date(consultation.date)
+                              ).toFormat("dd-MM-yyyy 'à' HH:mm")
+                            : null}
                         </Text>
                       </Flex>
                     </Flex>

@@ -4,26 +4,8 @@ const Schema = mongoose.Schema;
 const consultationSchema = new Schema(
   {
     date: {
-      type: String,
+      type: Date,
       required: true,
-      validate: {
-        validator: function (v) {
-          return /^\d{2}-\d{2}-\d{4}$/.test(v);
-        },
-        message: (props) =>
-          `${props.value} is not a valid date format! Expected format: DD-MM-YYYY`,
-      },
-    },
-    time: {
-      type: String,
-      required: true,
-      validate: {
-        validator: function (v) {
-          return /^([01]\d|2[0-3]):[0-5]\d$/.test(v);
-        },
-        message: (props) =>
-          `${props.value} is not a valid time format! Expected format: HH:MM`,
-      },
     },
     firstName: String,
     lastName: String,

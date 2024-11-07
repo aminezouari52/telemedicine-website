@@ -20,7 +20,7 @@
     "formik": "^2.4.2",
     "framer-motion": "^7.10.3",
     "lodash": "^4.17.21",
-    "moment": "^2.29.4",
+    "luxon": "^3.5.0",
     "react": "^18.3.1",
     "react-datepicker": "^6.9.0",
     "react-dom": "^18.2.0",
