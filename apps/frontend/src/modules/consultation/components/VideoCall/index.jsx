@@ -35,6 +35,7 @@ const VideoCall = () => {
   const user = useSelector((state) => state.user.loggedInUser);
   const params = useParams();
   const message = useRef();
+  const messagesContainer = useRef();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [messages, setMessages] = useState([]);
@@ -61,7 +62,7 @@ const VideoCall = () => {
       socket.on("receiveMessage", (message) => {
         setMessages((prevMessages) => [
           ...prevMessages,
-          { user: message.user, message: message.message },
+          { userFirstName: message.userFirstName, message: message.message },
         ]);
       });
 
@@ -78,7 +79,7 @@ const VideoCall = () => {
       socket.emit("sendMessage", {
         consultationId: params.consultationId,
         message: message.current.value.trim(),
-        user: user?.firstName,
+        userFirstName: user?.firstName,
       });
     }
     message.current.value = "";
@@ -127,31 +128,54 @@ const VideoCall = () => {
           isOpen={isOpenLeave}
         />
       </Portal>
-      <Box h="100vh" p={8}>
-        <Heading textAlign="center" size="md">
-          Consultation en cours
-        </Heading>
-        <Flex h="100%" w="100%" justifyContent="space-between">
+      <Flex direction="column" justifyContent="space-between" h="100vh" p={8}>
+        <Flex direction="column">
+          <Flex direction="column" alignItems="center" justifyContent="center">
+            <Heading textAlign="center" size="md">
+              Consultation en cours
+            </Heading>
+          </Flex>
+          <Flex direction="column" alignItems="end" justifyContent="flex-end">
+            <Button size="sm" colorScheme="red" onClick={onOpenLeave}>
+              Quitter
+            </Button>
+          </Flex>
+        </Flex>
+        <Flex h="90%" w="100%" justifyContent="center">
           <Flex
             justifyContent="flex-end"
             direction="column"
             gap={8}
             p={4}
-            w="30%"
+            w="400px"
+            bg="primary.100"
           >
-            <Stack spacing={4} overflowY="auto">
-              {messages.map((message, index) => (
-                <Text key={index}>
-                  {message.user} : {message.message}
-                </Text>
-              ))}
+            <Stack
+              direction="column-reverse"
+              ref={messagesContainer}
+              spacing={4}
+              overflowY="auto"
+            >
+              <Box>
+                {messages.map((message, index) => (
+                  <Text key={index}>
+                    {message.userFirstName} : {message.message}
+                  </Text>
+                ))}
+              </Box>
             </Stack>
             <InputGroup>
               <Input
                 ref={message}
                 focusBorderColor="primary.500"
+                borderColor="primary.500"
+                color="#000"
                 type="text"
                 placeholder="type a message"
+                _placeholder={{ fontSize: "sm" }}
+                _hover={{
+                  borderColor: "primary.500",
+                }}
                 onKeyDown={(event) => {
                   if (event.key === "Enter") sendMessage();
                 }}
@@ -170,19 +194,8 @@ const VideoCall = () => {
               </InputRightElement>
             </InputGroup>
           </Flex>
-
-          <Flex w="70%" direction="column" alignItems="end">
-            <Flex>
-              <Button size="sm" colorScheme="red" onClick={onOpenLeave}>
-                Quitter
-              </Button>
-            </Flex>
-            <Text w="100%" textAlign="center">
-              VIDEO CALLING
-            </Text>
-          </Flex>
         </Flex>
-      </Box>
+      </Flex>
     </>
   );
 };

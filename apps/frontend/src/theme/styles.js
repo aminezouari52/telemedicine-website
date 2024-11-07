@@ -3,7 +3,8 @@ export const globalStyles = {
     primary: {
       600: "#615EFC",
       500: "#615EFC",
-      200: "#b0afff",
+      300: "#b0afff",
+      200: "#d7d6fd",
       100: "#e2e6ff",
     },
     secondary: { 500: "#7E8EF1", 600: "#7E8EF1" },

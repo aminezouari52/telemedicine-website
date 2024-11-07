@@ -180,7 +180,7 @@ const General = ({ setIsLoading }) => {
 
   return (
     <Formik
-      // enableReinitialize
+      enableReinitialize
       initialValues={initialValues}
       validationSchema={validationSchema}
       onSubmit={async (values) => {

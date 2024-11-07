@@ -53,13 +53,13 @@ function initializeSocket(server) {
 
     scheduleCronJob(io);
 
-    socket.on("joinConsultation", ({ consultationId, userId }) => {
+    socket.on("joinConsultation", ({ consultationId }) => {
       socket.join(consultationId);
     });
 
-    socket.on("sendMessage", ({ consultationId, message, userId }) => {
+    socket.on("sendMessage", ({ consultationId, message, userFirstName }) => {
       io.to(consultationId).emit("receiveMessage", {
-        userId,
+        userFirstName,
         message,
       });
     });
