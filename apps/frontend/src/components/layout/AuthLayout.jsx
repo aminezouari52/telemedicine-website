@@ -5,13 +5,13 @@ import { useSelector } from "react-redux";
 
 // COMPONENTS
 import Spinner from "@/components/Spinner";
+import Logo from "@/components/Logo";
 
 // STYLE
 import { Flex, Image } from "@chakra-ui/react";
 
 // ASSETS
 import loginImg from "@/images/login.webp";
-import loginLogo from "@/images/login-logo.png";
 
 export const AuthLayout = () => {
   const navigate = useNavigate();
@@ -52,16 +52,7 @@ export const AuthLayout = () => {
         cursor="pointer"
         onClick={() => navigate("/")}
       >
-        <Image
-          objectFit="cover"
-          src={loginLogo}
-          alt="product image"
-          h="30px"
-          w="140px"
-          _hover={{
-            opacity: 0.7,
-          }}
-        />
+        <Logo />
       </Flex>
       <Flex justifyContent="center" alignItems="center" w="50%">
         <Outlet />
