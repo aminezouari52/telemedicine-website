@@ -1,7 +1,5 @@
-// socket.js
 const { Server } = require("socket.io");
 const cron = require("node-cron");
-// const getCurrentDateAndTime = require("./utils/utils");
 const { Consultation } = require("./models");
 const config = require("./config/config");
 const logger = require("./config/logger");
@@ -10,16 +8,10 @@ const scheduleCronJob = (io) => {
   cron.schedule("*/5 * * * * *", async () => {
     logger.info("Cron job: Schedule consultation");
 
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-
-    // TODO: make sure this works after the dates updates
-    const now = new Date();
-
     const consultations = await Consultation.find({
       date: {
-        $gte: startOfDay,
-        $lt: now,
+        $gte: new Date().setHours(0, 0, 0, 0),
+        $lt: new Date(),
       },
       status: "pending",
     });
@@ -38,30 +30,19 @@ const scheduleCronJob = (io) => {
     });
   });
 
-  /* TODO: update date in all the app
-   * - make sure dates are stored in `Date` format in mongoDB (and mongoose)
-   * - make sure in frontend all dates are stored in the database in the javascript Date format
-   * - when consumed dates should be formatted in the approriate way
-   * - ideally in frontend dates should be displayed as "DD-MM-YYYY" , "HH:MM"
-   * - after that done make sure the  "Cron job: Clean old consultations" works as expected
-   */
+  cron.schedule("*/5 * * * * *", async () => {
+    logger.info("Cron job: Clean old consultations");
 
-  // cron.schedule("*/5 * * * * *", async () => {
-  //   logger.info("Cron job: Clean old consultations");
+    const consultations = await Consultation.find({
+      date: { $lt: new Date().setHours(0, 0, 0, 0) },
+      status: "pending",
+    });
 
-  //   const startOfDay = new Date();
-  //   startOfDay.setHours(0, 0, 0, 0);
-
-  //   const consultations = await Consultation.find({
-  //     date: { $lt: startOfDay },
-  //     status: "pending",
-  //   });
-
-  //   consultations.forEach((consultation) => {
-  //     consultation.status = "canceled";
-  //     consultation.save();
-  //   });
-  // });
+    consultations.forEach((consultation) => {
+      consultation.status = "canceled";
+      consultation.save();
+    });
+  });
 };
 
 function initializeSocket(server) {
