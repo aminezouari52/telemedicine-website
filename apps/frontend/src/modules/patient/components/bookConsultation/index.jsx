@@ -6,7 +6,7 @@ import { useSteps } from "chakra-ui-steps";
 
 // FUNCTIONS
 import { submitConsultation } from "@/modules/patient/functions/patient";
-import { getDoctorById } from "@/modules/doctor/functions/doctor";
+import { getDoctor } from "@/modules/doctor/functions/doctor";
 import { useSelector } from "react-redux";
 import * as Yup from "yup";
 
@@ -26,13 +26,13 @@ const Consultation = () => {
   const params = useParams();
   const [doctor, setDoctor] = useState();
 
-  const getDoctorByIdFunction = async () => {
-    const response = await getDoctorById(params.id);
+  const loadDoctor = async () => {
+    const response = await getDoctor(params.id);
     setDoctor(response.data);
   };
 
   useEffect(() => {
-    getDoctorByIdFunction();
+    loadDoctor();
   }, []);
 
   const { onClose } = useDisclosure();
@@ -82,10 +82,7 @@ const Consultation = () => {
           phone: Yup.string()
             .required("Le numéro de téléphone est requis")
             .trim()
-            .matches(
-              /^[0-9]{8}$/,
-              "Le numéro de téléphone doit contenir exactement 8 chiffres"
-            ),
+            .matches(/^[0-9]*$/, "Le numéro de téléphone n'nest pas valide"),
         })}
         onSubmit={async (values) => {
           await submitConsultation(values);

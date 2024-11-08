@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 // FUNCTIONS
 import {
-  getDoctorById,
   getDoctorPatientsCount,
   getDoctorConsultations,
 } from "@/modules/doctor/functions/doctor";
@@ -42,25 +41,28 @@ const DoctorHome = () => {
     });
   };
 
-  const fetchData = async () => {
-    if (user) {
-      const doctorData = (await getDoctorById(user._id)).data;
-      const consultationsData = (await getDoctorConsultations(user?._id)).data;
-      const patientsCount = (await getDoctorPatientsCount(user._id)).data
-        .patientsCount;
-      setDoctor({ ...doctorData, patientsCount });
-      setConsultations(consultationsData);
-    }
+  const loadConsultations = async (user) => {
+    const consultationsData = (await getDoctorConsultations(user?._id)).data;
+    setConsultations(consultationsData);
+  };
+
+  const loadDoctor = async (user) => {
+    const patientsCount = (await getDoctorPatientsCount(user._id)).data
+      .patientsCount;
+    setDoctor({ ...user, patientsCount });
   };
 
   useEffect(() => {
-    fetchData();
+    if (user) {
+      loadDoctor(user);
+      loadConsultations(user);
+    }
   }, [user]);
 
   return (
     <Box p={10}>
       <Flex alignItems="center" gap={4}>
-        <Avatar size="lg" />
+        <Avatar size="lg" src={doctor?.photo} />
         <Flex flexDirection="column" gap={3}>
           <Heading size="md">Bonjour, Dr {doctor?.firstName}</Heading>
           {!user?.isProfileCompleted && (

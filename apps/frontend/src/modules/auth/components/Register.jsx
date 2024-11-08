@@ -60,14 +60,10 @@ const Register = () => {
         role,
       });
 
-      // redux store
       dispatch(
         setLoggedInUser({
-          firstName: res.data.firstName,
-          email: res.data.email,
+          ...res.data,
           token: idTokenResult.token,
-          role: res.data.role,
-          _id: res.data._id,
         })
       );
 

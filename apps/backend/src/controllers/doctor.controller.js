@@ -3,6 +3,7 @@ const { doctorService } = require("../services");
 const cloudinary = require("cloudinary");
 const config = require("../config/config");
 const pick = require("../utils/pick");
+const ApiError = require("../utils/ApiError");
 
 cloudinary.config(config.cloudinary);
 
@@ -24,7 +25,7 @@ const uploadProfilePicture = catchAsync(async (req, res) => {
 });
 
 const getDoctor = catchAsync(async (req, res) => {
-  const doctor = await doctorService.getDoctorById(req.params.doctorId);
+  const doctor = await doctorService.getDoctor(req.params.doctorId);
   if (!doctor) {
     throw new ApiError(httpStatus.NOT_FOUND, "Doctor not found");
   }

@@ -6,21 +6,13 @@ const logger = require("../config/logger");
 const express = require("express");
 const app = express();
 const { Doctor } = require("../models");
+const { generatePhoneNumber } = require("../utils/utils");
 
 const documentNumbers = 20;
 
 function randomIntFromInterval(min, max) {
   // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-// Generate a random phone number
-function generateRandomNumber() {
-  const countryCode = faker.datatype.boolean() ? "+" : "";
-  const randomNumber = faker.string.numeric(
-    faker.number.int({ min: 8, max: 15 }),
-  );
-  return `${countryCode}${randomNumber}`;
 }
 
 const specialities = [
@@ -88,7 +80,7 @@ async function seedDoctorCollection() {
       server = app.listen(config.port, async () => {
         logger.info(`Listening to port ${config.port}`);
 
-        await Doctor.collection.drop();
+        await Doctor.deleteMany({ role: "doctor" });
 
         let doctors = [];
 
@@ -121,7 +113,7 @@ async function seedDoctorCollection() {
             firstName,
             hospital: hospitals[hospitalIndex],
             lastName,
-            phone: generateRandomNumber(),
+            phone: generatePhoneNumber(),
             price: faker.number.int({ min: 1, max: 1000 }),
             zip: faker.location.zipCode("#####"),
             photo: profileUrl,

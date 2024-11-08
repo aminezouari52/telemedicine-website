@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon src/index.js",
-    "seed": "run-p -s \"seed:*\"",
     "seed:doctor": "node src/seeders/doctor.seeder.js",
+    "seed:patient": "node src/seeders/patient.seeder.js",
     "seed:consultation": "node src/seeders/consultation.seeder.js"
   },
   "dependencies": {

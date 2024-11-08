@@ -1,29 +1,10 @@
 const httpStatus = require("http-status");
-const { Doctor, User, Consultation } = require("../models");
+const { Doctor, Consultation } = require("../models");
 const ApiError = require("../utils/ApiError");
 const cloudinary = require("cloudinary");
 const mongoose = require("mongoose");
 
-const getUserById = async (id) => {
-  return User.findById(id);
-};
-
 const query = async function (Schema, filter, options) {
-  /**
-   * @typedef {Object} QueryResult
-   * @property {Document[]} results - Results found
-   * @property {number} totalPages - Total number of pages
-   * @property {number} totalResults - Total number of documents
-   */
-  /**
-   * Query for documents with pagination
-   * @param {Object} [filter] - Mongo filter
-   * @param {Object} [options] - Query options
-   * @param {string} [options.sortBy] - Sorting criteria using the format: sortField:(desc|asc). Multiple sorting criteria should be separated by commas (,)
-   * @param {string} [options.populate] - Populate data fields. Hierarchy of fields should be separated by (.). Multiple populating criteria should be separated by commas (,)
-   * @returns {Promise<QueryResult>}
-   */
-
   let sort = "";
   if (options.sortBy) {
     const sortingCriteria = [];
@@ -81,16 +62,15 @@ const query = async function (Schema, filter, options) {
 };
 
 const getAllDoctors = async (filter, options) => {
-  const doctors = await query(Doctor, filter, options);
-  return doctors;
+  return await query(Doctor, filter, options);
 };
 
-const updateDoctor = async (doctorId, updateBody) => {
-  const doctor = await getUserById(doctorId);
+const updateDoctor = async (id, body) => {
+  const doctor = await Doctor.findById(id);
   if (!doctor) {
     throw new ApiError(httpStatus.NOT_FOUND, "Doctor not found");
   }
-  Object.assign(doctor, updateBody);
+  Object.assign(doctor, body);
   await doctor.save();
   return doctor;
 };
@@ -107,14 +87,14 @@ const uploadProfilePicture = async (image) => {
   };
 };
 
-const getDoctorById = async (id) => {
+const getDoctor = async (id) => {
   return Doctor.findById(id);
 };
 
-const getDoctorPatientsCount = async (doctorId) => {
+const getDoctorPatientsCount = async (id) => {
   const match = {
     $match: {
-      doctor: new mongoose.Types.ObjectId(doctorId),
+      doctor: new mongoose.Types.ObjectId(id),
       status: { $in: ["completed"] },
     },
   };
@@ -142,6 +122,6 @@ module.exports = {
   updateDoctor,
   uploadProfilePicture,
   getAllDoctors,
-  getDoctorById,
+  getDoctor,
   getDoctorPatientsCount,
 };

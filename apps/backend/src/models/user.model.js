@@ -17,10 +17,35 @@ const userSchema = new mongoose.Schema(
       },
     },
     firstName: String,
+    lastName: String,
+    age: {
+      type: Number,
+      min: [18, "Age must be greater than 17"],
+      max: [100, "Age cannot exceed 100"],
+    },
+    phone: {
+      type: String,
+      unique: true,
+      match: [
+        /^[0-9]*$/,
+        "Please enter a valid phone number with an optional leading + sign.",
+      ],
+    },
+    address: String,
+    city: String,
+    zip: {
+      type: Number,
+      match: [
+        /^[0-9]+$/,
+        "Please enter a valid zip code which contains only numbers",
+      ],
+      minlength: 5,
+      maxlength: 5,
+    },
     role: {
       type: String,
       enum: roles,
-      default: "user",
+      required: true,
     },
   },
   { timestamps: true, discriminatorKey: "role", collection: "users" },

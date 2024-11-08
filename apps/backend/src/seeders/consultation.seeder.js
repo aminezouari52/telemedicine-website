@@ -4,18 +4,9 @@ const config = require("../config/config");
 const logger = require("../config/logger");
 const express = require("express");
 const app = express();
-const { Doctor, Consultation, User } = require("../models");
-const { DateTime } = require("luxon");
+const { Doctor, Consultation, Patient } = require("../models");
 
 const documentNumbers = 20;
-
-function generateRandomNumber() {
-  const countryCode = faker.datatype.boolean() ? "+" : "";
-  const randomNumber = faker.string.numeric(
-    faker.number.int({ min: 8, max: 15 }),
-  );
-  return `${countryCode}${randomNumber}`;
-}
 
 async function seedConsultationCollection() {
   let server;
@@ -30,40 +21,20 @@ async function seedConsultationCollection() {
         let consultations = [];
 
         const doctors = await Doctor.find();
-        const patients = await User.find();
+        const patients = await Patient.find();
 
         const doctorsIds = doctors.map((doctor) => doctor._id);
-        const patientsIds = patients
-          .map((patient) => {
-            if (patient.role === "patient") {
-              return patient._id;
-            }
-          })
-          .filter((p) => p);
+        const patientsIds = patients.map((patient) => patient._id);
 
         for (let i = 0; i < documentNumbers; i++) {
-          const firstName = faker.person.firstName();
-          const lastName = faker.person.lastName();
           const doctorIndex = Math.floor(Math.random() * doctorsIds.length);
           const patientIndex = Math.floor(Math.random() * patientsIds.length);
 
           let newConsultation = {
             date: new Date(faker.date.anytime()),
-            firstName,
-            lastName,
-            address: faker.location.streetAddress(true),
-            phone: generateRandomNumber(),
-            age: faker.number.int({ min: 18, max: 100 }).toString(),
-            weight: faker.number.int({ min: 20, max: 150 }).toString(),
-            dateInsurance: DateTime.fromJSDate(faker.date.anytime()).toFormat(
-              "dd-MM-yyyy",
-            ),
+            status: "pending",
             doctor: doctorsIds[doctorIndex],
             patient: patientsIds[patientIndex],
-            type: "type",
-            provider: "provider",
-            police: "police",
-            status: "pending",
           };
 
           consultations.push(newConsultation);

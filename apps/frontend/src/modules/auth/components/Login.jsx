@@ -56,11 +56,8 @@ const Login = () => {
       const res = await createOrUpdateUser({ token: idTokenResult.token });
       dispatch(
         setLoggedInUser({
-          firstName: res.data.firstName,
-          email: res.data.email,
+          ...res.data,
           token: idTokenResult.token,
-          role: res.data.role,
-          _id: res.data._id,
         })
       );
       roleBasedRedirect(res);

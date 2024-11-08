@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 // FUNCTIONS
-import { getDoctorById } from "@/modules/doctor/functions/doctor";
+import { getDoctor } from "@/modules/doctor/functions/doctor";
 
 // STYLE
 import {
@@ -21,13 +21,13 @@ function DoctorDetails() {
   const navigate = useNavigate();
   const [doctor, setDoctor] = useState();
 
-  const getDoctorByIdFunction = async () => {
-    const response = await getDoctorById(params.id);
+  const loadDoctor = async () => {
+    const response = await getDoctor(params.id);
     setDoctor(response.data);
   };
 
   useEffect(() => {
-    getDoctorByIdFunction();
+    loadDoctor();
   }, []);
 
   return (

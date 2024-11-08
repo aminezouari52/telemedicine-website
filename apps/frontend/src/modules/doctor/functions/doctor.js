@@ -27,7 +27,7 @@ export const getAllDoctors = async (filters, options) =>
     `${import.meta.env.VITE_API_V1_URL}/doctor?${filters}&sortBy=${options}`
   );
 
-export const getDoctorById = async (id) =>
+export const getDoctor = async (id) =>
   await axios.get(`${import.meta.env.VITE_API_V1_URL}/doctor/${id}`);
 
 export const getDoctorPatientsCount = async (id) =>

@@ -92,10 +92,7 @@ const General = ({ setIsLoading }) => {
       .max(100, "L'âge ne peut pas dépasser 100 ans"),
     phone: Yup.string()
       .required("Le numéro de téléphone est requis")
-      .matches(
-        /^\+?[1-9]\d{8,15}$/,
-        "Le numéro de téléphone n'nest pas valide"
-      ),
+      .matches(/^[0-9]*$/, "Le numéro de téléphone n'nest pas valide"),
     address: Yup.string()
       .required("L'adresse est requise")
       .max(50, "L'adresse ne peut pas dépasser 50 caractères"),

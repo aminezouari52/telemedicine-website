@@ -3,15 +3,15 @@ const catchAsync = require("../utils/catchAsync");
 const { consultationService } = require("../services");
 const httpStatus = require("http-status");
 
-const updateConsultation = async (req, res, next) => {
-  const consultation = await consultationService.updateConsultationById(
+const updateConsultation = async (req, res) => {
+  const consultation = await consultationService.updateConsultation(
     req.params.id,
     req.body,
   );
   res.json(consultation);
 };
 
-const submitConsultation = async (req, res, next) => {
+const submitConsultation = async (req, res) => {
   res.status(httpStatus.CREATED).send(await new Consultation(req.body).save());
 };
 

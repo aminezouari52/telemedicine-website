@@ -3,32 +3,6 @@ const User = require("./user.model.js");
 
 const doctorSchema = new mongoose.Schema({
   photo: String,
-  firstName: String,
-  lastName: String,
-  age: {
-    type: Number,
-    min: [18, "Age must be greater than 17"],
-    max: [100, "Age cannot exceed 100"],
-  },
-  phone: {
-    type: String,
-    unique: true,
-    match: [
-      /^\+?[1-9]\d{8,15}$/,
-      "Please enter a valid phone number with an optional leading + sign.",
-    ],
-  },
-  address: String,
-  city: String,
-  zip: {
-    type: Number,
-    match: [
-      /^[0-9]+$/,
-      "Please enter a valid zip code which contains only numbers",
-    ],
-    minlength: 5,
-    maxlength: 5,
-  },
   description: String,
   hospital: {
     type: String,
