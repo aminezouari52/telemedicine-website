@@ -14,7 +14,7 @@ import DatePicker, { registerLocale } from "react-datepicker";
 import { fr } from "date-fns/locale/fr"; // without this line it didn't work
 registerLocale("fr", fr);
 
-const DateStep = ({ nextForm }) => {
+const DateStep = ({ goToNext, goToPrevious }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const { values, setFieldValue } = useFormikContext();
 
@@ -75,7 +75,18 @@ const DateStep = ({ nextForm }) => {
         <Flex justifyContent="end">
           <Button
             size="sm"
-            onClick={() => nextForm(values)}
+            variant="ghost"
+            color="#000"
+            _hover={{
+              opacity: 0.8,
+            }}
+            onClick={goToPrevious}
+          >
+            Précédent
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => goToNext(values)}
             colorScheme="secondary"
             _hover={{
               opacity: 0.8,

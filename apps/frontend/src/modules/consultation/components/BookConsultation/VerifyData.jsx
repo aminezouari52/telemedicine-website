@@ -64,38 +64,24 @@ const VerifyData = ({ isOpen, onClose }) => {
                   {values?.address}
                 </Text>
                 <Text mr={2}>
+                  <strong>Ville: </strong>
+                  {values?.city}
+                </Text>
+                <Text mr={2}>
+                  <strong>Code postal: </strong>
+                  {values?.zip}
+                </Text>
+                <Text mr={2}>
                   <strong> Téléphone:</strong> {values?.phone}
                 </Text>
                 <Text mr={2}>
                   <strong> Age:</strong> {values?.age}
                 </Text>
-                <Text mr={2}>
-                  <strong> Poids:</strong> {values?.weight}
-                </Text>
-                <Text mr={2}>
-                  <strong>Docteur: </strong>
-                  {values?.doctor}
-                </Text>
-                <Text mr={2}>
-                  <strong>Type d'assurance: </strong>
-                  {values?.type}
-                </Text>
-                <Text mr={2}>
-                  <strong>Date d'assurance: </strong>
-                  {values?.dateInsurance
-                    ? DateTime.fromJSDate(
-                        new Date(values?.dateInsurance)
-                      ).toFormat("dd-MM-yyyy")
-                    : null}
-                </Text>
-                <Text mr={2}>
-                  <strong>Fournisseur: </strong>
-                  {values?.provider}
-                </Text>
-                <Text mr={2}>
-                  <strong>Numéro de police: </strong>
-                  {values?.police}
-                </Text>
+                {values?.weight && (
+                  <Text mr={2}>
+                    <strong> Poids:</strong> {values?.weight}
+                  </Text>
+                )}
               </Stack>
             </ModalBody>
             <ModalFooter>

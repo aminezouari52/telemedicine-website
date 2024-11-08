@@ -11,9 +11,8 @@ import * as Yup from "yup";
 
 // COMPONENTS
 import VerifyData from "./VerifyData";
-import DateStep from "./forms/Date";
-import ContactInfo from "./forms/ContactInfo";
-import OtherInformation from "./forms/OtherInformation";
+import DateStep from "./forms/DateStep";
+import PorfileInfo from "./forms/PorfileInfo";
 import { Formik, Form } from "formik";
 
 // STYLE
@@ -32,11 +31,7 @@ import {
   StepNumber,
 } from "@chakra-ui/react";
 
-const steps = [
-  { title: "Date et l'heure" },
-  { title: "Informations de contact" },
-  { title: "Assurance" },
-];
+const steps = [{ title: "Informations de Profil" }, { title: "Date et Heure" }];
 
 const Consultation = () => {
   const user = useSelector((state) => state.user.loggedInUser);
@@ -52,14 +47,6 @@ const Consultation = () => {
   useEffect(() => {
     loadDoctor();
   }, []);
-
-  // FORMS METHODS
-  const prevFormHandler = () => {
-    goToPrevious();
-  };
-  const nextFormHandler = () => {
-    goToNext();
-  };
 
   const { activeStep, goToNext, goToPrevious } = useSteps({
     index: 0,
@@ -80,12 +67,10 @@ const Consultation = () => {
           lastName: "",
           address: "",
           phone: "",
-          age: "",
+          age: 0,
+          city: "",
+          zip: "",
           weight: "",
-          type: "",
-          dateInsurance: "",
-          provider: "",
-          police: "",
           patient: user?._id,
           doctor: params?.id,
         }}
@@ -93,13 +78,31 @@ const Consultation = () => {
           date: Yup.string().required("La date est requis"),
           firstName: Yup.string().required("Le prenom est requis").trim(),
           lastName: Yup.string().required("Le nom est requis").trim(),
+          age: Yup.number()
+            .required("L'âge est requis")
+            .min(18, "Vous devez avoir au moins 18 ans")
+            .max(100, "L'âge ne peut pas dépasser 100 ans"),
           phone: Yup.string()
             .required("Le numéro de téléphone est requis")
             .trim()
             .matches(/^[0-9]*$/, "Le numéro de téléphone n'nest pas valide"),
+          address: Yup.string()
+            .required("L'adresse est requise")
+            .max(50, "L'adresse ne peut pas dépasser 50 caractères"),
+          city: Yup.string()
+            .required("La ville est requise")
+            .max(50, "La ville ne peut pas dépasser 50 caractères"),
+          zip: Yup.string()
+            .required("Le code postal est requis")
+            .matches(/^[0-9]+$/, "Le code postal doit être un nombre")
+            .min(4, "Le code postal doit comporter au moins 4 chiffres")
+            .max(5, "Le code postal ne peut pas dépasser 5 chiffres"),
         })}
         onSubmit={async (values) => {
-          await createConsultation(values);
+          // TODO:
+          // 1. update patient
+          // 2. create consultation
+          // await createConsultation(values);
         }}
       >
         <Form>
@@ -141,19 +144,13 @@ const Consultation = () => {
                 </Box>
               </Flex>
             </Flex>
-            <Flex w="90%">
+            <Flex w="90%" justifyContent="center">
               {activeStep === 0 ? (
-                <DateStep nextForm={nextFormHandler} />
-              ) : activeStep === 1 ? (
-                <ContactInfo
-                  nextForm={nextFormHandler}
-                  prevForm={prevFormHandler}
-                />
+                <PorfileInfo goToNext={goToNext} goToPrevious={goToPrevious} />
               ) : (
-                <OtherInformation
-                  nextForm={nextFormHandler}
-                  prevForm={prevFormHandler}
-                />
+                activeStep === 1 && (
+                  <DateStep goToNext={goToNext} goToPrevious={goToPrevious} />
+                )
               )}
             </Flex>
           </Flex>
