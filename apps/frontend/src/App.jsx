@@ -15,17 +15,17 @@ import Home from "@/components/Home";
 import Login from "@/modules/auth/components/Login";
 import Register from "@/modules/auth/components/Register";
 import ForgotPassword from "@/modules/auth/components/ForgotPassword";
+import DoctorPatients from "@/modules/doctor/components/DoctorPatients.jsx";
+import DoctorHome from "@/modules/doctor/components/DoctorHome";
+import DoctorProfile from "@/modules/doctor/components/DoctorProfile";
+import DoctorConsultations from "@/modules/doctor/components/DoctorConsultations";
 import PatientHome from "@/modules/patient/components/PatientHome";
 import PatientConsultations from "@/modules/patient/components/PatientConsultations";
 import Doctors from "@/modules/patient/components/Doctors";
 import DoctorDetails from "@/modules/patient/components/DoctorDetails";
-import NotFound from "@/components/NotFound";
-import BookConsultation from "@/modules/patient/components/BookConsultation";
-import DoctorHome from "@/modules/doctor/components/DoctorHome";
-import DoctorProfile from "@/modules/doctor/components/DoctorProfile";
-import DoctorConsultations from "@/modules/doctor/components/DoctorConsultations";
-import DoctorPatients from "@/modules/doctor/components/DoctorPatients.jsx";
+import BookConsultation from "@/modules/consultation/components/BookConsultation";
 import VideoCall from "@/modules/consultation/components/VideoCall";
+import NotFound from "@/components/NotFound";
 
 const App = () => {
   const dispatch = useDispatch();
