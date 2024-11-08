@@ -94,44 +94,6 @@ export const PatientHeader = () => {
             Rejoindre
           </Button>
         )}
-        <Menu>
-          <MenuButton
-            size="md"
-            as={IconButton}
-            aria-label="notification"
-            isRound
-            bg="transparent"
-            _hover={{
-              opacity: 0.6,
-            }}
-            _active={{
-              opacity: 0.6,
-            }}
-            icon={
-              <>
-                <FaRegBell />
-                <chakra.span
-                  pos="absolute"
-                  top="10px"
-                  right="10px"
-                  p="4px"
-                  fontSize="xs"
-                  fontWeight="bold"
-                  lineHeight="none"
-                  color="red.100"
-                  transform="translate(50%,-50%)"
-                  bg="red.600"
-                  rounded="full"
-                />
-              </>
-            }
-          ></MenuButton>
-          <MenuList>
-            <MenuItem onClick={() => navigate("/patient/call")}>
-              Vous avez une consultation maintenant
-            </MenuItem>
-          </MenuList>
-        </Menu>
 
         <IconButton
           size="md"
@@ -139,10 +101,10 @@ export const PatientHeader = () => {
           isRound
           bg="transparent"
           _hover={{
-            opacity: 0.6,
+            opacity: 0.8,
           }}
           _active={{
-            opacity: 0.6,
+            opacity: 0.8,
           }}
           onClick={logoutHandler}
           icon={

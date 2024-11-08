@@ -1,7 +1,7 @@
 // HOOKS
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // FUNCTIONS
@@ -30,10 +30,13 @@ import {
 
 // ASSETS
 import { FaRegUser, FaRegBell, FaVideo } from "react-icons/fa";
+import { TbLogout } from "react-icons/tb";
 
 export const DoctorHeader = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+
   const user = useSelector((state) => state.user.loggedInUser);
   const [isProfileCompleted, setIsProfileCompleted] = useState();
   const toast = useToast();
@@ -114,10 +117,10 @@ export const DoctorHeader = () => {
             isRound
             bg="transparent"
             _hover={{
-              opacity: 0.6,
+              opacity: 0.8,
             }}
             _active={{
-              opacity: 0.6,
+              opacity: 0.8,
             }}
             icon={
               <>
@@ -151,28 +154,50 @@ export const DoctorHeader = () => {
           </MenuList>
         </Menu>
 
-        <Menu size="xs">
-          <MenuButton
-            size="md"
-            as={IconButton}
-            aria-label="toggle profile menu"
-            isRound
-            bg="transparent"
-            _hover={{
-              opacity: 0.6,
-            }}
-            _active={{
-              opacity: 0.6,
-            }}
-            icon={<FaRegUser />}
-          ></MenuButton>
-          <MenuList>
-            <MenuItem onClick={() => navigate("/doctor/profile")}>
-              Profil
-            </MenuItem>
-            <MenuItem onClick={logoutHandler}>Déconnecter</MenuItem>
-          </MenuList>
-        </Menu>
+        <IconButton
+          size="md"
+          aria-label="logout"
+          isRound
+          bg="transparent"
+          _hover={{
+            opacity: 0.8,
+          }}
+          _active={{
+            bg: "transparent",
+          }}
+          onClick={() => navigate("/doctor/profile")}
+          icon={
+            <FaRegUser
+              style={{
+                color:
+                  location.pathname === "/doctor/profile" &&
+                  "var(--chakra-colors-primary-500)",
+              }}
+            />
+          }
+        />
+
+        <IconButton
+          size="md"
+          icon={
+            <TbLogout
+              style={{
+                height: "20px",
+                width: "20px",
+              }}
+            />
+          }
+          isRound
+          aria-label="logout"
+          bg="transparent"
+          _active={{
+            bg: "transparent",
+          }}
+          _hover={{
+            opacity: 0.8,
+          }}
+          onClick={logoutHandler}
+        />
       </Flex>
     </SimpleGrid>
   );

@@ -12,7 +12,7 @@ const Logo = () => {
       w="210px"
       cursor="pointer"
       _hover={{
-        opacity: 0.7,
+        opacity: 0.8,
       }}
       onClick={() => navigate("/")}
     />

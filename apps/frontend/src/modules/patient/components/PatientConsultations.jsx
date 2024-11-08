@@ -31,13 +31,16 @@ const PatientConsultations = () => {
   const user = useSelector((state) => state.user.loggedInUser);
   const [consultations, setConsultations] = useState([]);
 
+  const loadConsultations = async () => {
+    const consultationsData = (await getPatientConsultations(user?._id)).data;
+    setConsultations(consultationsData.filter((c) => c.status === "pending"));
+  };
+
   useEffect(() => {
-    const getPatientConsultationsFunction = async () => {
-      const response = await getPatientConsultations(user?._id);
-      setConsultations(response.data);
-    };
-    getPatientConsultationsFunction();
-  }, []);
+    if (user) {
+      loadConsultations();
+    }
+  }, [user]);
 
   const sortedUpcomingConsultations = () => {
     return consultations?.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -48,9 +51,6 @@ const PatientConsultations = () => {
       <Box w="40%">
         <Flex gap={4} mb={6} alignItems="center" justifyContent="space-between">
           <Heading size="md">Consultations à venir</Heading>
-          <Button size="xs" colorScheme="secondary" _hover={{ opacity: "0.5" }}>
-            Voir tous
-          </Button>
         </Flex>
         <Flex direction="column" gap={6}>
           {sortedUpcomingConsultations()
@@ -110,21 +110,20 @@ const PatientConsultations = () => {
       <Box w="50%">
         <Flex gap={4} mb={6} alignItems="center" justifyContent="space-between">
           <Heading size="md">Dossier médical</Heading>
-          <Button size="xs" colorScheme="secondary" _hover={{ opacity: "0.5" }}>
-            Voir details
-          </Button>
         </Flex>
         <Card>
           <CardBody>
             <Flex justifyContent="space-between" pb={4} gap={4}>
               <Flex flexDirection="column" gap={2}>
                 <Text fontWeight="bold">
-                  {sortedUpcomingConsultations()[0]?.firstName}{" "}
-                  {sortedUpcomingConsultations()[0]?.lastName}
+                  {sortedUpcomingConsultations()[0]?.patient?.firstName}{" "}
+                  {sortedUpcomingConsultations()[0]?.patient?.lastName}
                 </Text>
                 <Flex alignItems="center" gap={2}>
                   <Icon as={FaMapPin} color="red.500" />
-                  <Text>{sortedUpcomingConsultations()[0]?.address}</Text>
+                  <Text>
+                    {sortedUpcomingConsultations()[0]?.patient?.address}
+                  </Text>
                 </Flex>
               </Flex>
               <Divider ml={6} orientation="vertical" />
@@ -161,14 +160,15 @@ const PatientConsultations = () => {
               <UnorderedList fontSize="smaller" p={2}>
                 <ListItem>
                   <strong>Téléphone:</strong>{" "}
-                  {sortedUpcomingConsultations()[0]?.phone}
+                  {sortedUpcomingConsultations()[0]?.patient?.phone}
                 </ListItem>
                 <ListItem>
-                  <strong>Age:</strong> {sortedUpcomingConsultations()[0]?.age}
+                  <strong>Age:</strong>{" "}
+                  {sortedUpcomingConsultations()[0]?.patient?.age}
                 </ListItem>
                 <ListItem>
                   <strong>Poids: </strong>
-                  {sortedUpcomingConsultations()[0]?.weight}kg
+                  {sortedUpcomingConsultations()[0]?.patient?.weight}kg
                 </ListItem>
               </UnorderedList>
             </Box>

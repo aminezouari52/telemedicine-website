@@ -39,12 +39,12 @@ const DoctorHome = () => {
     });
   };
 
-  const loadConsultations = async (user) => {
+  const loadConsultations = async () => {
     const consultationsData = (await getDoctorConsultations(user?._id)).data;
     setConsultations(consultationsData);
   };
 
-  const loadDoctor = async (user) => {
+  const loadDoctor = async () => {
     const patientsCount = (await getDoctorPatientsCount(user._id)).data
       .patientsCount;
     setDoctor({ ...user, patientsCount });
@@ -93,7 +93,7 @@ const DoctorHome = () => {
               Nombre total des patiens
             </Text>
             <Text textAlign="center" p={4}>
-              {doctor?.patientsCount} Patietns
+              {doctor?.patientsCount} Patients
             </Text>
           </CardBody>
         </Card>

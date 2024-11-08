@@ -23,7 +23,7 @@ import NotFound from "@/components/NotFound";
 import BookConsultation from "@/modules/patient/components/BookConsultation";
 import DoctorHome from "@/modules/doctor/components/DoctorHome";
 import DoctorProfile from "@/modules/doctor/components/DoctorProfile";
-import DoctorConsultations from "@/modules/doctor/components/DoctorConsultations.jsx";
+import DoctorConsultations from "@/modules/doctor/components/DoctorConsultations";
 import DoctorPatients from "@/modules/doctor/components/DoctorPatients.jsx";
 import VideoCall from "@/modules/consultation/components/VideoCall";
 

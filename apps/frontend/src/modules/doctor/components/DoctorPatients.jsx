@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 
 // FUNCTIONS
 import { getDoctorConsultations } from "@/modules/consultation/functions/consultation";
+import { DateTime } from "luxon";
 
 // STYLE
 import {
@@ -20,45 +21,52 @@ const DoctorPatients = () => {
   const [consultations, setConsultations] = useState([]);
   const user = useSelector((state) => state.user.loggedInUser);
 
-  const fetchData = async () => {
-    if (user) {
-      const consultationsData = (await getDoctorConsultations(user?._id)).data;
-      setConsultations(consultationsData);
-    }
+  const loadConsultations = async () => {
+    const consultationsData = (await getDoctorConsultations(user?._id)).data;
+    setConsultations(consultationsData);
   };
 
   useEffect(() => {
-    fetchData();
+    if (user) {
+      loadConsultations();
+    }
   }, [user]);
 
-  const uniquePatients = consultations?.filter(
-    (obj, index, self) =>
-      index === self.findIndex((o) => o.patient?._id === obj.patient?._id)
+  const uniquePatientConsultations = consultations?.filter(
+    (consultation, index, self) =>
+      index ===
+      self.findIndex((c) => c.patient?._id === consultation.patient?._id)
   );
 
   return (
     <Box mx={6} mt={5}>
-      {!uniquePatients?.length && <Text>Vous n'avez pas de patients</Text>}
-      <SimpleGrid color="white" columns={4} gap={4}>
-        {uniquePatients?.map((patient, index) => {
+      {!uniquePatientConsultations?.length && (
+        <Text>Vous n'avez pas de patients</Text>
+      )}
+      <SimpleGrid color="#fff" columns={4} gap={4}>
+        {uniquePatientConsultations?.map((consultation, index) => {
           return (
             <Card key={index}>
               <CardBody>
                 <Stack>
                   <Heading size="md">
-                    {patient.firstName} {patient.lastName}
+                    {consultation?.patient.firstName}{" "}
+                    {consultation?.patient.lastName}
                   </Heading>
                   <Text>
                     <strong>Téléphone: </strong>
-                    {patient.phone}
+                    {consultation?.patient.phone}
                   </Text>
                   <Text>
                     <strong>age: </strong>
-                    {patient.age}
+                    {consultation?.patient.age}
                   </Text>
                   <Text>
                     <strong>Créer le: </strong>
-                    {patient.createdAt}
+                    {DateTime.fromJSDate(
+                      new Date(consultation?.createdAt)
+                    ).toFormat("dd-MM-yyyy 'à' HH:mm")}
+                    {}
                   </Text>
                 </Stack>
               </CardBody>
