@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 // FUNCTIONS
-import { getDoctorConsultations } from "@/modules/doctor/functions/doctor";
+import { getDoctorConsultations } from "@/modules/consultation/functions/consultation";
 import { DateTime } from "luxon";
 
 // STYLE

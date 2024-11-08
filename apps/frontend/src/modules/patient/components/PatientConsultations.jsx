@@ -20,7 +20,7 @@ import {
 
 // FUNCTIONS
 import { useSelector } from "react-redux";
-import { getPatientConsultations } from "@/modules/patient/functions/patient";
+import { getPatientConsultations } from "@/modules/consultation/functions/consultation";
 import { DateTime } from "luxon";
 
 // ASSETS

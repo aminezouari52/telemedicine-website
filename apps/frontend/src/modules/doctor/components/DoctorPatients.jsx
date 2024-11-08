@@ -1,17 +1,15 @@
 // HOOKS
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // FUNCTIONS
-import { getDoctorConsultations } from "@/modules/doctor/functions/doctor";
+import { getDoctorConsultations } from "@/modules/consultation/functions/consultation";
 
 // STYLE
 import {
   Box,
   Card,
   CardBody,
-  Divider,
   Heading,
   SimpleGrid,
   Stack,

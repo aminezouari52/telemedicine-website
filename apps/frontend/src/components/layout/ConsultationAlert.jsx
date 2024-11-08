@@ -7,8 +7,10 @@ import { setLoggedInUser } from "@/reducers/userReducer";
 
 // FUNCTIONS
 import { socket } from "@/socket";
-import { getPatientConsultations } from "@/modules/patient/functions/patient";
-import { getDoctorConsultations } from "@/modules/doctor/functions/doctor";
+import {
+  getDoctorConsultations,
+  getPatientConsultations,
+} from "@/modules/consultation/functions/consultation";
 
 // STYLE
 import {

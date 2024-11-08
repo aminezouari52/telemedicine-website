@@ -4,10 +4,8 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 // FUNCTIONS
-import {
-  getDoctorPatientsCount,
-  getDoctorConsultations,
-} from "@/modules/doctor/functions/doctor";
+import { getDoctorPatientsCount } from "@/modules/doctor/functions/doctor";
+import { getDoctorConsultations } from "@/modules/consultation/functions/consultation";
 
 // STYLE
 import {

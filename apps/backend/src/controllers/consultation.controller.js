@@ -11,7 +11,7 @@ const updateConsultation = async (req, res) => {
   res.json(consultation);
 };
 
-const submitConsultation = async (req, res) => {
+const createConsultation = async (req, res) => {
   res.status(httpStatus.CREATED).send(await new Consultation(req.body).save());
 };
 
@@ -35,7 +35,7 @@ const getConsultation = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-  submitConsultation,
+  createConsultation,
   getPatientConsultations,
   updateConsultation,
   getDoctorConsultations,

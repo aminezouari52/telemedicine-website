@@ -6,7 +6,7 @@ const router = express.Router();
 const consultationController = require("../../controllers/consultation.controller");
 
 // routes
-router.route("/").post(consultationController.submitConsultation);
+router.route("/").post(consultationController.createConsultation);
 
 router
   .route("/:id")

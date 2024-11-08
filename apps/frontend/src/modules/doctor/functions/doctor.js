@@ -32,8 +32,3 @@ export const getDoctor = async (id) =>
 
 export const getDoctorPatientsCount = async (id) =>
   await axios.get(`${import.meta.env.VITE_API_V1_URL}/doctor/patients/${id}`);
-
-export const getDoctorConsultations = async (id) =>
-  await axios.get(
-    `${import.meta.env.VITE_API_V1_URL}/consultation/doctor/${id}`
-  );

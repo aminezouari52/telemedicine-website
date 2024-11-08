@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useSteps } from "chakra-ui-steps";
 
 // FUNCTIONS
-import { submitConsultation } from "@/modules/patient/functions/patient";
+import { createConsultation } from "@/modules/consultation/functions/consultation";
 import { getDoctor } from "@/modules/doctor/functions/doctor";
 import { useSelector } from "react-redux";
 import * as Yup from "yup";
@@ -85,7 +85,7 @@ const Consultation = () => {
             .matches(/^[0-9]*$/, "Le numéro de téléphone n'nest pas valide"),
         })}
         onSubmit={async (values) => {
-          await submitConsultation(values);
+          await createConsultation(values);
         }}
       >
         <Form>
