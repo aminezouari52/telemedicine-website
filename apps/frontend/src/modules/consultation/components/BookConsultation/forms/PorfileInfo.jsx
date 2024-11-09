@@ -111,6 +111,7 @@ const PorfileInfo = ({ goToNext }) => {
         <Flex>
           <InputField
             label="Age"
+            type="number"
             name="age"
             placeholder="Votre age"
             borderRadius="0px"

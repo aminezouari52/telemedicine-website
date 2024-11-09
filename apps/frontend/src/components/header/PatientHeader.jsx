@@ -13,22 +13,11 @@ import HeaderButton from "./HeaderButton";
 import Logo from "@/components/Logo";
 
 // STYLE
-import {
-  Flex,
-  Text,
-  IconButton,
-  SimpleGrid,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  chakra,
-  Button,
-} from "@chakra-ui/react";
+import { Flex, Text, IconButton, SimpleGrid, Button } from "@chakra-ui/react";
 
 // ASSETS
 
-import { FaRegBell, FaVideo } from "react-icons/fa";
+import { FaVideo } from "react-icons/fa";
 import { TbLogout } from "react-icons/tb";
 
 export const PatientHeader = () => {
@@ -57,13 +46,14 @@ export const PatientHeader = () => {
     <SimpleGrid
       as="header"
       columns={3}
-      background="#fff"
-      w="100%"
-      alignItems="center"
-      px="56px"
-      shadow="md"
       pos="sticky"
       top="0"
+      background="#fff"
+      alignItems="center"
+      h="62px"
+      w="100%"
+      px="56px"
+      shadow="md"
       zIndex="5"
     >
       <Logo />

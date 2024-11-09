@@ -71,13 +71,14 @@ export const DoctorHeader = () => {
     <SimpleGrid
       as="header"
       columns={3}
-      background="#fff"
-      w="100%"
-      alignItems="center"
-      px="56px"
-      shadow="md"
       pos="sticky"
       top="0"
+      background="#fff"
+      alignItems="center"
+      h="62px"
+      w="100%"
+      px="56px"
+      shadow="md"
       zIndex="5"
     >
       <Logo />

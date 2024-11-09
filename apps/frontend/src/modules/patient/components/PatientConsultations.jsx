@@ -53,57 +53,53 @@ const PatientConsultations = () => {
           <Heading size="md">Consultations à venir</Heading>
         </Flex>
         <Flex direction="column" gap={6}>
-          {sortedUpcomingConsultations()
-            ?.slice(0, 2)
-            ?.map((consultation) => (
-              <Card key={consultation._id}>
-                <CardBody>
-                  <Flex p={4} gap={4}>
-                    <Avatar
-                      size="lg"
-                      name="Segun Adebayo"
-                      src={consultation?.doctor?.photo}
-                    />
-                    <Flex flexDirection="column">
-                      <Text fontWeight="bold">
-                        Dr. {consultation?.doctor?.firstName}{" "}
-                        {consultation?.doctor?.lastName}
-                      </Text>
-                      <Text color="gray">
-                        {consultation?.doctor?.specialty}
-                      </Text>
-                      <Flex gap={2}>
-                        <Icon as={FaMapPin} color="red.500" />
-                        <Text>{consultation?.doctor?.hospital}</Text>
-                      </Flex>
+          {sortedUpcomingConsultations()?.map((consultation) => (
+            <Card key={consultation._id}>
+              <CardBody>
+                <Flex p={4} gap={4}>
+                  <Avatar
+                    size="lg"
+                    name="Segun Adebayo"
+                    src={consultation?.doctor?.photo}
+                  />
+                  <Flex flexDirection="column">
+                    <Text fontWeight="bold">
+                      Dr. {consultation?.doctor?.firstName}{" "}
+                      {consultation?.doctor?.lastName}
+                    </Text>
+                    <Text color="gray">{consultation?.doctor?.specialty}</Text>
+                    <Flex gap={2}>
+                      <Icon as={FaMapPin} color="red.500" />
+                      <Text>{consultation?.doctor?.hospital}</Text>
                     </Flex>
                   </Flex>
-                </CardBody>
-                <Divider borderColor="gray" />
-                <CardFooter>
-                  <Flex
-                    justifyContent="space-between"
-                    alignItems="center"
-                    w="100%"
-                  >
-                    <Flex alignItems="center" gap="10px">
-                      <Icon as={CalendarIcon} color="gray.500" />
-                      <Flex fontSize="12px" flexDirection="column">
-                        <Text color="gray">Votre consultation</Text>
-                        <Text>
-                          le{" "}
-                          {consultation?.date
-                            ? DateTime.fromJSDate(
-                                new Date(consultation.date)
-                              ).toFormat("dd-MM-yyyy 'à' HH:mm")
-                            : null}
-                        </Text>
-                      </Flex>
+                </Flex>
+              </CardBody>
+              <Divider borderColor="gray" />
+              <CardFooter>
+                <Flex
+                  justifyContent="space-between"
+                  alignItems="center"
+                  w="100%"
+                >
+                  <Flex alignItems="center" gap="10px">
+                    <Icon as={CalendarIcon} color="gray.500" />
+                    <Flex fontSize="12px" flexDirection="column">
+                      <Text color="gray">Votre consultation</Text>
+                      <Text>
+                        le{" "}
+                        {consultation?.date
+                          ? DateTime.fromJSDate(
+                              new Date(consultation.date)
+                            ).toFormat("dd-MM-yyyy 'à' HH:mm")
+                          : null}
+                      </Text>
                     </Flex>
                   </Flex>
-                </CardFooter>
-              </Card>
-            ))}
+                </Flex>
+              </CardFooter>
+            </Card>
+          ))}
         </Flex>
       </Box>
 

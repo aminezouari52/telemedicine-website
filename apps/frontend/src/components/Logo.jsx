@@ -9,7 +9,7 @@ const Logo = () => {
       src={logo}
       alt="logo"
       h="auto"
-      w="210px"
+      w="180px"
       cursor="pointer"
       _hover={{
         opacity: 0.8,

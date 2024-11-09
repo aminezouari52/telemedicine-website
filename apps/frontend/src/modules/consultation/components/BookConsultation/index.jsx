@@ -2,11 +2,13 @@
 import { useDisclosure, useSteps } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 // FUNCTIONS
 import { createConsultation } from "@/modules/consultation/functions/consultation";
+import { updatePatient } from "../../../patient/functions/patient";
 import { getDoctor } from "@/modules/doctor/functions/doctor";
-import { useSelector } from "react-redux";
+import { setLoggedInUser } from "@/reducers/userReducer";
 import * as Yup from "yup";
 
 // COMPONENTS
@@ -34,6 +36,7 @@ import {
 const steps = [{ title: "Informations de Profil" }, { title: "Date et Heure" }];
 
 const Consultation = () => {
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.loggedInUser);
   const { onClose } = useDisclosure();
   const params = useParams();
@@ -58,21 +61,28 @@ const Consultation = () => {
     goToPrevious();
   };
 
+  useEffect(() => {
+    if (user?.isProfileCompleted) {
+      goToNext();
+    }
+  }, [user]);
+
   return (
     <Flex direction="column" bg="#fff" p={10} w="100%">
       <Formik
         initialValues={{
           date: new Date(),
-          firstName: "",
-          lastName: "",
-          address: "",
-          phone: "",
-          age: 0,
-          city: "",
-          zip: "",
-          weight: "",
+          firstName: user?.firstName ?? "",
+          lastName: user?.lastName ?? "",
+          address: user?.address ?? "",
+          phone: user?.phone ?? "",
+          age: user?.age ?? 0,
+          city: user?.city ?? "",
+          zip: user?.zip ?? "",
+          weight: user?.weight ?? "",
           patient: user?._id,
           doctor: params?.id,
+          isProfileCompleted: true,
         }}
         validationSchema={Yup.object({
           date: Yup.string().required("La date est requis"),
@@ -99,10 +109,15 @@ const Consultation = () => {
             .max(5, "Le code postal ne peut pas dépasser 5 chiffres"),
         })}
         onSubmit={async (values) => {
-          // TODO:
-          // 1. update patient
-          // 2. create consultation
-          // await createConsultation(values);
+          const { date, patient, doctor, ...resValues } = values;
+          await updatePatient({ id: user._id, token: user.token }, resValues);
+          await createConsultation({ date, patient, doctor });
+          dispatch(
+            setLoggedInUser({
+              ...user,
+              ...resValues,
+            })
+          );
         }}
       >
         <Form>

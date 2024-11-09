@@ -42,6 +42,10 @@ const userSchema = new mongoose.Schema(
       minlength: 5,
       maxlength: 5,
     },
+    isProfileCompleted: {
+      type: Boolean,
+      default: false,
+    },
     role: {
       type: String,
       enum: roles,

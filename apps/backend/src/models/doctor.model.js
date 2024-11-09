@@ -45,10 +45,6 @@ const doctorSchema = new mongoose.Schema({
     type: String,
     enum: ["Moins qu'une année", "1 - 5 ans", "+5 ans"],
   },
-  isProfileCompleted: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 const Doctor = User.discriminator("doctor", doctorSchema);
