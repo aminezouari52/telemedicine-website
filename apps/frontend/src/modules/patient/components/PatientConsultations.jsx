@@ -28,7 +28,7 @@ import { CalendarIcon } from "@chakra-ui/icons";
 import { FaMapPin } from "react-icons/fa";
 
 const PatientConsultations = () => {
-  const user = useSelector((state) => state.user.loggedInUser);
+  const user = useSelector((state) => state.userReducer.user);
   const [consultations, setConsultations] = useState([]);
 
   const loadConsultations = async () => {

@@ -2,18 +2,21 @@ const { Consultation } = require("../models");
 const ApiError = require("../utils/ApiError");
 const httpStatus = require("http-status");
 
-const updateConsultation = async (id, body) => {
-  const consultation = await Consultation.findById(id);
-  if (!consultation) {
-    throw new ApiError(httpStatus.NOT_FOUND, "Consultation not found");
-  }
-  Object.assign(consultation, body);
-  await consultation.save();
+const createConsultation = async (body) => {
+  const consultation = await Consultation.create(body);
   return consultation;
 };
 
+const updateConsultation = async (id, body) => {
+  const consultation = await Consultation.findById(id).exec();
+  if (!consultation) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Consultation not found");
+  }
+  return await Consultation.create(body);
+};
+
 const getConsultation = async (id) => {
-  const consultation = await Consultation.findById(id);
+  const consultation = await Consultation.findById(id).exec();
   if (!consultation) {
     throw new ApiError(httpStatus.NOT_FOUND, "Consultation not found");
   }
@@ -35,6 +38,7 @@ const getDoctorConsultations = async (doctorId) => {
 };
 
 module.exports = {
+  createConsultation,
   updateConsultation,
   getPatientConsultations,
   getDoctorConsultations,

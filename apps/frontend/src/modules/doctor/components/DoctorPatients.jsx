@@ -19,7 +19,7 @@ import {
 
 const DoctorPatients = () => {
   const [consultations, setConsultations] = useState([]);
-  const user = useSelector((state) => state.user.loggedInUser);
+  const user = useSelector((state) => state.userReducer.user);
 
   const loadConsultations = async () => {
     const consultationsData = (await getDoctorConsultations(user?._id)).data;

@@ -6,7 +6,7 @@ import { useDisclosure } from "@chakra-ui/react";
 
 // FUNCTIONS
 import { socket } from "@/socket";
-import { setLoggedInUser } from "@/reducers/userReducer";
+import { setUser } from "@/reducers/userReducer";
 import { updateConsultation } from "@/modules/consultation/functions/consultation";
 
 // COMPONENTS
@@ -32,7 +32,7 @@ import {
 import { IoSend } from "react-icons/io5";
 
 const VideoCall = () => {
-  const user = useSelector((state) => state.user.loggedInUser);
+  const user = useSelector((state) => state.userReducer.user);
   const params = useParams();
   const message = useRef();
   const messagesContainer = useRef();
@@ -91,8 +91,8 @@ const VideoCall = () => {
     socket.emit("leaveConsultation", {
       consultationId: params.consultationId,
     });
-    dispatch(setLoggedInUser(restUser));
-    await updateConsultation(params.consultationId, {
+    dispatch(setUser(restUser));
+    await updateConsultation(params.consultationId, user?.token, {
       status: "completed",
     });
     navigate("/");
@@ -101,7 +101,7 @@ const VideoCall = () => {
   const completeConsultation = () => {
     onCloseComplete();
     const { consultationId, ...restUser } = user;
-    dispatch(setLoggedInUser(restUser));
+    dispatch(setUser(restUser));
     navigate("/");
   };
 

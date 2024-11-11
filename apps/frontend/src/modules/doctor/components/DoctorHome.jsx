@@ -26,7 +26,7 @@ const DoctorHome = () => {
   const navigate = useNavigate();
   const [doctor, setDoctor] = useState();
   const [consultations, setConsultations] = useState([]);
-  const user = useSelector((state) => state.user.loggedInUser);
+  const user = useSelector((state) => state.userReducer.user);
 
   const consultationsThisMonth = () => {
     return consultations?.filter((consultation) => {

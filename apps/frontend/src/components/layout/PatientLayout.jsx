@@ -18,7 +18,7 @@ import { Box } from "@chakra-ui/react";
 
 export const PatientLayout = () => {
   const navigate = useNavigate();
-  const user = useSelector((state) => state.user.loggedInUser);
+  const user = useSelector((state) => state.userReducer.user);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

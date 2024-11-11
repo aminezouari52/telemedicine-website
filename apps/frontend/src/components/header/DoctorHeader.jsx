@@ -37,7 +37,7 @@ export const DoctorHeader = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const user = useSelector((state) => state.user.loggedInUser);
+  const user = useSelector((state) => state.userReducer.user);
   const [isProfileCompleted, setIsProfileCompleted] = useState();
   const toast = useToast();
 

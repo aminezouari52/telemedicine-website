@@ -22,7 +22,7 @@ const videoStyle = {
 };
 
 const Home = () => {
-  const loggedInUser = useSelector((state) => state.user.loggedInUser);
+  const user = useSelector((state) => state.userReducer.user);
   const navigate = useNavigate();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
@@ -33,16 +33,16 @@ const Home = () => {
     if (intended) {
       return;
     } else {
-      if (loggedInUser && loggedInUser.token) {
-        if (loggedInUser.role === "doctor") {
+      if (user && user.token) {
+        if (user.role === "doctor") {
           navigate("/doctor");
-        } else if (loggedInUser.role === "patient") {
+        } else if (user.role === "patient") {
           navigate("/patient");
         }
       }
       setIsLoading(false);
     }
-  }, [loggedInUser, navigate, location]);
+  }, [user, navigate, location]);
 
   return isLoading ? (
     <Spinner />

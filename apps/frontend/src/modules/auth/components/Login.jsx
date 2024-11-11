@@ -10,7 +10,7 @@ import { useDispatch } from "react-redux";
 
 // FUNCTIONS
 import { createOrUpdateUser } from "@/modules/auth/functions/auth";
-import { setLoggedInUser } from "@/reducers/userReducer";
+import { setUser } from "@/reducers/userReducer";
 
 // COMPONENTS
 import { NavLink } from "react-router-dom";
@@ -55,7 +55,7 @@ const Login = () => {
       // create user in database
       const res = await createOrUpdateUser({ token: idTokenResult.token });
       dispatch(
-        setLoggedInUser({
+        setUser({
           ...res.data,
           token: idTokenResult.token,
         })

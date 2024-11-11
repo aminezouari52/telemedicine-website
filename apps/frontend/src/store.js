@@ -4,8 +4,8 @@ import searchReducer from "@/reducers/searchReducer";
 
 export const store = configureStore({
   reducer: {
-    user: userReducer,
-    search: searchReducer,
+    userReducer,
+    searchReducer,
   },
   devTools: import.meta.env.VITE_NODE_ENV !== "production",
 });

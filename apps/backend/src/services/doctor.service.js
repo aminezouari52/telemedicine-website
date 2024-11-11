@@ -65,13 +65,19 @@ const getAllDoctors = async (filter, options) => {
   return await query(Doctor, filter, options);
 };
 
-const updateDoctor = async (id, body) => {
-  const doctor = await Doctor.findById(id);
+const getDoctor = async (id) => {
+  const doctor = Doctor.findById(id).exec();
   if (!doctor) {
     throw new ApiError(httpStatus.NOT_FOUND, "Doctor not found");
   }
-  Object.assign(doctor, body);
-  await doctor.save();
+  return doctor;
+};
+
+const updateDoctor = async (id, body) => {
+  const doctor = await Doctor.findByIdAndUpdate(id, body, { new: true }).exec();
+  if (!doctor) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Doctor not found");
+  }
   return doctor;
 };
 
@@ -85,10 +91,6 @@ const uploadProfilePicture = async (image) => {
     public_id: result.public_id,
     url: result.secure_url,
   };
-};
-
-const getDoctor = async (id) => {
-  return Doctor.findById(id);
 };
 
 const getDoctorPatientsCount = async (id) => {
@@ -113,15 +115,15 @@ const getDoctorPatientsCount = async (id) => {
     match,
     group,
     count,
-  ]);
+  ]).exec();
 
   return uniquePatientCount[0]?.uniquePatientCount || 0;
 };
 
 module.exports = {
-  updateDoctor,
-  uploadProfilePicture,
   getAllDoctors,
   getDoctor,
+  updateDoctor,
+  uploadProfilePicture,
   getDoctorPatientsCount,
 };

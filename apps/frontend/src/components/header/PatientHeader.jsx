@@ -24,7 +24,7 @@ export const PatientHeader = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const toast = useToast();
-  const user = useSelector((state) => state.user.loggedInUser);
+  const user = useSelector((state) => state.userReducer.user);
 
   const logoutHandler = async () => {
     try {

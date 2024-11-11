@@ -19,14 +19,7 @@ const DateStep = ({ goToNext, goToPrevious }) => {
   const { values, setFieldValue } = useFormikContext();
 
   return (
-    <Flex
-      h="100%"
-      w="100%"
-      direction="column"
-      justifyContent="end"
-      gap={8}
-      px={20}
-    >
+    <Flex h="100%" direction="column" justifyContent="end" gap={8} px={20}>
       <Flex flexDirection="column" w="100%">
         <Heading size="xs" color="gray.600" pb={4}>
           Choisir la date et l'heure

@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDisclosure } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { setLoggedInUser } from "@/reducers/userReducer";
+import { setUser } from "@/reducers/userReducer";
 
 // FUNCTIONS
 import { socket } from "@/socket";
@@ -29,14 +29,14 @@ const ConsultationAlert = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const user = useSelector((state) => state.user.loggedInUser);
+  const user = useSelector((state) => state.userReducer.user);
   const cancelRef = useRef();
 
   const handleStartConsultation = (consultation) => {
     if ([consultation.patientId, consultation.doctorId].includes(user?._id)) {
       onOpen();
       dispatch(
-        setLoggedInUser({
+        setUser({
           ...user,
           consultationId: consultation.consultationId,
         })

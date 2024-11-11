@@ -17,7 +17,7 @@ async function seedPatientCollection() {
       server = app.listen(config.port, async () => {
         logger.info(`Listening to port ${config.port}`);
 
-        await Patient.deleteMany({ role: "patient" });
+        await Patient.deleteMany({ role: "patient" }).exec();
 
         let patients = [];
 

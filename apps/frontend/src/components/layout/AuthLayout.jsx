@@ -19,7 +19,7 @@ export const AuthLayout = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   // REDIRECT USER
-  const user = useSelector((state) => state.user.loggedInUser);
+  const user = useSelector((state) => state.userReducer.user);
   useEffect(() => {
     const intended = location.state;
     if (intended) {

@@ -23,7 +23,7 @@ const Doctors = () => {
   const [specialty, setSpecialty] = useState("");
   const [hospital, setHospital] = useState("");
   const [sortBy, setSortBy] = useState("");
-  const searchText = useSelector((state) => state.search.searchText);
+  const searchText = useSelector((state) => state.searchReducer.searchText);
   const { text } = searchText;
 
   const nextPageHandler = () => {

@@ -9,7 +9,7 @@ import {
 } from "@/modules/doctor/functions/doctor";
 import { debounceFieldValue } from "@/utils";
 import { getCurrentUser } from "@/modules/auth/functions/auth";
-import { setLoggedInUser } from "@/reducers/userReducer";
+import { setUser } from "@/reducers/userReducer";
 import * as Yup from "yup";
 
 // COMPONENTS
@@ -56,7 +56,7 @@ import { AddIcon, CloseIcon } from "@chakra-ui/icons";
 
 const General = ({ setIsLoading }) => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.loggedInUser);
+  const user = useSelector((state) => state.userReducer.user);
   const memoizeDebounceFieldValue = useCallback(debounceFieldValue, []);
   const [currentUser, setCurrentUser] = useState();
   const [imageSrc, setImageSrc] = useState();
@@ -188,7 +188,7 @@ const General = ({ setIsLoading }) => {
           { ...values, photo: imageResponse.data.url, isProfileCompleted: true }
         );
         dispatch(
-          setLoggedInUser({
+          setUser({
             ...user,
             isProfileCompleted: true,
           })

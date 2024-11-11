@@ -80,7 +80,7 @@ async function seedDoctorCollection() {
       server = app.listen(config.port, async () => {
         logger.info(`Listening to port ${config.port}`);
 
-        await Doctor.deleteMany({ role: "doctor" });
+        await Doctor.deleteMany({ role: "doctor" }).exec();
 
         let doctors = [];
 

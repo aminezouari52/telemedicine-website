@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 // FUNCTIONS
-import { setLoggedInUser } from "@/reducers/userReducer";
+import { setUser } from "@/reducers/userReducer";
 import { getCurrentUser } from "@/modules/auth/functions/auth";
 import { auth } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -40,14 +40,12 @@ const App = () => {
             throw new Error("user not found");
           }
 
-          const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+          const storedUser = JSON.parse(localStorage.getItem("user"));
           if (storedUser) {
-            dispatch(
-              setLoggedInUser({ ...storedUser, token: idTokenResult.token })
-            );
+            dispatch(setUser({ ...storedUser, token: idTokenResult.token }));
           } else {
             dispatch(
-              setLoggedInUser({
+              setUser({
                 ...res.data,
                 token: idTokenResult.token,
               })

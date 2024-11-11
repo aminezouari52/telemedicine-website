@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { createConsultation } from "@/modules/consultation/functions/consultation";
 import { updatePatient } from "../../../patient/functions/patient";
 import { getDoctor } from "@/modules/doctor/functions/doctor";
-import { setLoggedInUser } from "@/reducers/userReducer";
+import { setUser } from "@/reducers/userReducer";
 import * as Yup from "yup";
 
 // COMPONENTS
@@ -31,13 +31,14 @@ import {
   StepSeparator,
   StepIcon,
   StepNumber,
+  Image,
 } from "@chakra-ui/react";
 
 const steps = [{ title: "Informations de Profil" }, { title: "Date et Heure" }];
 
 const Consultation = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.loggedInUser);
+  const user = useSelector((state) => state.userReducer.user);
   const { onClose } = useDisclosure();
   const params = useParams();
   const [doctor, setDoctor] = useState();
@@ -113,7 +114,7 @@ const Consultation = () => {
           await updatePatient({ id: user._id, token: user.token }, resValues);
           await createConsultation({ date, patient, doctor });
           dispatch(
-            setLoggedInUser({
+            setUser({
               ...user,
               ...resValues,
             })
@@ -142,12 +143,12 @@ const Consultation = () => {
             <Flex direction="column" w="35%" gap={4}>
               <Heading size="sm">Consultation avec</Heading>
               <Flex direction="column" bg="#fff" w="full">
-                <Box
-                  h={64}
-                  bgSize="cover"
-                  bgImage={`url('${doctor?.photo}')`}
-                  borderRadius="md"
-                ></Box>
+                <Image
+                  src={doctor?.photo}
+                  alt="doctor-image"
+                  borderRadius="lg"
+                  maxHeight="400px"
+                />
                 <Box py={8} maxW="xl">
                   <chakra.h2 fontSize="2xl" color="gray.800" fontWeight="bold">
                     <chakra.span color="primary.600">Dr.</chakra.span>{" "}

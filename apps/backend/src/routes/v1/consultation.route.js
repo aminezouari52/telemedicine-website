@@ -1,16 +1,15 @@
 const express = require("express");
+const authCheck = require("../../middlewares/auth");
 
 const router = express.Router();
 
-// middlewares
 const consultationController = require("../../controllers/consultation.controller");
 
-// routes
 router.route("/").post(consultationController.createConsultation);
 
 router
   .route("/:id")
-  .patch(consultationController.updateConsultation)
+  .patch(authCheck, consultationController.updateConsultation)
   .get(consultationController.getConsultation);
 
 router
