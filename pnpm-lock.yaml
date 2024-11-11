@@ -105,9 +105,6 @@ importers:
       axios:
         specifier: ^1.4.0
         version: 1.7.2
-      chakra-ui-steps:
-        specifier: ^2.1.0
-        version: 2.1.0(@chakra-ui/react@2.8.2)(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(framer-motion@7.10.3)(react@18.3.1)
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
@@ -126,9 +123,6 @@ importers:
       luxon:
         specifier: ^3.5.0
         version: 3.5.0
-      moment:
-        specifier: ^2.29.4
-        version: 2.30.1
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -3394,22 +3388,6 @@ packages:
     dev: false
     optional: true
 
-  /chakra-ui-steps@2.1.0(@chakra-ui/react@2.8.2)(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(framer-motion@7.10.3)(react@18.3.1):
-    resolution: {integrity: sha512-stGaoMP/3xgSee3Qw70Dq+W2c/9Neulkx/N0tTw4BBVnr4rrnDyG2VVB6jLUDf+Oh85wwSpAkLSL28zLx4CN7g==}
-    peerDependencies:
-      '@chakra-ui/react': ^2.0.0
-      '@emotion/react': ^11.4.1
-      '@emotion/styled': ^11.3.0
-      framer-motion: ^7.0.0
-      react: ^18.0.0
-    dependencies:
-      '@chakra-ui/react': 2.8.2(@emotion/react@11.11.4)(@emotion/styled@11.11.5)(framer-motion@7.10.3)(react-dom@18.3.1)(react@18.3.1)
-      '@emotion/react': 11.11.4(react@18.3.1)
-      '@emotion/styled': 11.11.5(@emotion/react@11.11.4)(react@18.3.1)
-      framer-motion: 7.10.3(react-dom@18.3.1)(react@18.3.1)
-      react: 18.3.1
-    dev: false
-
   /chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
     engines: {node: '>=4'}
@@ -5434,10 +5412,6 @@ packages:
     requiresBuild: true
     dev: false
     optional: true
-
-  /moment@2.30.1:
-    resolution: {integrity: sha512-uEmtNhbDOrWPFS+hdjFCBfy9f2YoyzRpwcl+DqpC6taX21FzsTLQVbMV/W7PzNSX6x/bhC1zA3c2UQ5NzH6how==}
-    dev: false
 
   /mongodb-connection-string-url@2.6.0:
     resolution: {integrity: sha512-WvTZlI9ab0QYtTYnuMLgobULWhokRjtC7db9LtcVfJ+Hsnyr5eo6ZtNAt3Ly24XZScGMelOcGtm7lSn0332tPQ==}
