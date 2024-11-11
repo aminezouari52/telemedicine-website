@@ -26,6 +26,7 @@ import DoctorDetails from "@/modules/patient/components/DoctorDetails";
 import BookConsultation from "@/modules/consultation/components/BookConsultation";
 import VideoCall from "@/modules/consultation/components/VideoCall";
 import NotFound from "@/components/NotFound";
+import { getLocalStorage } from "./utils";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -40,17 +41,8 @@ const App = () => {
             throw new Error("user not found");
           }
 
-          const storedUser = JSON.parse(localStorage.getItem("user"));
-          if (storedUser) {
-            dispatch(setUser({ ...storedUser, token: idTokenResult.token }));
-          } else {
-            dispatch(
-              setUser({
-                ...res.data,
-                token: idTokenResult.token,
-              })
-            );
-          }
+          const storedUser = getLocalStorage("user") || res.data;
+          dispatch(setUser({ ...storedUser, token: idTokenResult.token }));
         } catch (err) {
           console.log(err);
         }

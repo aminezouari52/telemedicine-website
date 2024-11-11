@@ -10,7 +10,35 @@ export const validateEmail = (email) => {
   return emailRegex.test(email);
 };
 
-// won't run in SSR
-export const isBrowser = () => {
-  return typeof window !== "undefined";
+export const setLocalStorage = (name, value) => {
+  if (typeof window !== "undefined") {
+    if (localStorage.getItem(name)) {
+      localStorage.setItem(name, JSON.stringify(value));
+    } else {
+      console.log(`${name} item not found`);
+      return false;
+    }
+  }
+};
+
+export const getLocalStorage = (name) => {
+  if (typeof window !== "undefined") {
+    if (localStorage.getItem(name)) {
+      return JSON.parse(localStorage.getItem(name));
+    } else {
+      console.log(`${name} item not found`);
+      return false;
+    }
+  }
+};
+
+export const removeLocalStorage = (name) => {
+  if (typeof window !== "undefined") {
+    if (localStorage.getItem(name)) {
+      localStorage.removeItem(name);
+    } else {
+      console.log(`${name} item not found`);
+      return false;
+    }
+  }
 };
