@@ -9,7 +9,7 @@ This website is dedicated to doctors and patients to book consultations for free
 To build all apps and packages, run the following command:
 
 ```
-cd telemedecin-app
+cd telemedecine-app
 pnpm build
 ```
 
@@ -18,10 +18,12 @@ pnpm build
 To dev all apps and packages, run the following command:
 
 ```
-cd my-turborepo
+cd telemedecine-app
 pnpm dev
 ```
 
-## Add a package
+## Turborepo
+
+### Add a package
 
 pnpm add <package-name> -F <workspace-name>
