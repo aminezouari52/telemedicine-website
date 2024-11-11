@@ -24,7 +24,7 @@ import PatientConsultations from "@/modules/patient/components/PatientConsultati
 import Doctors from "@/modules/patient/components/Doctors";
 import DoctorDetails from "@/modules/patient/components/DoctorDetails";
 import BookConsultation from "@/modules/consultation/components/BookConsultation";
-import VideoCall from "@/modules/consultation/components/VideoCall";
+import Chat from "@/modules/consultation/components/Chat";
 import NotFound from "@/components/NotFound";
 import { getLocalStorage } from "./utils";
 
@@ -80,7 +80,7 @@ const App = () => {
           <Route path="*" element={<Navigate to="/doctor/home" />} />
         </Route>
 
-        <Route path="/:consultationId" element={<VideoCall />} />
+        <Route path="/:consultationId" element={<Chat />} />
 
         <Route path="*" element={<NotFound />} />
 

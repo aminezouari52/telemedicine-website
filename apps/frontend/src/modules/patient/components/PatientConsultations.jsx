@@ -52,6 +52,9 @@ const PatientConsultations = () => {
         <Flex gap={4} mb={6} alignItems="center" justifyContent="space-between">
           <Heading size="md">Consultations à venir</Heading>
         </Flex>
+        {sortedUpcomingConsultations()?.length < 1 && (
+          <Text>Vous n'avez encore de consultations</Text>
+        )}
         <Flex direction="column" gap={6}>
           {sortedUpcomingConsultations()?.map((consultation) => (
             <Card key={consultation._id}>
@@ -107,69 +110,71 @@ const PatientConsultations = () => {
         <Flex gap={4} mb={6} alignItems="center" justifyContent="space-between">
           <Heading size="md">Dossier médical</Heading>
         </Flex>
-        <Card>
-          <CardBody>
-            <Flex justifyContent="space-between" pb={4} gap={4}>
-              <Flex flexDirection="column" gap={2}>
-                <Text fontWeight="bold">
-                  {sortedUpcomingConsultations()[0]?.patient?.firstName}{" "}
-                  {sortedUpcomingConsultations()[0]?.patient?.lastName}
-                </Text>
-                <Flex alignItems="center" gap={2}>
-                  <Icon as={FaMapPin} color="red.500" />
-                  <Text>
-                    {sortedUpcomingConsultations()[0]?.patient?.address}
+        {sortedUpcomingConsultations()?.length > 0 && (
+          <Card>
+            <CardBody>
+              <Flex justifyContent="space-between" pb={4} gap={4}>
+                <Flex flexDirection="column" gap={2}>
+                  <Text fontWeight="bold">
+                    {sortedUpcomingConsultations()[0]?.patient?.firstName}{" "}
+                    {sortedUpcomingConsultations()[0]?.patient?.lastName}
                   </Text>
-                </Flex>
-              </Flex>
-              <Divider ml={6} orientation="vertical" />
-              <Flex alignItems="center" gap="20px">
-                <Flex fontSize="12px" flexDirection="column">
-                  <Flex>
-                    <Text mr={2} color="gray">
-                      Date:{" "}
-                    </Text>
+                  <Flex alignItems="center" gap={2}>
+                    <Icon as={FaMapPin} color="red.500" />
                     <Text>
-                      {DateTime.fromJSDate(
-                        new Date(sortedUpcomingConsultations()[0]?.date)
-                      ).toFormat("dd-MM-yyyy")}
-                    </Text>
-                  </Flex>
-                  <Flex>
-                    <Text mr={2} color="gray">
-                      Heure:{" "}
-                    </Text>
-                    <Text>
-                      {DateTime.fromJSDate(
-                        new Date(sortedUpcomingConsultations()[0]?.date)
-                      ).toFormat("HH:mm")}
+                      {sortedUpcomingConsultations()[0]?.patient?.address}
                     </Text>
                   </Flex>
                 </Flex>
-                <Icon as={CalendarIcon} color="gray.500" />
+                <Divider ml={6} orientation="vertical" />
+                <Flex alignItems="center" gap="20px">
+                  <Flex fontSize="12px" flexDirection="column">
+                    <Flex>
+                      <Text mr={2} color="gray">
+                        Date:{" "}
+                      </Text>
+                      <Text>
+                        {DateTime.fromJSDate(
+                          new Date(sortedUpcomingConsultations()[0]?.date)
+                        ).toFormat("dd-MM-yyyy")}
+                      </Text>
+                    </Flex>
+                    <Flex>
+                      <Text mr={2} color="gray">
+                        Heure:{" "}
+                      </Text>
+                      <Text>
+                        {DateTime.fromJSDate(
+                          new Date(sortedUpcomingConsultations()[0]?.date)
+                        ).toFormat("HH:mm")}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                  <Icon as={CalendarIcon} color="gray.500" />
+                </Flex>
               </Flex>
-            </Flex>
-            <Box>
-              <Text color="gray" fontWeight="bold">
-                Details
-              </Text>
-              <UnorderedList fontSize="smaller" p={2}>
-                <ListItem>
-                  <strong>Téléphone:</strong>{" "}
-                  {sortedUpcomingConsultations()[0]?.patient?.phone}
-                </ListItem>
-                <ListItem>
-                  <strong>Age:</strong>{" "}
-                  {sortedUpcomingConsultations()[0]?.patient?.age}
-                </ListItem>
-                <ListItem>
-                  <strong>Poids: </strong>
-                  {sortedUpcomingConsultations()[0]?.patient?.weight}kg
-                </ListItem>
-              </UnorderedList>
-            </Box>
-          </CardBody>
-        </Card>
+              <Box>
+                <Text color="gray" fontWeight="bold">
+                  Details
+                </Text>
+                <UnorderedList fontSize="smaller" p={2}>
+                  <ListItem>
+                    <strong>Téléphone:</strong>{" "}
+                    {sortedUpcomingConsultations()[0]?.patient?.phone}
+                  </ListItem>
+                  <ListItem>
+                    <strong>Age:</strong>{" "}
+                    {sortedUpcomingConsultations()[0]?.patient?.age}
+                  </ListItem>
+                  <ListItem>
+                    <strong>Poids: </strong>
+                    {sortedUpcomingConsultations()[0]?.patient?.weight}kg
+                  </ListItem>
+                </UnorderedList>
+              </Box>
+            </CardBody>
+          </Card>
+        )}
       </Box>
     </Flex>
   );

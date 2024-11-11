@@ -29,7 +29,8 @@ import {
 } from "@chakra-ui/react";
 
 // ASSETS
-import { FaRegUser, FaRegBell, FaVideo } from "react-icons/fa";
+import { FaRegUser, FaRegBell } from "react-icons/fa";
+import { IoChatboxSharp } from "react-icons/io5";
 import { TbLogout } from "react-icons/tb";
 
 export const DoctorHeader = () => {
@@ -99,7 +100,7 @@ export const DoctorHeader = () => {
           <Button
             size="sm"
             colorScheme="primary"
-            rightIcon={<FaVideo />}
+            rightIcon={<IoChatboxSharp />}
             _hover={{
               opacity: 0.8,
             }}

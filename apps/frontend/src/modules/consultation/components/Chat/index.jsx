@@ -31,7 +31,7 @@ import {
 // ASSETS
 import { IoSend } from "react-icons/io5";
 
-const VideoCall = () => {
+const Chat = () => {
   const user = useSelector((state) => state.userReducer.user);
   const params = useParams();
   const message = useRef();
@@ -200,4 +200,4 @@ const VideoCall = () => {
   );
 };
 
-export default VideoCall;
+export default Chat;

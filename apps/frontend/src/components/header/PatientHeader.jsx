@@ -16,8 +16,7 @@ import Logo from "@/components/Logo";
 import { Flex, Text, IconButton, SimpleGrid, Button } from "@chakra-ui/react";
 
 // ASSETS
-
-import { FaVideo } from "react-icons/fa";
+import { IoChatboxSharp } from "react-icons/io5";
 import { TbLogout } from "react-icons/tb";
 
 export const PatientHeader = () => {
@@ -73,7 +72,7 @@ export const PatientHeader = () => {
           <Button
             size="sm"
             colorScheme="primary"
-            rightIcon={<FaVideo />}
+            rightIcon={<IoChatboxSharp />}
             _hover={{
               opacity: 0.8,
             }}
