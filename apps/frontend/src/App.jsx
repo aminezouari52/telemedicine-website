@@ -40,7 +40,6 @@ const App = () => {
           if (!res.data) {
             throw new Error("user not found");
           }
-
           const storedUser = getLocalStorage("user") || res.data;
           dispatch(setUser({ ...storedUser, token: idTokenResult.token }));
         } catch (err) {

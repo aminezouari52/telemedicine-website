@@ -25,7 +25,6 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      unique: true,
       match: [
         /^[0-9]*$/,
         "Please enter a valid phone number with an optional leading + sign.",

@@ -62,7 +62,7 @@ const DoctorConsultations = () => {
         <Box w="40%">
           <Flex alignItems="center" justifyContent="space-between" py={5}>
             <Heading size="md">Consultations à venir</Heading>
-            {!(consultations?.length > 2) && (
+            {consultations?.length > 2 && (
               <Button
                 size="xs"
                 colorScheme="secondary"
@@ -87,73 +87,77 @@ const DoctorConsultations = () => {
         </Box>
 
         <Box w="50%">
-          <Flex alignItems="center" justifyContent="space-between" py={5}>
-            <Heading size="md">Prôchaine consultation</Heading>
-          </Flex>
-          <Card>
-            <CardBody>
-              <Flex justifyContent="space-between" pb={4} gap={4}>
-                <Flex flexDirection="column" gap={2}>
-                  <Text fontWeight="bold">
-                    {sortedUpcomingConsultations()[0]?.patient?.firstName}{" "}
-                    {sortedUpcomingConsultations()[0]?.patient?.lastName}
-                  </Text>
-                  <Flex alignItems="center" gap={2}>
-                    <Icon as={FaMapPin} color="red.500" />
-                    <Text>
-                      {sortedUpcomingConsultations()[0]?.patient?.address}
-                    </Text>
-                  </Flex>
-                </Flex>
-                <Divider ml={6} orientation="vertical" />
-                <Flex alignItems="center" gap="20px">
-                  <Flex fontSize="12px" flexDirection="column">
-                    <Flex>
-                      <Text mr={2} color="gray">
-                        Date:{" "}
-                      </Text>
-
-                      <Text>
-                        {DateTime.fromJSDate(
-                          new Date(sortedUpcomingConsultations()[0]?.date)
-                        ).toFormat("dd-MM-yyyy")}
-                      </Text>
-                    </Flex>
-                    <Flex>
-                      <Text mr={2} color="gray">
-                        Heure:{" "}
-                      </Text>
-                      <Text>
-                        {DateTime.fromJSDate(
-                          new Date(sortedUpcomingConsultations()[0]?.date)
-                        ).toFormat("HH:mm")}
-                      </Text>
-                    </Flex>
-                  </Flex>
-                  <Icon as={CalendarIcon} color="gray.500" />
-                </Flex>
+          {sortedUpcomingConsultations()?.length !== 0 && (
+            <>
+              <Flex alignItems="center" justifyContent="space-between" py={5}>
+                <Heading size="md">Prôchaine consultation</Heading>
               </Flex>
-              <Box>
-                <Text color="gray" fontWeight="bold">
-                  Details
-                </Text>
-                <UnorderedList fontSize="smaller" p={2}>
-                  <ListItem>
-                    <strong>Téléphone:</strong>{" "}
-                    {sortedUpcomingConsultations()[0]?.patient?.phone}
-                  </ListItem>
-                  <ListItem>
-                    <strong>Age:</strong>{" "}
-                    {sortedUpcomingConsultations()[0]?.patient?.age}
-                  </ListItem>
-                  <ListItem>
-                    <strong>Poids: </strong>
-                    {sortedUpcomingConsultations()[0]?.patient?.weight}kg
-                  </ListItem>
-                </UnorderedList>
-              </Box>
-            </CardBody>
-          </Card>
+              <Card>
+                <CardBody>
+                  <Flex justifyContent="space-between" pb={4} gap={4}>
+                    <Flex flexDirection="column" gap={2}>
+                      <Text fontWeight="bold">
+                        {sortedUpcomingConsultations()[0]?.patient?.firstName}{" "}
+                        {sortedUpcomingConsultations()[0]?.patient?.lastName}
+                      </Text>
+                      <Flex alignItems="center" gap={2}>
+                        <Icon as={FaMapPin} color="red.500" />
+                        <Text>
+                          {sortedUpcomingConsultations()[0]?.patient?.address}
+                        </Text>
+                      </Flex>
+                    </Flex>
+                    <Divider ml={6} orientation="vertical" />
+                    <Flex alignItems="center" gap="20px">
+                      <Flex fontSize="12px" flexDirection="column">
+                        <Flex>
+                          <Text mr={2} color="gray">
+                            Date:{" "}
+                          </Text>
+
+                          <Text>
+                            {DateTime.fromJSDate(
+                              new Date(sortedUpcomingConsultations()[0]?.date)
+                            ).toFormat("dd-MM-yyyy")}
+                          </Text>
+                        </Flex>
+                        <Flex>
+                          <Text mr={2} color="gray">
+                            Heure:{" "}
+                          </Text>
+                          <Text>
+                            {DateTime.fromJSDate(
+                              new Date(sortedUpcomingConsultations()[0]?.date)
+                            ).toFormat("HH:mm")}
+                          </Text>
+                        </Flex>
+                      </Flex>
+                      <Icon as={CalendarIcon} color="gray.500" />
+                    </Flex>
+                  </Flex>
+                  <Box>
+                    <Text color="gray" fontWeight="bold">
+                      Details
+                    </Text>
+                    <UnorderedList fontSize="smaller" p={2}>
+                      <ListItem>
+                        <strong>Téléphone:</strong>{" "}
+                        {sortedUpcomingConsultations()[0]?.patient?.phone}
+                      </ListItem>
+                      <ListItem>
+                        <strong>Age:</strong>{" "}
+                        {sortedUpcomingConsultations()[0]?.patient?.age}
+                      </ListItem>
+                      <ListItem>
+                        <strong>Poids: </strong>
+                        {sortedUpcomingConsultations()[0]?.patient?.weight}kg
+                      </ListItem>
+                    </UnorderedList>
+                  </Box>
+                </CardBody>
+              </Card>
+            </>
+          )}
         </Box>
       </Flex>
     </>

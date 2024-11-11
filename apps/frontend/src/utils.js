@@ -15,7 +15,7 @@ export const setLocalStorage = (name, value) => {
     if (localStorage.getItem(name)) {
       localStorage.setItem(name, JSON.stringify(value));
     } else {
-      console.log(`${name} item not found`);
+      console.log(`localstorage: ${name} item not found`);
       return false;
     }
   }
@@ -26,7 +26,7 @@ export const getLocalStorage = (name) => {
     if (localStorage.getItem(name)) {
       return JSON.parse(localStorage.getItem(name));
     } else {
-      console.log(`${name} item not found`);
+      console.log(`localstorage: ${name} item not found`);
       return false;
     }
   }
@@ -37,7 +37,7 @@ export const removeLocalStorage = (name) => {
     if (localStorage.getItem(name)) {
       localStorage.removeItem(name);
     } else {
-      console.log(`${name} item not found`);
+      console.log(`localstorage: ${name} item not found`);
       return false;
     }
   }
