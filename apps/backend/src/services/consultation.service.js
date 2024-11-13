@@ -8,11 +8,13 @@ const createConsultation = async (body) => {
 };
 
 const updateConsultation = async (id, body) => {
-  const consultation = await Consultation.findById(id).exec();
+  const consultation = await Consultation.findByIdAndUpdate(id, body, {
+    new: true,
+  }).exec();
   if (!consultation) {
     throw new ApiError(httpStatus.NOT_FOUND, "Consultation not found");
   }
-  return await Consultation.create(body);
+  return consultation;
 };
 
 const getConsultation = async (id) => {

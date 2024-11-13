@@ -1,6 +1,7 @@
 // HOOKS
 import { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useToast } from "@chakra-ui/react";
 
 // FUNCTIONS
 import {
@@ -56,6 +57,7 @@ import { AddIcon, CloseIcon } from "@chakra-ui/icons";
 
 const General = ({ setIsLoading }) => {
   const dispatch = useDispatch();
+  const toast = useToast();
   const user = useSelector((state) => state.userReducer.user);
   const memoizeDebounceFieldValue = useCallback(debounceFieldValue, []);
   const [currentUser, setCurrentUser] = useState();
@@ -182,17 +184,43 @@ const General = ({ setIsLoading }) => {
       validationSchema={validationSchema}
       onSubmit={async (values) => {
         setIsLoading(true);
-        const imageResponse = await uploadProfilePicture(user, imageSrc);
-        await updateDoctor(
-          { id: user._id, token: user.token },
-          { ...values, photo: imageResponse.data.url, isProfileCompleted: true }
-        );
-        dispatch(
-          setUser({
-            ...user,
-            isProfileCompleted: true,
-          })
-        );
+        if (!imageSrc || imageSrc === "") {
+          toast({
+            title: "Image non valide",
+            description: "choisir une image valide",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+          setIsLoading(false);
+          return;
+        }
+
+        if (user) {
+          const imageResponse = await uploadProfilePicture(user, imageSrc);
+          await updateDoctor(
+            { id: user._id, token: user.token },
+            {
+              ...values,
+              photo: imageResponse.data.url,
+              isProfileCompleted: true,
+            }
+          );
+          dispatch(
+            setUser({
+              ...user,
+              isProfileCompleted: true,
+            })
+          );
+        } else {
+          toast({
+            title: "Utilisateur non valide",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+          useToast;
+        }
         setIsLoading(false);
       }}
     >
@@ -211,7 +239,7 @@ const General = ({ setIsLoading }) => {
                 Personelles
               </Heading>
               <Text
-                mt={1}
+                my={2}
                 fontSize="sm"
                 color="gray.600"
                 _dark={{
@@ -539,7 +567,7 @@ const General = ({ setIsLoading }) => {
                   Professionnelles
                 </Heading>
                 <Text
-                  mt={1}
+                  my={2}
                   fontSize="sm"
                   color="gray.600"
                   _dark={{
@@ -897,7 +925,7 @@ const General = ({ setIsLoading }) => {
                   Horaire
                 </Heading>
                 <Text
-                  mt={1}
+                  my={2}
                   fontSize="sm"
                   color="gray.600"
                   _dark={{

@@ -30,53 +30,59 @@ const ConsultationAlert = () => {
   const dispatch = useDispatch();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const user = useSelector((state) => state.userReducer.user);
+  const userRef = useRef(user);
   const cancelRef = useRef();
 
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
+
   const handleStartConsultation = (consultation) => {
-    if ([consultation.patientId, consultation.doctorId].includes(user?._id)) {
-      onOpen();
-      dispatch(
-        setUser({
-          ...user,
-          consultationId: consultation.consultationId,
-        })
-      );
+    if (userRef.current) {
+      if (
+        [consultation.patientId, consultation.doctorId].includes(
+          userRef.current?._id
+        )
+      ) {
+        onOpen();
+        dispatch(
+          setUser({
+            ...userRef.current,
+            consultationId: consultation.consultationId,
+          })
+        );
+      }
     }
   };
 
   useEffect(() => {
     socket.on("startConsultation", handleStartConsultation);
-
-    return () => {
-      socket.off("startConsultation", handleStartConsultation);
-    };
+    return () => socket.off("startConsultation", handleStartConsultation);
   }, []);
 
   const fetchConsultation = async () => {
-    if (user) {
-      let consultations = [];
-      if (user.role === "patient") {
-        consultations = await getPatientConsultations(user?._id);
-      }
-      if (user.role === "doctor") {
-        consultations = await getDoctorConsultations(user?._id);
-      }
+    let consultations = [];
+    if (user.role === "patient") {
+      consultations = await getPatientConsultations(user?._id);
+    }
+    if (user.role === "doctor") {
+      consultations = await getDoctorConsultations(user?._id);
+    }
 
-      const inProgressconsultation = consultations.data.find(
-        (c) => c.status === "in-progress"
-      );
+    const inProgressconsultation = consultations.data.find(
+      (c) => c.status === "in-progress"
+    );
 
-      if (
-        inProgressconsultation &&
-        inProgressconsultation?.doctor?._id &&
-        inProgressconsultation?.patient?._id
-      ) {
-        handleStartConsultation({
-          consultationId: inProgressconsultation?._id,
-          doctorId: inProgressconsultation?.doctor?._id,
-          patientId: inProgressconsultation?.patient?._id,
-        });
-      }
+    if (
+      inProgressconsultation &&
+      inProgressconsultation?.doctor?._id &&
+      inProgressconsultation?.patient?._id
+    ) {
+      handleStartConsultation({
+        consultationId: inProgressconsultation?._id,
+        doctorId: inProgressconsultation?.doctor?._id,
+        patientId: inProgressconsultation?.patient?._id,
+      });
     }
   };
 

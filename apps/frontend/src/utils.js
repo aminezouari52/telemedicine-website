@@ -12,33 +12,18 @@ export const validateEmail = (email) => {
 
 export const setLocalStorage = (name, value) => {
   if (typeof window !== "undefined") {
-    if (localStorage.getItem(name)) {
-      localStorage.setItem(name, JSON.stringify(value));
-    } else {
-      console.log(`localstorage: ${name} item not found`);
-      return false;
-    }
+    localStorage.setItem(name, JSON.stringify(value));
   }
 };
 
 export const getLocalStorage = (name) => {
   if (typeof window !== "undefined") {
-    if (localStorage.getItem(name)) {
-      return JSON.parse(localStorage.getItem(name));
-    } else {
-      console.log(`localstorage: ${name} item not found`);
-      return false;
-    }
+    return JSON.parse(localStorage.getItem(name));
   }
 };
 
 export const removeLocalStorage = (name) => {
   if (typeof window !== "undefined") {
-    if (localStorage.getItem(name)) {
-      localStorage.removeItem(name);
-    } else {
-      console.log(`localstorage: ${name} item not found`);
-      return false;
-    }
+    localStorage.removeItem(name);
   }
 };

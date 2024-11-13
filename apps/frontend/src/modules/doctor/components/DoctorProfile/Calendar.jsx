@@ -8,7 +8,9 @@ const Calendar = () => {
       w="100%"
       justifyContent="center"
       alignItems="center"
-    ></Flex>
+    >
+      coming soon!
+    </Flex>
   );
 };
 

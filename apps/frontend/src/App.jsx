@@ -1,6 +1,6 @@
 // HOOKS
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 // FUNCTIONS
 import { setUser } from "@/reducers/userReducer";
