@@ -1,12 +1,10 @@
 const admin = require("../firebase");
 const httpStatus = require("http-status");
-const ApiError = require("../utils/ApiError");
+const ApiError = require("../ApiError");
 
 const authCheck = async (req, res, next) => {
   try {
-    const firebaseUser = await admin
-      .auth()
-      .verifyIdToken(req.headers.authtoken);
+    const firebaseUser = await admin.auth().verifyIdToken(req.headers.authtoken);
 
     if (!firebaseUser) {
       throw new ApiError(httpStatus.UNAUTHORIZED, "Please authenticate");
