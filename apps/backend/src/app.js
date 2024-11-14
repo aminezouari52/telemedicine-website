@@ -42,6 +42,10 @@ if (config.env === "production") {
 // v1 api routes
 app.use("/v1", routes);
 
+app.use(function (req, res) {
+  res.send({ test: "hello world!" });
+});
+
 // error handling
 app.use((req, res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, "Not found"));
