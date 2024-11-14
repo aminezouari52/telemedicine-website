@@ -1,5 +1,5 @@
 const { Consultation } = require("../models");
-const ApiError = require("../utils/ApiError");
+const ApiError = require("../ApiError");
 const httpStatus = require("http-status");
 
 const createConsultation = async (body) => {
