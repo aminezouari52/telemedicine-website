@@ -6,27 +6,17 @@ dotenv.config({ path: path.join(__dirname, "../../.env") });
 
 const envVarsSchema = Joi.object()
   .keys({
-    NODE_ENV: Joi.string()
-      .valid("production", "development", "test")
-      .required(),
+    NODE_ENV: Joi.string().valid("production", "development", "test").required(),
     PORT: Joi.number().default(3000),
     MONGODB_URL: Joi.string().required().description("Mongo DB url"),
     WEB_FRONTEND_URL: Joi.string().required().description("The frontend url"),
-    CLOUDINARY_CLOUD_NAME: Joi.string()
-      .required()
-      .description("Cloudinary Cloud Name"),
-    CLOUDINARY_API_KEY: Joi.string()
-      .required()
-      .description("Cloudinary API Key"),
-    CLOUDINARY_API_SECRET: Joi.string()
-      .required()
-      .description("Cloudinary API Secret"),
+    CLOUDINARY_CLOUD_NAME: Joi.string().required().description("Cloudinary Cloud Name"),
+    CLOUDINARY_API_KEY: Joi.string().required().description("Cloudinary API Key"),
+    CLOUDINARY_API_SECRET: Joi.string().required().description("Cloudinary API Secret"),
   })
   .unknown();
 
-const { value: envVars, error } = envVarsSchema
-  .prefs({ errors: { label: "key" } })
-  .validate(process.env);
+const { value: envVars, error } = envVarsSchema.prefs({ errors: { label: "key" } }).validate(process.env);
 
 if (error) {
   throw new Error(`Config validation error: ${error.message}`);
@@ -44,8 +34,7 @@ module.exports = {
   },
   socket: {
     cors: {
-      origin:
-        envVars.NODE_ENV === "production" ? false : [envVars.WEB_FRONTEND_URL],
+      origin: [envVars.WEB_FRONTEND_URL],
     },
   },
   cloudinary: {
