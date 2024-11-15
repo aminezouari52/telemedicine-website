@@ -69,7 +69,7 @@ const ConsultationAlert = () => {
       consultations = await getDoctorConsultations(user?._id);
     }
 
-    const inProgressconsultation = consultations.data.find(
+    const inProgressconsultation = consultations?.data?.find(
       (c) => c.status === "in-progress"
     );
 
