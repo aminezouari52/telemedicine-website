@@ -6,7 +6,7 @@
   "author": "Amine Zouari <zouariamine52@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=17.0.0"
   },
   "scripts": {
     "start": "pm2 start ecosystem.config.json --no-daemon",
@@ -38,33 +38,8 @@
     "validator": "^13.12.0",
     "winston": "^3.13.1"
   },
-  "keywords": [
-    "node",
-    "node.js",
-    "boilerplate",
-    "generator",
-    "express",
-    "rest",
-    "api",
-    "mongodb",
-    "mongoose",
-    "es6",
-    "es7",
-    "es8",
-    "es9",
-    "jest",
-    "travis",
-    "docker",
-    "passport",
-    "joi",
-    "eslint",
-    "prettier"
-  ],
   "devDependencies": {
     "@faker-js/faker": "^9.0.1",
-    "cross-env": "^7.0.3",
-    "eslint": "^9.14.0",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^3.3.2"
+    "cross-env": "^7.0.3"
   }
 }

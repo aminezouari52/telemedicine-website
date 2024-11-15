@@ -35,6 +35,8 @@ app.use(formData.parse(options));
 app.use(cors());
 app.options("*", cors());
 
+app.set("trust proxy", true);
+
 if (config.env === "production") {
   app.use("/v1/auth", authLimiter);
 }
