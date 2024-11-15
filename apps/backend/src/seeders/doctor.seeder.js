@@ -6,7 +6,7 @@ const logger = require("../config/logger");
 const express = require("express");
 const app = express();
 const { Doctor } = require("../models");
-const { generatePhoneNumber } = require("../utils/utils");
+const randomPhone = require("../utils/randomPhone");
 
 const documentNumbers = 20;
 
@@ -88,10 +88,10 @@ async function seedDoctorCollection() {
           const firstName = faker.person.firstName();
           const lastName = faker.person.lastName();
           const specialtyIndex = Math.floor(
-            Math.random() * specialities.length,
+            Math.random() * specialities.length
           );
           const experienceIndex = Math.floor(
-            Math.random() * experiences.length,
+            Math.random() * experiences.length
           );
           const hospitalIndex = Math.floor(Math.random() * hospitals.length);
           const randomParam = Math.random();
@@ -113,7 +113,7 @@ async function seedDoctorCollection() {
             firstName,
             hospital: hospitals[hospitalIndex],
             lastName,
-            phone: generatePhoneNumber(),
+            phone: randomPhone(),
             price: faker.number.int({ min: 1, max: 1000 }),
             zip: faker.location.zipCode("#####"),
             photo: profileUrl,
@@ -132,7 +132,7 @@ async function seedDoctorCollection() {
 
           for (let k = 0; k < randomIntFromInterval(1, 7); k++) {
             const emploiDisponible = schedule.filter(
-              (jour) => !newDoctor.schedule.includes(jour),
+              (jour) => !newDoctor.schedule.includes(jour)
             );
             const nouvelEmploi =
               emploiDisponible[

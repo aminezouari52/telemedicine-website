@@ -1,6 +1,6 @@
 const httpStatus = require("http-status");
 const { Doctor, Consultation } = require("../models");
-const ApiError = require("../ApiError");
+const ApiError = require("../utils/ApiError");
 const cloudinary = require("cloudinary");
 const mongoose = require("mongoose");
 
@@ -48,7 +48,7 @@ const query = async function (Schema, filter, options) {
         populateOption
           .split(".")
           .reverse()
-          .reduce((a, b) => ({ path: b, populate: a })),
+          .reduce((a, b) => ({ path: b, populate: a }))
       );
     });
   }
@@ -111,7 +111,11 @@ const getDoctorPatientsCount = async (id) => {
     $count: "uniquePatientCount",
   };
 
-  const uniquePatientCount = await Consultation.aggregate([match, group, count]).exec();
+  const uniquePatientCount = await Consultation.aggregate([
+    match,
+    group,
+    count,
+  ]).exec();
 
   return uniquePatientCount[0]?.uniquePatientCount || 0;
 };

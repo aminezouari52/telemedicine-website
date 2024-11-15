@@ -9,7 +9,7 @@ const morgan = require("./config/morgan");
 const { authLimiter } = require("./middlewares/rateLimiter");
 const routes = require("./routes/v1");
 const { errorConverter, errorHandler } = require("./middlewares/error");
-const ApiError = require("./ApiError");
+const ApiError = require("./utils/ApiError");
 const os = require("os");
 const formData = require("express-form-data");
 

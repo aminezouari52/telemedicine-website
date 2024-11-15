@@ -5,7 +5,7 @@ const logger = require("../config/logger");
 const express = require("express");
 const app = express();
 const { Patient } = require("../models");
-const { generatePhoneNumber } = require("../utils/utils");
+const randomPhone = require("../utils/randomPhone");
 
 const documentNumbers = 20;
 
@@ -34,7 +34,7 @@ async function seedPatientCollection() {
             city: faker.location.city(),
             zip: faker.location.zipCode("#####"),
             weight: faker.number.int({ min: 20, max: 150 }).toString(),
-            phone: generatePhoneNumber(),
+            phone: randomPhone(),
             role: "patient",
           };
 

@@ -1,6 +1,6 @@
 const httpStatus = require("http-status");
 const { Patient } = require("../models");
-const ApiError = require("../ApiError");
+const ApiError = require("../utils/ApiError");
 
 const updatePatient = async (id, body) => {
   const patient = await Patient.findByIdAndUpdate(id, body, {
