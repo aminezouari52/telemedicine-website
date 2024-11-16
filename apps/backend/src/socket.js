@@ -46,7 +46,7 @@ const scheduleCronJob = (io) => {
 };
 
 function initializeSocket(server) {
-  const io = new Server(server, config.socket);
+  const io = new Server(server);
 
   io.on("connection", (socket) => {
     logger.info("socket.io connected");
