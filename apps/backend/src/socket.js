@@ -46,13 +46,7 @@ const scheduleCronJob = (io) => {
 };
 
 function initializeSocket(server) {
-  const io = new Server(server, {
-    cors: {
-      origin: "https://bucolic-malabi-07ed64.netlify.app",
-      methods: ["GET", "POST"],
-      credentials: true,
-    },
-  });
+  const io = new Server(server, config.socket);
 
   io.on("connection", (socket) => {
     logger.info("socket.io connected");

@@ -44,8 +44,7 @@ module.exports = {
   },
   socket: {
     cors: {
-      origin: "https://bucolic-malabi-07ed64.netlify.app",
-      methods: ["GET", "POST"],
+      origin: envVars.WEB_FRONTEND_URL,
     },
   },
   cloudinary: {
