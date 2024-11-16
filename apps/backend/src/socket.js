@@ -5,7 +5,7 @@ const config = require("./config/config");
 const logger = require("./config/logger");
 
 const scheduleCronJob = (io) => {
-  cron.schedule("* * * * *", async () => {
+  cron.schedule("*/5 * * * * *", async () => {
     logger.info("Cron job: Schedule consultation");
 
     const consultations = await Consultation.find({
@@ -30,7 +30,7 @@ const scheduleCronJob = (io) => {
     });
   });
 
-  cron.schedule("* * * * *", async () => {
+  cron.schedule("*/5 * * * * *", async () => {
     logger.info("Cron job: Clean old consultations");
 
     const consultations = await Consultation.find({
