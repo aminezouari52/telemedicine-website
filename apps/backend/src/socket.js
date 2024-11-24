@@ -6,7 +6,7 @@ const logger = require("./config/logger");
 const getHourRange = require("./utils/getHourRange");
 
 const scheduleCronJob = (io) => {
-  cron.schedule("0 * * * *", async () => {
+  cron.schedule("*/1 * * * * *", async () => {
     logger.info("Cron job: Schedule consultation");
 
     const { startHour, endHour } = getHourRange();
@@ -36,8 +36,10 @@ const scheduleCronJob = (io) => {
   cron.schedule("0 * * * *", async () => {
     logger.info("Cron job: Clean old consultations");
 
+    const { startHour } = getHourRange();
+
     const consultations = await Consultation.find({
-      date: { $lt: new Date().setHours(0, 0, 0, 0) },
+      date: { $lt: startHour },
       status: { $in: ["pending", "in-progress"] },
     });
 

@@ -2,11 +2,13 @@
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
 
 // FUNCTIONS
 import { auth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { logout } from "@/reducers/userReducer";
+import { getPatientConsultations } from "@/modules/consultation/functions/consultation";
 
 // COMPONENTS
 import HeaderButton from "./HeaderButton";
@@ -25,6 +27,15 @@ export const PatientHeader = () => {
   const toast = useToast();
   const user = useSelector((state) => state.userReducer.user);
 
+  const [consultation, setConsultation] = useState();
+
+  const loadConsultations = async () => {
+    const consultationsData = (await getPatientConsultations(user?._id)).data;
+    setConsultation(
+      consultationsData.filter((c) => c.status === "in-progress")[0]
+    );
+  };
+
   const logoutHandler = async () => {
     try {
       await signOut(auth);
@@ -40,6 +51,12 @@ export const PatientHeader = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      loadConsultations();
+    }
+  }, [user]);
 
   return (
     <SimpleGrid
@@ -68,7 +85,7 @@ export const PatientHeader = () => {
         </HeaderButton>
       </Flex>
       <Flex gap={1} alignItems="center" justifyContent="flex-end" height="100%">
-        {user && user?.consultationId && (
+        {user && !!consultation && (
           <Button
             size="sm"
             colorScheme="primary"

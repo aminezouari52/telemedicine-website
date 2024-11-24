@@ -7,7 +7,11 @@ import { useDisclosure } from "@chakra-ui/react";
 // FUNCTIONS
 import { socket } from "@/socket";
 import { setUser } from "@/reducers/userReducer";
-import { updateConsultation } from "@/modules/consultation/functions/consultation";
+import {
+  updateConsultation,
+  getPatientConsultations,
+  getDoctorConsultations,
+} from "@/modules/consultation/functions/consultation";
 
 // COMPONENTS
 import CompleteDialog from "./CompleteDialog";
@@ -26,6 +30,7 @@ import {
   Avatar,
   Stack,
   Button,
+  AvatarBadge,
 } from "@chakra-ui/react";
 
 // ASSETS
@@ -42,6 +47,7 @@ const Chat = () => {
   const dispatch = useDispatch();
   const [messages, setMessages] = useState([]);
   const [currentUsers, setCurrentUsers] = useState({});
+  const [consultation, setConsultation] = useState();
 
   const {
     isOpen: isOpenLeave,
@@ -84,10 +90,30 @@ const Chat = () => {
     navigate("/");
   };
 
+  const loadConsultations = async () => {
+    let consultationData = [];
+    if (user?.role === "doctor") {
+      consultationData = (await getDoctorConsultations(user?._id)).data;
+    }
+    if (user?.role === "patient") {
+      consultationData = (await getPatientConsultations(user?._id)).data;
+    }
+    setConsultation(
+      consultationData.filter((c) => c.status === "in-progress")[0]
+    );
+  };
+
   useEffect(() => {
-    if (!user?.consultationId || user?.consultationId !== consultationId)
-      navigate("/");
+    if (user) {
+      loadConsultations();
+    }
   }, [user]);
+
+  useEffect(() => {
+    if (consultation && consultation?._id !== consultationId) {
+      navigate("/");
+    }
+  }, [consultation]);
 
   const socketJoinedHandler = ({ role, name }) => {
     if (role && name) {
@@ -142,37 +168,64 @@ const Chat = () => {
         leaveConsultation={leaveConsultation}
         isOpen={isOpenLeave}
       />
-      <Flex direction="column" justifyContent="space-between" h="100vh" p={8}>
-        {user?.role === "patient" && (
-          <Flex alignItems="center">
-            <Avatar name="Dan Abrahmov" src={DoctorAvatar} />
-            <Text>
-              {currentUsers?.doctor
-                ? "is currently active"
-                : "waiting for doctor to join..."}
-            </Text>
+      <Flex
+        direction="column"
+        justifyContent="space-between"
+        h="100vh"
+        p={8}
+        gap={4}
+        bg="#fff"
+      >
+        <Flex alignItems="center" justifyContent="space-between">
+          {user?.role === "patient" && (
+            <Flex alignItems="center" gap={2}>
+              <Avatar name="Doctor" src={DoctorAvatar}>
+                <AvatarBadge
+                  boxSize="1.25em"
+                  bg={currentUsers?.doctor ? "green.500" : "gray.500"}
+                ></AvatarBadge>
+              </Avatar>
+              <Text>
+                {currentUsers?.doctor ? (
+                  <Text>
+                    Dr <strong>{currentUsers?.doctor}</strong> is currently
+                    active
+                  </Text>
+                ) : (
+                  "waiting for doctor to join..."
+                )}
+              </Text>
+            </Flex>
+          )}
+          {user?.role === "doctor" && (
+            <Flex alignItems="center" gap={2}>
+              <Avatar name="Patient" src={PatientAvatar}>
+                <AvatarBadge
+                  boxSize="1.25em"
+                  bg={currentUsers?.patient ? "green.500" : "gray.500"}
+                ></AvatarBadge>
+              </Avatar>
+              {currentUsers?.patient ? (
+                <Text>
+                  <strong>{currentUsers?.patient}</strong> is currently active
+                </Text>
+              ) : (
+                <Text>Waiting for patient to join...</Text>
+              )}
+            </Flex>
+          )}
+
+          <Flex direction="column" alignItems="end" justifyContent="flex-end">
+            <Button size="sm" colorScheme="red" onClick={onOpenLeave}>
+              Quitter
+            </Button>
           </Flex>
-        )}
-        {user?.role === "doctor" && (
-          <Flex alignItems="center">
-            <Avatar name="Dan Abrahmov" src={PatientAvatar} />
-            <Text>
-              {currentUsers?.patient
-                ? "is currently active"
-                : "waiting for patient to join..."}
-            </Text>
-          </Flex>
-        )}
+        </Flex>
         <Flex direction="column">
           <Flex direction="column" alignItems="center" justifyContent="center">
             <Heading textAlign="center" size="md">
               Consultation en cours
             </Heading>
-          </Flex>
-          <Flex direction="column" alignItems="end" justifyContent="flex-end">
-            <Button size="sm" colorScheme="red" onClick={onOpenLeave}>
-              Quitter
-            </Button>
           </Flex>
         </Flex>
         <Flex h="90%" w="100%" justifyContent="center">

@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import { signOut } from "firebase/auth";
 import { logout } from "@/reducers/userReducer";
 import { auth } from "@/firebase";
+import { getDoctorConsultations } from "@/modules/consultation/functions/consultation";
 
 // COMPONENTS
 import HeaderButton from "./HeaderButton";
@@ -40,6 +41,7 @@ export const DoctorHeader = () => {
 
   const user = useSelector((state) => state.userReducer.user);
   const [isProfileCompleted, setIsProfileCompleted] = useState();
+  const [consultation, setConsultation] = useState();
   const toast = useToast();
 
   const logoutHandler = async () => {
@@ -64,7 +66,15 @@ export const DoctorHeader = () => {
     }
   };
 
+  const loadConsultations = async () => {
+    const consultationsData = (await getDoctorConsultations(user?._id)).data;
+    setConsultation(
+      consultationsData.filter((c) => c.status === "in-progress")[0]
+    );
+  };
+
   useEffect(() => {
+    loadConsultations();
     loadIsProfileCompleted();
   }, [isProfileCompleted, user]);
 
@@ -96,7 +106,7 @@ export const DoctorHeader = () => {
         </HeaderButton>
       </Flex>
       <Flex alignItems="center" justifyContent="flex-end" height="100%">
-        {user && user?.consultationId && (
+        {user && !!consultation && (
           <Button
             size="sm"
             colorScheme="primary"
