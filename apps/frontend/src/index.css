@@ -1,3 +1,5 @@
+@import "./theme/css/calender.css";
+
 #root {
   background-color: #f6f8fb;
 }

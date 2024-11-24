@@ -14,7 +14,6 @@ import {
 
 // STYLE
 import {
-  Portal,
   AlertDialog,
   AlertDialogOverlay,
   AlertDialogContent,
@@ -56,8 +55,8 @@ const ConsultationAlert = () => {
   };
 
   useEffect(() => {
-    socket.on("startConsultation", handleStartConsultation);
-    return () => socket.off("startConsultation", handleStartConsultation);
+    socket.on("start", handleStartConsultation);
+    return () => socket.off("start", handleStartConsultation);
   }, []);
 
   const fetchConsultation = async () => {
@@ -96,41 +95,39 @@ const ConsultationAlert = () => {
   };
 
   return (
-    <Portal>
-      <AlertDialog
-        motionPreset="slideInBottom"
-        leastDestructiveRef={cancelRef}
-        isOpen={isOpen}
-        onClose={onClose}
-        isCentered
-      >
-        <AlertDialogOverlay />
+    <AlertDialog
+      motionPreset="slideInBottom"
+      leastDestructiveRef={cancelRef}
+      isOpen={isOpen}
+      onClose={onClose}
+      isCentered
+    >
+      <AlertDialogOverlay />
 
-        <AlertDialogContent>
-          <AlertDialogHeader>Vous avez une consultation!</AlertDialogHeader>
-          <AlertDialogCloseButton />
-          <AlertDialogBody>
-            Vous avez une consultation, joingnez maintenant!
-          </AlertDialogBody>
-          <AlertDialogFooter>
-            <Button size="sm" ref={cancelRef} onClick={onClose}>
-              Pas maintenant
-            </Button>
-            <Button
-              colorScheme="primary"
-              size="sm"
-              ml={3}
-              onClick={handleConfirm}
-              _hover={{
-                opacity: 0.8,
-              }}
-            >
-              Rejoindre
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </Portal>
+      <AlertDialogContent>
+        <AlertDialogHeader>Vous avez une consultation!</AlertDialogHeader>
+        <AlertDialogCloseButton />
+        <AlertDialogBody>
+          Vous avez une consultation, joingnez maintenant!
+        </AlertDialogBody>
+        <AlertDialogFooter>
+          <Button size="sm" ref={cancelRef} onClick={onClose}>
+            Pas maintenant
+          </Button>
+          <Button
+            colorScheme="primary"
+            size="sm"
+            ml={3}
+            onClick={handleConfirm}
+            _hover={{
+              opacity: 0.8,
+            }}
+          >
+            Joindre
+          </Button>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 

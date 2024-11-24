@@ -151,7 +151,7 @@ const Consultation = () => {
                 />
                 <Box py={8} maxW="xl">
                   <chakra.h2 fontSize="2xl" color="gray.800" fontWeight="bold">
-                    <chakra.span color="primary.600">Dr.</chakra.span>{" "}
+                    <chakra.span color="primary.500">Dr.</chakra.span>{" "}
                     {doctor?.firstName} {doctor?.lastName}
                   </chakra.h2>
                   <chakra.p mt={4} color="gray.600">

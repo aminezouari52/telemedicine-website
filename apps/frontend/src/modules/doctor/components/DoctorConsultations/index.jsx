@@ -80,8 +80,8 @@ const DoctorConsultations = () => {
           <Stack spacing={6}>
             {sortedUpcomingConsultations()
               ?.slice(0, 2)
-              .map((consultation) => (
-                <ConsultationCard consultation={consultation} />
+              .map((consultation, index) => (
+                <ConsultationCard key={index} consultation={consultation} />
               ))}
           </Stack>
         </Box>

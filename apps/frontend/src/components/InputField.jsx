@@ -1,17 +1,17 @@
-import { Box, FormLabel, FormControl } from '@chakra-ui/react';
-import { Input } from '@chakra-ui/react';
-import { useField } from 'formik';
+import { Box, FormLabel, FormControl } from "@chakra-ui/react";
+import { Input } from "@chakra-ui/react";
+import { useField } from "formik";
 
 const InputField = ({
   label,
   labelColor,
   isRequired,
-  labelWeight = 'normal',
+  labelWeight = "normal",
   ...props
 }) => {
   const [field, meta] = useField(props);
   const errorMessageColor =
-    meta.touched && meta.error ? 'error.500' : props.secondarycolor;
+    meta.touched && meta.error ? "deepRed.500" : props.secondarycolor;
 
   return (
     <FormControl w="100%" flexDirection="column" isRequired={isRequired}>
@@ -29,7 +29,7 @@ const InputField = ({
         {...props}
       />
       {meta.touched && meta.error ? (
-        <Box mt={1} color="error.500" fontSize="sm">
+        <Box mt={1} color="deepRed.500" fontSize="sm">
           {meta.error}
         </Box>
       ) : null}

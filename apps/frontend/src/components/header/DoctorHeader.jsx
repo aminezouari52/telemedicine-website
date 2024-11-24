@@ -108,7 +108,7 @@ export const DoctorHeader = () => {
               navigate(`/${user?.consultationId}`);
             }}
           >
-            Rejoindre
+            Joindre
           </Button>
         )}
         <Menu>

@@ -108,7 +108,7 @@ const PatientConsultations = () => {
 
       <Box w="50%">
         <Flex gap={4} mb={6} alignItems="center" justifyContent="space-between">
-          <Heading size="md">Dossier médical</Heading>
+          <Heading size="md">Profil</Heading>
         </Flex>
         {sortedUpcomingConsultations()?.length > 0 && (
           <Card>

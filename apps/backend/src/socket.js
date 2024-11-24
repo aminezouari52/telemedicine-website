@@ -3,15 +3,18 @@ const cron = require("node-cron");
 const { Consultation } = require("./models");
 const config = require("./config/config");
 const logger = require("./config/logger");
+const getHourRange = require("./utils/getHourRange");
 
 const scheduleCronJob = (io) => {
-  cron.schedule("*/5 * * * * *", async () => {
+  cron.schedule("0 * * * *", async () => {
     logger.info("Cron job: Schedule consultation");
+
+    const { startHour, endHour } = getHourRange();
 
     const consultations = await Consultation.find({
       date: {
-        $gte: new Date().setHours(0, 0, 0, 0),
-        $lt: new Date(),
+        $gte: startHour,
+        $lt: endHour,
       },
       status: "pending",
     });
@@ -19,7 +22,7 @@ const scheduleCronJob = (io) => {
     consultations.forEach((consultation) => {
       const { patient, doctor, _id } = consultation;
 
-      io.emit("startConsultation", {
+      io.emit("start", {
         consultationId: _id,
         patientId: patient,
         doctorId: doctor,
@@ -30,12 +33,12 @@ const scheduleCronJob = (io) => {
     });
   });
 
-  cron.schedule("*/5 * * * * *", async () => {
+  cron.schedule("0 * * * *", async () => {
     logger.info("Cron job: Clean old consultations");
 
     const consultations = await Consultation.find({
       date: { $lt: new Date().setHours(0, 0, 0, 0) },
-      status: "pending",
+      status: { $in: ["pending", "in-progress"] },
     });
 
     consultations.forEach((consultation) => {
@@ -45,6 +48,8 @@ const scheduleCronJob = (io) => {
   });
 };
 
+const connectedUsers = {};
+
 function initializeSocket(server) {
   const io = new Server(server, config.socket);
 
@@ -53,19 +58,37 @@ function initializeSocket(server) {
 
     scheduleCronJob(io);
 
-    socket.on("joinConsultation", ({ consultationId }) => {
-      socket.join(consultationId);
+    socket.on("join", ({ roomId, role, name }) => {
+      io.to(roomId).emit("joined", {
+        role,
+        name,
+      });
+      connectedUsers[roomId] = {
+        ...connectedUsers[roomId],
+        [role]: name,
+      };
+      socket.join(roomId);
     });
 
-    socket.on("sendMessage", ({ consultationId, message, userFirstName }) => {
-      io.to(consultationId).emit("receiveMessage", {
-        userFirstName,
+    socket.on("sendMessage", ({ roomId, message, name }) => {
+      io.to(roomId).emit("receiveMessage", {
+        name,
         message,
       });
     });
 
-    socket.on("leaveConsultation", ({ consultationId }) => {
-      io.to(consultationId).emit("userLeft");
+    socket.on("getUsers", (roomId) => {
+      io.to(roomId).emit("sendUsers", connectedUsers[roomId]);
+    });
+
+    socket.on("exitPage", ({ roomId, role }) => {
+      if (connectedUsers[roomId]) delete connectedUsers[roomId][role];
+
+      io.to(roomId).emit("sendUsers", connectedUsers[roomId]);
+    });
+
+    socket.on("leave", (roomId) => {
+      io.to(roomId).emit("userLeft");
     });
 
     socket.on("disconnect", () => {

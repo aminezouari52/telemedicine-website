@@ -1,5 +1,4 @@
 const httpStatus = require("http-status");
-const { User } = require("../models");
 const { authService } = require("../services");
 const catchAsync = require("../utils/catchAsync");
 

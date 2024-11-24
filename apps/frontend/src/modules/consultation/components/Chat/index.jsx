@@ -1,5 +1,5 @@
 // HOOKS
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useDisclosure } from "@chakra-ui/react";
@@ -23,22 +23,25 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
+  Avatar,
   Stack,
   Button,
-  Portal,
 } from "@chakra-ui/react";
 
 // ASSETS
 import { IoSend } from "react-icons/io5";
+import PatientAvatar from "@/images/avatar-patient.png";
+import DoctorAvatar from "@/images/avatar-doctor.jpg";
 
 const Chat = () => {
   const user = useSelector((state) => state.userReducer.user);
-  const params = useParams();
+  const { consultationId } = useParams();
   const message = useRef();
   const messagesContainer = useRef();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [messages, setMessages] = useState([]);
+  const [currentUsers, setCurrentUsers] = useState({});
 
   const {
     isOpen: isOpenLeave,
@@ -52,34 +55,12 @@ const Chat = () => {
     onClose: onCloseComplete,
   } = useDisclosure();
 
-  useEffect(() => {
-    if (user) {
-      socket.emit("joinConsultation", {
-        consultationId: params.consultationId,
-        userId: user?._id,
-      });
-
-      socket.on("receiveMessage", (message) => {
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          { userFirstName: message.userFirstName, message: message.message },
-        ]);
-      });
-
-      socket.on("userLeft", onOpenComplete);
-
-      return () => {
-        socket.off("receiveMessage");
-      };
-    }
-  }, [user, params.consultationId]);
-
   const sendMessage = () => {
     if (message.current.value.trim()) {
       socket.emit("sendMessage", {
-        consultationId: params.consultationId,
+        roomId: consultationId,
         message: message.current.value.trim(),
-        userFirstName: user?.firstName,
+        name: user?.firstName,
       });
     }
     message.current.value = "";
@@ -88,11 +69,9 @@ const Chat = () => {
   const leaveConsultation = async () => {
     onCloseLeave();
     const { consultationId, ...restUser } = user;
-    socket.emit("leaveConsultation", {
-      consultationId: params.consultationId,
-    });
+    socket.emit("leave", consultationId);
     dispatch(setUser(restUser));
-    await updateConsultation(params.consultationId, user?.token, {
+    await updateConsultation(consultationId, user?.token, {
       status: "completed",
     });
     navigate("/");
@@ -106,29 +85,84 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    if (
-      !user ||
-      !user?.consultationId ||
-      user?.consultationId !== params.consultationId
-    )
+    if (!user?.consultationId || user?.consultationId !== consultationId)
       navigate("/");
   }, [user]);
 
+  const socketJoinedHandler = ({ role, name }) => {
+    if (role && name) {
+      setCurrentUsers((prev) => ({
+        ...prev,
+        [role]: name,
+      }));
+    }
+  };
+
+  const socketReceiveMessageHandler = ({ name, message }) => {
+    setMessages((prevMessages) => [...prevMessages, { name, message }]);
+  };
+
+  const cleanupEffect = () => {
+    if (consultationId && user) {
+      socket.emit("exitPage", {
+        roomId: consultationId,
+        role: user?.role,
+      });
+    }
+    socket.removeAllListeners();
+    window.removeEventListener("beforeunload", cleanupEffect);
+  };
+
+  useEffect(() => {
+    socket.emit("join", {
+      roomId: consultationId,
+      role: user?.role,
+      name: user?.firstName,
+    });
+
+    socket.on("joined", socketJoinedHandler);
+    socket.on("receiveMessage", socketReceiveMessageHandler);
+    socket.emit("getUsers", consultationId);
+    socket.on("sendUsers", setCurrentUsers);
+    socket.on("userLeft", onOpenComplete);
+
+    window.addEventListener("beforeunload", cleanupEffect);
+    return cleanupEffect;
+  }, [socket]);
+
   return (
     <>
-      <Portal>
-        <CompleteDialog
-          onClose={onCloseComplete}
-          completeConsultation={completeConsultation}
-          isOpen={isOpenComplete}
-        />
-        <LeaveDialog
-          onClose={onCloseLeave}
-          leaveConsultation={leaveConsultation}
-          isOpen={isOpenLeave}
-        />
-      </Portal>
+      <CompleteDialog
+        onClose={onCloseComplete}
+        completeConsultation={completeConsultation}
+        isOpen={isOpenComplete}
+      />
+      <LeaveDialog
+        onClose={onCloseLeave}
+        leaveConsultation={leaveConsultation}
+        isOpen={isOpenLeave}
+      />
       <Flex direction="column" justifyContent="space-between" h="100vh" p={8}>
+        {user?.role === "patient" && (
+          <Flex alignItems="center">
+            <Avatar name="Dan Abrahmov" src={DoctorAvatar} />
+            <Text>
+              {currentUsers?.doctor
+                ? "is currently active"
+                : "waiting for doctor to join..."}
+            </Text>
+          </Flex>
+        )}
+        {user?.role === "doctor" && (
+          <Flex alignItems="center">
+            <Avatar name="Dan Abrahmov" src={PatientAvatar} />
+            <Text>
+              {currentUsers?.patient
+                ? "is currently active"
+                : "waiting for patient to join..."}
+            </Text>
+          </Flex>
+        )}
         <Flex direction="column">
           <Flex direction="column" alignItems="center" justifyContent="center">
             <Heading textAlign="center" size="md">
@@ -157,9 +191,9 @@ const Chat = () => {
               overflowY="auto"
             >
               <Box>
-                {messages.map((message, index) => (
+                {messages.map((user, index) => (
                   <Text key={index}>
-                    {message.userFirstName} : {message.message}
+                    {user.name} : {user.message}
                   </Text>
                 ))}
               </Box>
