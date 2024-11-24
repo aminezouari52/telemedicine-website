@@ -31,7 +31,7 @@ async function seedConsultationCollection() {
           const patientIndex = Math.floor(Math.random() * patientsIds.length);
 
           let newConsultation = {
-            date: new Date(faker.date.anytime()),
+            date: new Date(new Date(faker.date.anytime()).setMinutes(0, 0, 0)),
             status: "pending",
             doctor: doctorsIds[doctorIndex],
             patient: patientsIds[patientIndex],

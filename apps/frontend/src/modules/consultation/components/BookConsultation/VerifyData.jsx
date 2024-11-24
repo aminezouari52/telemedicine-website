@@ -47,7 +47,7 @@ const VerifyData = ({ isOpen, onClose }) => {
             <ModalBody>
               <Stack spacing={4} mt={2}>
                 <Text mr={2}>
-                  <strong> Date de l'évenement:</strong> le{" "}
+                  <strong> Date de la consultation:</strong> le{" "}
                   {values?.date
                     ? DateTime.fromJSDate(new Date(values.date)).toFormat(
                         "dd-MM-yyyy 'à' HH:mm"

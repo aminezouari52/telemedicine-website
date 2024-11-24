@@ -29,7 +29,7 @@ export const PatientHeader = () => {
 
   const [consultation, setConsultation] = useState();
 
-  const loadConsultations = async () => {
+  const loadConsultation = async () => {
     const consultationsData = (await getPatientConsultations(user?._id)).data;
     setConsultation(
       consultationsData.filter((c) => c.status === "in-progress")[0]
@@ -54,7 +54,7 @@ export const PatientHeader = () => {
 
   useEffect(() => {
     if (user) {
-      loadConsultations();
+      loadConsultation();
     }
   }, [user]);
 

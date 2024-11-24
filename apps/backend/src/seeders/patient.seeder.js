@@ -36,6 +36,7 @@ async function seedPatientCollection() {
             weight: faker.number.int({ min: 20, max: 150 }).toString(),
             phone: randomPhone(),
             role: "patient",
+            isProfileCompleted: true,
           };
 
           patients.push(newPatient);

@@ -66,7 +66,7 @@ export const DoctorHeader = () => {
     }
   };
 
-  const loadConsultations = async () => {
+  const loadConsultation = async () => {
     const consultationsData = (await getDoctorConsultations(user?._id)).data;
     setConsultation(
       consultationsData.filter((c) => c.status === "in-progress")[0]
@@ -74,8 +74,10 @@ export const DoctorHeader = () => {
   };
 
   useEffect(() => {
-    loadConsultations();
-    loadIsProfileCompleted();
+    if (user) {
+      loadConsultation();
+      loadIsProfileCompleted();
+    }
   }, [isProfileCompleted, user]);
 
   return (

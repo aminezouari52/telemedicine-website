@@ -72,7 +72,7 @@ const DateStep = ({ goToNext, goToPrevious }) => {
             le{" "}
             {values?.date
               ? DateTime.fromJSDate(new Date(values.date)).toFormat(
-                  "dd-MM-yyyy 'à' HH:mm"
+                  "dd-MM-yyyy 'à' HH:00"
                 )
               : null}
           </Text>
