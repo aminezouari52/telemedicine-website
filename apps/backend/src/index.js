@@ -3,6 +3,7 @@ const app = require("./app");
 const config = require("./config/config");
 const logger = require("./config/logger");
 const initializeSocket = require("./socket");
+const cron = require("node-cron");
 
 let server;
 
@@ -13,6 +14,11 @@ mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
   });
 
   initializeSocket(server);
+
+  if (config.env === "production")
+    cron.schedule("*/9 * * * *", async () =>
+      logger.info("Cron job: ping to keep server alive")
+    );
 });
 
 const exitHandler = () => {
