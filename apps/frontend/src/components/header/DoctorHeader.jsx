@@ -17,6 +17,7 @@ import Logo from "@/components/Logo";
 // STYLE
 import {
   chakra,
+  Avatar,
   Button,
   Flex,
   Text,
@@ -30,9 +31,10 @@ import {
 } from "@chakra-ui/react";
 
 // ASSETS
-import { FaRegUser, FaRegBell } from "react-icons/fa";
+import { FaRegBell } from "react-icons/fa";
 import { IoChatboxSharp } from "react-icons/io5";
 import { TbLogout } from "react-icons/tb";
+import DoctorAvatar from "@/images/avatar-doctor.jpg";
 
 export const DoctorHeader = () => {
   const navigate = useNavigate();
@@ -107,7 +109,7 @@ export const DoctorHeader = () => {
           <Text fontSize="sm">Patiens</Text>
         </HeaderButton>
       </Flex>
-      <Flex alignItems="center" justifyContent="flex-end" height="100%">
+      <Flex alignItems="center" justifyContent="flex-end" height="100%" gap={2}>
         {user && !!consultation && (
           <Button
             size="sm"
@@ -168,29 +170,19 @@ export const DoctorHeader = () => {
           </MenuList>
         </Menu>
 
-        <IconButton
-          size="md"
-          aria-label="logout"
-          isRound
-          bg="transparent"
+        <Avatar
+          size="sm"
+          h="20px"
+          w="20px"
+          cursor="pointer"
+          showBorder={location.pathname === "/doctor/profile"}
+          borderColor="primary.500"
+          src={DoctorAvatar}
+          onClick={() => navigate("/doctor/profile")}
           _hover={{
             opacity: 0.8,
           }}
-          _active={{
-            bg: "transparent",
-          }}
-          onClick={() => navigate("/doctor/profile")}
-          icon={
-            <FaRegUser
-              style={{
-                color:
-                  location.pathname === "/doctor/profile" &&
-                  "var(--chakra-colors-primary-500)",
-              }}
-            />
-          }
         />
-
         <IconButton
           size="md"
           icon={

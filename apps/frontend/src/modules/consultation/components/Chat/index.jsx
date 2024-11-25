@@ -47,7 +47,6 @@ const Chat = () => {
   const dispatch = useDispatch();
   const [messages, setMessages] = useState([]);
   const [currentUsers, setCurrentUsers] = useState({});
-  const [consultation, setConsultation] = useState();
 
   const {
     isOpen: isOpenLeave,
@@ -90,7 +89,7 @@ const Chat = () => {
     navigate("/");
   };
 
-  const loadConsultations = async () => {
+  const loadConsultation = async () => {
     let consultationData = [];
     if (user?.role === "doctor") {
       consultationData = (await getDoctorConsultations(user?._id)).data;
@@ -98,22 +97,20 @@ const Chat = () => {
     if (user?.role === "patient") {
       consultationData = (await getPatientConsultations(user?._id)).data;
     }
-    setConsultation(
-      consultationData.filter((c) => c.status === "in-progress")[0]
-    );
+    const consultation = consultationData.filter(
+      (c) => c.status === "in-progress"
+    )[0];
+
+    if (!consultation || consultation?._id !== consultationId) {
+      navigate("/");
+    }
   };
 
   useEffect(() => {
     if (user) {
-      loadConsultations();
+      loadConsultation();
     }
   }, [user]);
-
-  useEffect(() => {
-    if (consultation && consultation?._id !== consultationId) {
-      navigate("/");
-    }
-  }, [consultation]);
 
   const socketJoinedHandler = ({ role, name }) => {
     if (role && name) {
@@ -188,11 +185,10 @@ const Chat = () => {
               <Text>
                 {currentUsers?.doctor ? (
                   <Text>
-                    Dr <strong>{currentUsers?.doctor}</strong> is currently
-                    active
+                    Dr <strong>{currentUsers?.doctor}</strong> est active
                   </Text>
                 ) : (
-                  "waiting for doctor to join..."
+                  <Text>En attente que le médecin se joigne...</Text>
                 )}
               </Text>
             </Flex>
@@ -207,10 +203,10 @@ const Chat = () => {
               </Avatar>
               {currentUsers?.patient ? (
                 <Text>
-                  <strong>{currentUsers?.patient}</strong> is currently active
+                  <strong>{currentUsers?.patient}</strong> est active
                 </Text>
               ) : (
-                <Text>Waiting for patient to join...</Text>
+                <Text>En attente que le patient se joigne...</Text>
               )}
             </Flex>
           )}

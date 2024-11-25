@@ -3,6 +3,10 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDisclosure } from "@chakra-ui/react";
 
+// COMPONENTS
+import AllConsultationsModal from "./AllConsultationsModal";
+import ConsultationCard from "./ConsultationCard";
+
 // FUNCTIONS
 import { getDoctorConsultations } from "@/modules/consultation/functions/consultation";
 import { DateTime } from "luxon";
@@ -22,12 +26,10 @@ import {
   UnorderedList,
   Stack,
 } from "@chakra-ui/react";
-import { CalendarIcon } from "@chakra-ui/icons";
-import { FaMapPin } from "react-icons/fa";
 
 // ASSETS
-import AllConsultationsModal from "./AllConsultationsModal";
-import ConsultationCard from "./ConsultationCard";
+import { CalendarIcon } from "@chakra-ui/icons";
+import { FaMapPin } from "react-icons/fa";
 
 const DoctorConsultations = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

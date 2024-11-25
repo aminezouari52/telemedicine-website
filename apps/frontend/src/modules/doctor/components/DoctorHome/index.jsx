@@ -8,19 +8,12 @@ import { getDoctorPatientsCount } from "@/modules/doctor/functions/doctor";
 import { getDoctorConsultations } from "@/modules/consultation/functions/consultation";
 
 // STYLE
-import {
-  Avatar,
-  Box,
-  Button,
-  Card,
-  CardBody,
-  Flex,
-  Heading,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Avatar, Heading } from "@chakra-ui/react";
 
 // ASSETS
 import { ArrowForwardIcon } from "@chakra-ui/icons";
+import DoctorAvatar from "@/images/avatar-doctor.jpg";
+import StatisticsBox from "./StatisticsBox";
 
 const DoctorHome = () => {
   const navigate = useNavigate();
@@ -60,9 +53,9 @@ const DoctorHome = () => {
   return (
     <Box p={10}>
       <Flex alignItems="center" gap={4}>
-        <Avatar size="lg" src={doctor?.photo} />
+        <Avatar size="lg" src={doctor?.photo || DoctorAvatar} />
         <Flex flexDirection="column" gap={3}>
-          <Heading size="md">Bonjour, Dr {doctor?.firstName}</Heading>
+          <Heading size="md">Salut, Dr {doctor?.firstName}</Heading>
           {!user?.isProfileCompleted && (
             <Button
               rightIcon={<ArrowForwardIcon />}
@@ -77,36 +70,31 @@ const DoctorHome = () => {
         </Flex>
       </Flex>
       <Flex my={4} color="white" gap={4}>
-        <Card>
-          <CardBody>
-            <Text fontSize="2xl" fontWeight="bold">
-              Consultations ce mois
-            </Text>
-            <Text textAlign="center" p={4}>
-              {consultationsThisMonth()?.length} Consultations
-            </Text>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <Text fontSize="2xl" fontWeight="bold">
-              Nombre total des patiens
-            </Text>
-            <Text textAlign="center" p={4}>
-              {doctor?.patientsCount} Patients
-            </Text>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody>
-            <Text fontSize="2xl" fontWeight="bold">
-              Nombre total des Consultations
-            </Text>
-            <Text textAlign="center" p={4}>
-              {consultations?.length} consultations
-            </Text>
-          </CardBody>
-        </Card>
+        <StatisticsBox
+          title="Consultations ce mois"
+          number={consultationsThisMonth()?.length}
+          icon={undefined}
+        />
+        <StatisticsBox
+          title="Consultations en attente"
+          number={undefined}
+          icon={undefined}
+        />
+        <StatisticsBox
+          title="Nouveau consultations"
+          number={undefined}
+          icon={undefined}
+        />
+        <StatisticsBox
+          title="Nombre total des patiens"
+          number={doctor?.patientsCount}
+          icon={undefined}
+        />
+        <StatisticsBox
+          title="Nombre total des Consultations"
+          number={consultations?.length}
+          icon={undefined}
+        />
       </Flex>
     </Box>
   );

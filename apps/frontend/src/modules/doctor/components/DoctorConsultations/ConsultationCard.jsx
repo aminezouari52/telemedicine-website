@@ -6,6 +6,7 @@ import {
   Text,
   Icon,
   Divider,
+  Avatar,
   Stack,
 } from "@chakra-ui/react";
 
@@ -13,15 +14,20 @@ import {
 import { PhoneIcon } from "@chakra-ui/icons";
 import { FaWeight } from "react-icons/fa";
 import { CalendarIcon } from "@chakra-ui/icons";
+import PatientAvatar from "@/images/avatar-patient.png";
 
 const ConsultationCard = ({ consultation }) => {
   return (
     <Card key={consultation?._id}>
       <Stack>
         <Stack flexDirection="column" p={4}>
-          <Text fontWeight="bold">
-            {consultation?.patient?.firstName} {consultation?.patient?.lastName}
-          </Text>
+          <Flex alignItems="center" gap={2}>
+            <Avatar name="Patient" src={PatientAvatar} />
+            <Text fontWeight="bold">
+              {consultation?.patient?.firstName}{" "}
+              {consultation?.patient?.lastName}
+            </Text>
+          </Flex>
           <Flex gap={2} alignItems="center">
             <Icon as={PhoneIcon} color="gray.500" />
             <Text color="gray.500">{consultation?.patient?.phone}</Text>

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 // STYLE
 import {
   Box,
-  Button,
   Heading,
   ListItem,
   Card,
@@ -26,6 +25,8 @@ import { DateTime } from "luxon";
 // ASSETS
 import { CalendarIcon } from "@chakra-ui/icons";
 import { FaMapPin } from "react-icons/fa";
+import DoctorAvatar from "@/images/avatar-doctor.jpg";
+import PatientAvatar from "@/images/avatar-patient.png";
 
 const PatientConsultations = () => {
   const user = useSelector((state) => state.userReducer.user);
@@ -62,8 +63,8 @@ const PatientConsultations = () => {
                 <Flex p={4} gap={4}>
                   <Avatar
                     size="lg"
-                    name="Segun Adebayo"
-                    src={consultation?.doctor?.photo}
+                    name="Doctor"
+                    src={consultation?.doctor?.photo || DoctorAvatar}
                   />
                   <Flex flexDirection="column">
                     <Text fontWeight="bold">
@@ -71,7 +72,7 @@ const PatientConsultations = () => {
                       {consultation?.doctor?.lastName}
                     </Text>
                     <Text color="gray">{consultation?.doctor?.specialty}</Text>
-                    <Flex gap={2}>
+                    <Flex gap={2} alignItems="center">
                       <Icon as={FaMapPin} color="red.500" />
                       <Text>{consultation?.doctor?.hospital}</Text>
                     </Flex>
@@ -115,10 +116,14 @@ const PatientConsultations = () => {
             <CardBody>
               <Flex justifyContent="space-between" pb={4} gap={4}>
                 <Flex flexDirection="column" gap={2}>
-                  <Text fontWeight="bold">
-                    {sortedUpcomingConsultations()[0]?.patient?.firstName}{" "}
-                    {sortedUpcomingConsultations()[0]?.patient?.lastName}
-                  </Text>
+                  <Flex alignItems="center" gap={2}>
+                    <Avatar name="Patient" src={PatientAvatar} />
+                    <Text fontWeight="bold">
+                      {sortedUpcomingConsultations()[0]?.patient?.firstName}{" "}
+                      {sortedUpcomingConsultations()[0]?.patient?.lastName}
+                    </Text>
+                  </Flex>
+                  <Text fontWeight="bold"></Text>
                   <Flex alignItems="center" gap={2}>
                     <Icon as={FaMapPin} color="red.500" />
                     <Text>
