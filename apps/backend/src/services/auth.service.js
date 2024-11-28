@@ -1,10 +1,21 @@
 const { User } = require("../models");
+const httpStatus = require("http-status");
+const ApiError = require("../utils/ApiError");
 
-const createOrUpdateUser = async (email, role) => {
+const loginUser = async (email) => {
+  const user = await User.findOne({ email }).exec();
+
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+  return user;
+};
+
+const registerUser = async (email, role) => {
   const user = await User.findOneAndUpdate(
     { email },
     { role },
-    { new: true },
+    { new: true }
   ).exec();
 
   if (!user) {
@@ -22,6 +33,7 @@ const getCurrentUser = async (email) => {
 };
 
 module.exports = {
-  createOrUpdateUser,
+  loginUser,
+  registerUser,
   getCurrentUser,
 };

@@ -1,14 +1,17 @@
 import axios from "axios";
 
-export const createOrUpdateUser = async (user) => {
+export const loginUser = async (user) => {
+  return await axios.get(`${import.meta.env.VITE_API_V1_URL}/auth/login-user`, {
+    headers: {
+      authtoken: user.token,
+    },
+  });
+};
+
+export const registerUser = async (user) => {
   return await axios.post(
-    `${import.meta.env.VITE_API_V1_URL}/auth/create-or-update-user`,
-    { role: user.role },
-    {
-      headers: {
-        authtoken: user.token,
-      },
-    }
+    `${import.meta.env.VITE_API_V1_URL}/auth/register-user`,
+    { role: user.role, email: user.email }
   );
 };
 

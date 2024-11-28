@@ -1,6 +1,6 @@
 // FIREBASE
 import { auth } from "@/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 // HOOKS
 import { useState } from "react";
@@ -9,7 +9,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 // FUNCTIONS
-import { createOrUpdateUser } from "@/modules/auth/functions/auth";
+import { loginUser } from "@/modules/auth/functions/auth";
 import { setUser } from "@/reducers/userReducer";
 
 // COMPONENTS
@@ -22,6 +22,8 @@ import { Flex, Heading, Input, Button, Link, Text } from "@chakra-ui/react";
 // ASSETS
 import { AiOutlineMail } from "react-icons/ai";
 
+const demoAccounts = ["freddie24@yahoo.com", "christop_hagenes21@gmail.com"];
+
 const Login = () => {
   const toast = useToast();
   const navigate = useNavigate();
@@ -31,7 +33,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // REDIRECT FUNCTION
   const roleBasedRedirect = (res) => {
     const intended = location.state;
     if (intended) {
@@ -45,16 +46,22 @@ const Login = () => {
     }
   };
 
-  // SUBMIT FUNCTION
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       const { user } = result;
+
+      if (!demoAccounts.includes(email) && !user.emailVerified) {
+        await signOut(auth);
+        throw new Error("Email not verified. Please verify your email.");
+      }
+
       const idTokenResult = await user.getIdTokenResult();
-      // create user in database
-      const res = await createOrUpdateUser({ token: idTokenResult.token });
+      const res = await loginUser({ token: idTokenResult.token });
+
       dispatch(
         setUser({
           ...res.data,
@@ -62,10 +69,10 @@ const Login = () => {
         })
       );
       roleBasedRedirect(res);
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
       toast({
-        title: "Incorrect email or password",
+        title: error.message,
         status: "error",
         duration: 3000,
         isClosable: true,

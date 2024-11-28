@@ -5,9 +5,9 @@ const router = express.Router();
 
 const authController = require("../../controllers/auth.controller");
 
-router
-  .route("/create-or-update-user")
-  .post(authCheck, authController.createOrUpdateUser);
+router.route("/login-user").get(authCheck, authController.loginUser);
+
+router.route("/register-user").post(authController.registerUser);
 
 router.route("/current-user").post(authCheck, authController.getCurrentUser);
 

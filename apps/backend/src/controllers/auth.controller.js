@@ -2,10 +2,15 @@ const httpStatus = require("http-status");
 const { authService } = require("../services");
 const catchAsync = require("../utils/catchAsync");
 
-const createOrUpdateUser = catchAsync(async (req, res) => {
+const loginUser = catchAsync(async (req, res) => {
   const { email } = req.user;
-  const role = req.body.role;
-  const user = await authService.createOrUpdateUser(email, role);
+  const user = await authService.loginUser(email);
+  res.status(httpStatus.CREATED).send(user);
+});
+
+const registerUser = catchAsync(async (req, res) => {
+  const { email, role } = req.body;
+  const user = await authService.registerUser(email, role);
   res.status(httpStatus.CREATED).send(user);
 });
 
@@ -16,6 +21,7 @@ const getCurrentUser = catchAsync(async (req, res) => {
 });
 
 module.exports = {
-  createOrUpdateUser,
+  loginUser,
+  registerUser,
   getCurrentUser,
 };

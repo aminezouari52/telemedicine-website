@@ -5,15 +5,17 @@ import { useToast } from "@chakra-ui/react";
 
 // REDUX
 import { useDispatch } from "react-redux";
-import { setUser } from "@/reducers/userReducer";
 
 // FIREBASE
 import { auth } from "@/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 import { validateEmail } from "@/utils";
 
 // FUNCTIONS
-import { createOrUpdateUser } from "@/modules/auth/functions/auth";
+import { registerUser } from "@/modules/auth/functions/auth";
 
 //  COMPONENTS
 import Logo from "@/components/Logo";
@@ -31,7 +33,6 @@ import {
 } from "@chakra-ui/react";
 
 const Register = () => {
-  let dispatch = useDispatch();
   const navigate = useNavigate();
   const toast = useToast();
   const [email, setEmail] = useState("");
@@ -42,7 +43,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // create user
+
     try {
       if (!validateEmail(email)) {
         throw new Error("Invalid Email");
@@ -54,40 +55,28 @@ const Register = () => {
         password
       );
 
-      // get user id token
       const user = userCredential.user;
-      const idTokenResult = await user.getIdTokenResult();
 
-      // save to database
-      const res = await createOrUpdateUser({
-        token: idTokenResult.token,
-        role,
-      });
-
-      dispatch(
-        setUser({
-          ...res.data,
-          token: idTokenResult.token,
-        })
-      );
-
-      // redirect
-      if (role === "doctor") {
-        navigate("/doctor");
-      } else if (role === "patient") {
-        navigate("/patient");
-      }
+      await sendEmailVerification(user);
 
       toast({
-        title: "Account created successfully!",
-        status: "success",
-        duration: 3000,
+        title: "Verification email sent! Please check your inbox.",
+        status: "info",
+        duration: null,
         isClosable: true,
       });
-    } catch (err) {
-      console.log(err);
+
+      await registerUser({
+        role,
+        email,
+      });
+
+      setLoading(false);
+      navigate("/auth/login");
+    } catch (error) {
+      console.log(error);
       toast({
-        title: "Verify your email",
+        title: error.message,
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -143,8 +132,9 @@ const Register = () => {
             You are a{" "}
           </Text>
           <Select
-            onChange={(e) => setRole(e.target.value)}
+            size="sm"
             focusBorderColor="primary.500"
+            onChange={(e) => setRole(e.target.value)}
           >
             <option value="patient">Patient</option>
             <option value="doctor">Doctor</option>

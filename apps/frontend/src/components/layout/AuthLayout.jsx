@@ -75,7 +75,7 @@ export const AuthLayout = () => {
           <PopoverArrow />
           <PopoverCloseButton />
           <PopoverHeader>
-            For testing purposes you can use these credentials
+            For testing purposes you can login with these credentials
           </PopoverHeader>
           <PopoverBody>
             <Box>

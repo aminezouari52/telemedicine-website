@@ -34,16 +34,18 @@ const App = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       if (authUser) {
+        await authUser.reload();
+
         const idTokenResult = await authUser.getIdTokenResult();
         try {
           const res = await getCurrentUser(idTokenResult.token);
           if (!res.data) {
-            throw new Error("user not found");
+            throw new Error("User not found or token expired");
           }
           const storedUser = getLocalStorage("user") || res.data;
           dispatch(setUser({ ...storedUser, token: idTokenResult.token }));
-        } catch (err) {
-          console.log(err);
+        } catch (error) {
+          console.log(error);
         }
       }
     });
