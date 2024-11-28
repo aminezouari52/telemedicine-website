@@ -82,7 +82,7 @@ const Home = () => {
               onClick={() => navigate("/auth/login")}
               size="sm"
             >
-              Se connecter
+              Login
             </Button>
           </Flex>
         </Flex>
@@ -99,19 +99,18 @@ const Home = () => {
           flexDirection="column"
           justifyContent="center"
           alignItems="center"
-          padding={{ sm: 4, md: 8, lg: 10 }}
+          padding={8}
           zIndex={2}
           bg="rgba(0, 0, 0, 0.4)"
         >
           <Heading
             textAlign="center"
-            fontSize={{ sm: "3xl", md: "3xl", lg: "5xl" }}
+            fontSize="3xl"
             as="h1"
             color="white"
             py={6}
-            width={{ sm: "100", md: "90%", lg: "80%" }}
           >
-            Consultez un Expert Depuis Chez Vous!
+            Consult an Expert From Home!
           </Heading>
           <Text
             textAlign="center"
@@ -119,13 +118,12 @@ const Home = () => {
             py={6}
             width="60%"
             fontSize="large"
-            display={{ sm: "none", md: "block" }}
           >
-            Accédez à des consultations en ligne avec des professionnels
-            qualifiés, où que vous soyez. Simplifiez vos démarches et obtenez
-            des conseils personnalisés en quelques clics.
+            Access online consultations with qualified professionals, wherever
+            you are. Simplify your procedures and get personalized advice in
+            just a few clicks.
             <br></br>
-            La santé et le bien-être à portée de main!
+            Health and well-being at your fingertips!
           </Text>
           <Box py={6}>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
@@ -141,7 +139,7 @@ const Home = () => {
                 }}
                 onClick={() => navigate("/auth/login")}
               >
-                S'inscrire maintenant!
+                Register now!
               </Button>
             </motion.div>
           </Box>

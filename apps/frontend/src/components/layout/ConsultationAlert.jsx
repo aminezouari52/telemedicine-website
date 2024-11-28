@@ -109,14 +109,12 @@ const ConsultationAlert = () => {
       <AlertDialogOverlay />
 
       <AlertDialogContent>
-        <AlertDialogHeader>Vous avez une consultation!</AlertDialogHeader>
+        <AlertDialogHeader>You have a consultation!</AlertDialogHeader>
         <AlertDialogCloseButton />
-        <AlertDialogBody>
-          Vous avez une consultation, joingnez maintenant!
-        </AlertDialogBody>
+        <AlertDialogBody>You have a consultation, join now!</AlertDialogBody>
         <AlertDialogFooter>
           <Button size="sm" ref={cancelRef} onClick={onClose}>
-            Pas maintenant
+            Maybe later
           </Button>
           <Button
             colorScheme="primary"
@@ -127,7 +125,7 @@ const ConsultationAlert = () => {
               opacity: 0.8,
             }}
           >
-            Joindre
+            Join
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

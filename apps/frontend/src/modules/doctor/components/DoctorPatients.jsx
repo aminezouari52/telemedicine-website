@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
+//  COMPONENTS
 import DataTable from "@/components/DataTable";
 
 // FUNCTIONS
@@ -9,17 +10,7 @@ import { getDoctorConsultations } from "@/modules/consultation/functions/consult
 import { DateTime } from "luxon";
 
 // STYLE
-import {
-  Box,
-  Card,
-  CardBody,
-  Heading,
-  SimpleGrid,
-  Stack,
-  Text,
-  Tr,
-  Td,
-} from "@chakra-ui/react";
+import { Box, Heading, Tr, Td } from "@chakra-ui/react";
 
 const DoctorPatients = () => {
   const [consultations, setConsultations] = useState([]);
@@ -44,7 +35,7 @@ const DoctorPatients = () => {
       self.findIndex((c) => c.patient?._id === consultation.patient?._id)
   );
 
-  const headers = ["Patient", "Phone", "Age", "Créer le"];
+  const headers = ["Patient", "Phone", "Age", "Created at"];
 
   const renderRow = (consultation, index) => (
     <Tr key={index} fontSize="xs">
@@ -64,7 +55,7 @@ const DoctorPatients = () => {
   return (
     <Box m={6}>
       <Heading my={4} fontSize="lg">
-        Les patients qui ont compléter leur consultation
+        Patients who have completed their consultation
       </Heading>
       <DataTable
         data={uniquePatientConsultations}

@@ -64,7 +64,7 @@ const Login = () => {
     } catch (err) {
       console.log(err);
       toast({
-        title: "Email ou mot de passe incorrect",
+        title: "Incorrect email or password",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -91,10 +91,10 @@ const Login = () => {
         alignItems="center"
       >
         <Heading size="lg" textAlign="center">
-          Se connecter
+          Login
         </Heading>
         <Text color="darkgray" textAlign="center">
-          Connecter vous pour accèder à la plateforme
+          Login to access the platform
         </Text>
       </Flex>
       <Flex w="100%" direction="column" alignItems="end" gap={2}>
@@ -103,9 +103,9 @@ const Login = () => {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="votre email"
+          placeholder="your email"
           autoFocus
-          size={{ sm: "sm", md: "md" }}
+          size="md"
           mt={2}
         />
 
@@ -114,8 +114,8 @@ const Login = () => {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Votre mot de passe"
-          size={{ sm: "sm", md: "md" }}
+          placeholder="your password"
+          size="md"
         />
         <Link
           as={NavLink}
@@ -124,7 +124,7 @@ const Login = () => {
           _hover={{ textDecoration: "underline" }}
           fontSize="sm"
         >
-          Mot de passe oublié?
+          Forgot your password?
         </Link>
       </Flex>
 
@@ -139,15 +139,14 @@ const Login = () => {
           _hover={{
             opacity: email && password.length >= 6 && 0.8,
           }}
-          // onClick={handleSubmit}
         >
-          Connectez-vous
+          Login
         </Button>
       </Flex>
 
       <Flex fontSize="sm" w="100%" justifyContent="center">
         <Text color="gray" mr={1}>
-          Vous n'avez pas de compte ?
+          Don't have an account?
         </Text>
         <Link
           as={NavLink}
@@ -156,7 +155,7 @@ const Login = () => {
           fontWeight="semibold"
           _hover={{ textDecoration: "underline" }}
         >
-          S'inscrire
+          Register
         </Link>
       </Flex>
     </Flex>

@@ -8,10 +8,25 @@ import Spinner from "@/components/Spinner";
 import Logo from "@/components/Logo";
 
 // STYLE
-import { Flex, Image } from "@chakra-ui/react";
+import {
+  Flex,
+  IconButton,
+  Image,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  Text,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  Box,
+} from "@chakra-ui/react";
 
 // ASSETS
 import loginImg from "@/images/login.webp";
+import { FaInfoCircle } from "react-icons/fa";
 
 export const AuthLayout = () => {
   const navigate = useNavigate();
@@ -45,6 +60,45 @@ export const AuthLayout = () => {
       h="100vh"
       bg="#fff"
     >
+      <Popover>
+        <PopoverTrigger>
+          <IconButton
+            m={4}
+            size="sm"
+            color="primary.700"
+            icon={<FaInfoCircle />}
+            pos="absolute"
+            top="0"
+            right="50%"
+          ></IconButton>
+        </PopoverTrigger>
+        <PopoverContent w="367px">
+          <PopoverArrow />
+          <PopoverCloseButton />
+          <PopoverHeader>
+            For testing purposes you can use these credentials
+          </PopoverHeader>
+          <PopoverBody>
+            <Box>
+              <Flex gap={1}>
+                <Text fontWeight="bold">doctor: </Text>
+                <Text>kelli79@hotmail.com</Text>
+              </Flex>
+              <Flex gap={1}>
+                <Text fontWeight="bold">patient: </Text>
+                <Text>barbara.ankunding@gmail.com</Text>
+              </Flex>
+            </Box>
+          </PopoverBody>
+          <PopoverFooter>
+            <Flex gap={1}>
+              <Text fontWeight="bold">Password: </Text>
+              <Text>testtest</Text>
+            </Flex>
+          </PopoverFooter>
+        </PopoverContent>
+      </Popover>
+
       <Flex
         pos="absolute"
         top="10px"

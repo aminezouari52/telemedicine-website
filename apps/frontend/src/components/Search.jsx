@@ -37,7 +37,7 @@ const Search = () => {
         size="sm"
         type="text"
         focusBorderColor="primary.500"
-        placeholder="Chercher..."
+        placeholder="Search..."
         onChange={handleChange}
         color="#000"
         borderTopLeftRadius="0"

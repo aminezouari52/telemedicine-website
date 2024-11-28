@@ -61,7 +61,7 @@ const DoctorConsultations = () => {
       <Flex justifyContent="space-around" p={12}>
         <Box w="40%">
           <Flex alignItems="center" justifyContent="space-between" py={5}>
-            <Heading size="md">Consultations à venir</Heading>
+            <Heading size="md">Upcoming consultations</Heading>
             {consultations?.length > 2 && (
               <Button
                 size="xs"
@@ -69,12 +69,12 @@ const DoctorConsultations = () => {
                 _hover={{ opacity: "0.8" }}
                 onClick={onOpen}
               >
-                Voir tous
+                See all
               </Button>
             )}
           </Flex>
           {!sortedUpcomingConsultations()?.length && (
-            <div>vous n'avez pas de consultations</div>
+            <div>You don't have any consultations</div>
           )}
 
           <Stack spacing={6}>
@@ -90,7 +90,7 @@ const DoctorConsultations = () => {
           {sortedUpcomingConsultations()?.length !== 0 && (
             <>
               <Flex alignItems="center" justifyContent="space-between" py={5}>
-                <Heading size="md">Prôchaine consultation</Heading>
+                <Heading size="md">Next consultation</Heading>
               </Flex>
               <Card>
                 <CardBody>
@@ -123,7 +123,7 @@ const DoctorConsultations = () => {
                         </Flex>
                         <Flex>
                           <Text mr={2} color="gray">
-                            Heure:{" "}
+                            Time:{" "}
                           </Text>
                           <Text>
                             {DateTime.fromJSDate(
@@ -141,7 +141,7 @@ const DoctorConsultations = () => {
                     </Text>
                     <UnorderedList fontSize="smaller" p={2}>
                       <ListItem>
-                        <strong>Téléphone:</strong>{" "}
+                        <strong>Phone:</strong>{" "}
                         {sortedUpcomingConsultations()[0]?.patient?.phone}
                       </ListItem>
                       <ListItem>
@@ -149,7 +149,7 @@ const DoctorConsultations = () => {
                         {sortedUpcomingConsultations()[0]?.patient?.age}
                       </ListItem>
                       <ListItem>
-                        <strong>Poids: </strong>
+                        <strong>Weight: </strong>
                         {sortedUpcomingConsultations()[0]?.patient?.weight}kg
                       </ListItem>
                     </UnorderedList>

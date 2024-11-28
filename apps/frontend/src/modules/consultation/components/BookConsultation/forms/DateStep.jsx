@@ -56,7 +56,7 @@ const DateStep = ({ goToNext, goToPrevious }) => {
       <Flex h="100%" direction="column" justifyContent="end" gap={8} px={20}>
         <Flex flexDirection="column" w="100%">
           <Heading size="xs" color="gray.600" pb={4}>
-            Choisir la date et l'heure
+            Choose date and time
           </Heading>
           <DatePicker
             required
@@ -68,8 +68,7 @@ const DateStep = ({ goToNext, goToPrevious }) => {
         </Flex>
         <Stack spacing={7} maxWidth="600px">
           <Text mr={2}>
-            <strong>Date choisis: </strong>
-            le{" "}
+            <strong>Selected date: </strong>
             {values?.date
               ? DateTime.fromJSDate(new Date(values.date)).toFormat(
                   "dd-MM-yyyy 'à' HH:00"
@@ -86,7 +85,7 @@ const DateStep = ({ goToNext, goToPrevious }) => {
               }}
               onClick={goToPrevious}
             >
-              Précédent
+              Previous
             </Button>
             <Button
               size="sm"
@@ -96,7 +95,7 @@ const DateStep = ({ goToNext, goToPrevious }) => {
                 opacity: 0.8,
               }}
             >
-              Enregistrer & Continuer
+              Save & Continue
             </Button>
           </Flex>
         </Stack>

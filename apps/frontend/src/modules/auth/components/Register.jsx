@@ -75,7 +75,7 @@ const Register = () => {
       }
 
       toast({
-        title: "Compte créer avec succès!",
+        title: "Account created successfully!",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -83,7 +83,7 @@ const Register = () => {
     } catch (err) {
       console.log(err);
       toast({
-        title: "Vérifier votre email",
+        title: "Verify your email",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -109,8 +109,8 @@ const Register = () => {
         justifyContent="center"
         alignItems="center"
       >
-        <Heading size="lg">Bienvenue!</Heading>
-        <Text color="darkgray">Bienvenue! Merci de créer votre compte</Text>
+        <Heading size="lg">Welcome!</Heading>
+        <Text color="darkgray">Welcome! Please create your account</Text>
       </Flex>
       <Flex w="100%" direction="column" gap={2}>
         <Input
@@ -118,9 +118,9 @@ const Register = () => {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Votre email"
+          placeholder="your email"
           autoFocus
-          size={{ sm: "sm", md: "md" }}
+          size="md"
           mt={2}
         />
 
@@ -129,19 +129,19 @@ const Register = () => {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Votre mot de passe"
-          size={{ sm: "sm", md: "md" }}
+          placeholder="your password"
+          size="md"
         />
         <Flex w="100%" gap={4} alignItems="center">
           <Text flexWrap="nowrap" whiteSpace="nowrap">
-            Vous êtes un{" "}
+            You are a{" "}
           </Text>
           <Select
             onChange={(e) => setRole(e.target.value)}
             focusBorderColor="primary.500"
           >
             <option value="patient">Patient</option>
-            <option value="doctor">Docteur</option>
+            <option value="doctor">Doctor</option>
           </Select>
         </Flex>
       </Flex>
@@ -156,13 +156,13 @@ const Register = () => {
             opacity: email && password.length >= 6 && "0.8",
           }}
         >
-          S'inscrire
+          Register
         </Button>
       </Flex>
 
       <Flex fontSize="sm">
         <Text color="gray" mr={1}>
-          Vous avez déjà un compte?
+          Already have an account?
         </Text>
         <Link
           as={NavLink}
@@ -171,7 +171,7 @@ const Register = () => {
           fontWeight="semibold"
           _hover={{ textDecoration: "underline" }}
         >
-          Se connecter
+          Login
         </Link>
       </Flex>
     </Flex>

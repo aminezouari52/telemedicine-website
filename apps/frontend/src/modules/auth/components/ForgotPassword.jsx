@@ -31,8 +31,8 @@ const ForgotPassword = () => {
       setEmail("");
       setLoading(false);
       toast({
-        title: "Lien envoyée avec succès",
-        description: "Veuillez vérifier votre boîte de réception",
+        title: "Link sent successfully",
+        description: "Please check your inbox",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -65,10 +65,10 @@ const ForgotPassword = () => {
         alignItems="center"
       >
         <Heading textAlign="center" size="lg">
-          Mot de passe oublié
+          Forgotten password
         </Heading>
         <Text color="darkgray" textAlign="center">
-          Entrez votre email ci-dessous pour recevoir un lien
+          Enter your email below to receive a link
         </Text>
       </Flex>
       <Flex w="100%" direction="column" gap={1}>
@@ -77,7 +77,7 @@ const ForgotPassword = () => {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Votre email"
+          placeholder="your email"
           autoFocus
           mb={2}
         />
@@ -93,12 +93,12 @@ const ForgotPassword = () => {
           }}
           onClick={handleSubmit}
         >
-          Réinitialiser
+          Reset
         </Button>
       </Flex>
       <Flex fontSize="sm">
         <Text color="gray" mr={1}>
-          Vous n'avez pas de compte ?
+          Don't have an account?
         </Text>
         <Link
           as={NavLink}
@@ -107,7 +107,7 @@ const ForgotPassword = () => {
           fontWeight="semibold"
           _hover={{ textDecoration: "underline" }}
         >
-          S'inscrire
+          Register
         </Link>
       </Flex>
     </Flex>

@@ -15,7 +15,7 @@ const NotFound = () => {
     >
       <Image boxSize="400px" src={NotFoundImg} alt="Dan Abramov" />
       <Heading size="md" textAlign="center">
-        Désolé! La page que vous recherchez est introuvable.
+        Sorry! The page you are looking for could not be found.
       </Heading>
       <Button
         size="sm"
@@ -25,7 +25,7 @@ const NotFound = () => {
         }}
         onClick={() => navigate("/")}
       >
-        Retourner vers la page d'acceuil
+        Return to the home page
       </Button>
     </Flex>
   );

@@ -48,9 +48,7 @@ const DataTable = ({ data, renderRow, headers }) => {
               paginatedData[currentPage]?.map((item, index) =>
                 renderRow(item, index)
               )}
-            <Text m={4}>
-              {!paginatedData?.length && "Cette table est vide"}
-            </Text>
+            <Text m={4}>{!paginatedData?.length && "This table is empty"}</Text>
           </Tbody>
         </Table>
       </TableContainer>

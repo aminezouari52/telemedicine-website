@@ -64,7 +64,7 @@ function DoctorDetails() {
             w="100%"
           >
             <Flex direction="column" gap={2}>
-              <Heading size="sm">Téléphone</Heading>
+              <Heading size="sm">Phone</Heading>
               <Text>{doctor?.phone}</Text>
             </Flex>
             <Flex direction="column" gap={2}>
@@ -73,7 +73,7 @@ function DoctorDetails() {
             </Flex>
 
             <Flex direction="column" gap={2}>
-              <Heading size="sm">Certifications</Heading>
+              <Heading size="sm">Certificates</Heading>
               <UnorderedList>
                 {doctor?.certifications?.map((certification, index) => (
                   <ListItem key={index}>{certification}</ListItem>
@@ -81,7 +81,7 @@ function DoctorDetails() {
               </UnorderedList>
             </Flex>
             <Flex direction="column" gap={2}>
-              <Heading size="sm">Diplôme</Heading>
+              <Heading size="sm">Degrees</Heading>
               <UnorderedList>
                 {doctor?.degrees?.map((degree, index) => (
                   <ListItem key={index}>{degree}</ListItem>
@@ -103,21 +103,21 @@ function DoctorDetails() {
             w="100%"
           >
             <Flex direction="column" gap={2}>
-              <Heading size="sm">Hôpital</Heading>
+              <Heading size="sm">Hospital</Heading>
               <Text>{doctor?.hospital}</Text>
             </Flex>
             <Flex direction="column" gap={2}>
-              <Heading size="sm">Adresse</Heading>
+              <Heading size="sm">Address</Heading>
               <Text>
                 {doctor?.address}, {doctor?.city} {doctor?.zip}
               </Text>
             </Flex>
             <Flex direction="column" gap={2}>
-              <Heading size="sm">Horaire</Heading>
+              <Heading size="sm">Schedule</Heading>
               <Text>{doctor?.schedule.join(", ")}</Text>
             </Flex>
             <Flex direction="column" gap={2}>
-              <Heading size="sm">Prix de consultation</Heading>
+              <Heading size="sm">Consultation price</Heading>
               <Text>{doctor?.price} dt/h</Text>
             </Flex>
           </Flex>
@@ -132,7 +132,7 @@ function DoctorDetails() {
             }}
             onClick={() => navigate(`/patient/consultation/${params.id}`)}
           >
-            Prenez un rendez-vous
+            Book a consultation
           </Button>
         </Flex>
       </Flex>

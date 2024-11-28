@@ -54,7 +54,7 @@ const PorfileInfo = ({ goToNext }) => {
           <InputField
             label="Prenom"
             name="firstName"
-            placeholder="Votre prenom"
+            placeholder="your firstname"
             borderRadius="0px"
             labelColor="#000"
             secondarycolor="secondary.500"
@@ -62,7 +62,7 @@ const PorfileInfo = ({ goToNext }) => {
           <InputField
             label="Nom"
             name="lastName"
-            placeholder="Votre nom"
+            placeholder="your lastname"
             borderRadius="0px"
             labelColor="#000"
             secondarycolor="secondary.500"
@@ -72,15 +72,15 @@ const PorfileInfo = ({ goToNext }) => {
           <InputField
             label="Adresse"
             name="address"
-            placeholder="Votre adresse"
+            placeholder="your address"
             borderRadius="0px"
             labelColor="#000"
             secondarycolor="secondary.500"
           />
           <InputField
-            label="Téléphone"
+            label="Phone"
             name="phone"
-            placeholder="Votre numero de téléphone"
+            placeholder="your phone number"
             borderRadius="0px"
             labelColor="#000"
             secondarycolor="secondary.500"
@@ -90,7 +90,7 @@ const PorfileInfo = ({ goToNext }) => {
           <InputField
             label="Ville"
             autoComplete="home city"
-            placeholder="Votre ville"
+            placeholder="your city"
             name="city"
             borderRadius="0px"
             labelColor="#000"
@@ -101,7 +101,7 @@ const PorfileInfo = ({ goToNext }) => {
             label="Code postal / Poste"
             autoComplete="postal-code"
             name="zip"
-            placeholder="Votre numero de téléphone"
+            placeholder="your zip number"
             borderRadius="0px"
             labelColor="#000"
             secondarycolor="secondary.500"
@@ -113,7 +113,7 @@ const PorfileInfo = ({ goToNext }) => {
             label="Age"
             type="number"
             name="age"
-            placeholder="Votre age"
+            placeholder="your age"
             borderRadius="0px"
             labelColor="#000"
             secondarycolor="secondary.500"
@@ -121,7 +121,7 @@ const PorfileInfo = ({ goToNext }) => {
           <InputField
             label="Poids"
             name="weight"
-            placeholder="Votre poids"
+            placeholder="your weight"
             borderRadius="0px"
             labelColor="#000"
             secondarycolor="secondary.500"
@@ -139,7 +139,7 @@ const PorfileInfo = ({ goToNext }) => {
           }}
           onClick={nextFormHandler}
         >
-          Enregistrer & Continuer
+          Save & Continue
         </Button>
       </Flex>
     </Flex>

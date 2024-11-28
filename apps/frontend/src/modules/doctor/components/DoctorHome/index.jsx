@@ -60,7 +60,7 @@ const DoctorHome = () => {
         <Flex alignItems="center" gap={4}>
           <Avatar size="lg" src={doctor?.photo || DoctorAvatar} />
           <Flex flexDirection="column" gap={3}>
-            <Heading size="md">Salut, Dr {doctor?.firstName}</Heading>
+            <Heading size="md">Hello, Dr {doctor?.firstName}!</Heading>
             {!user?.isProfileCompleted && (
               <Button
                 rightIcon={<ArrowForwardIcon />}
@@ -69,14 +69,14 @@ const DoctorHome = () => {
                 fontWeight="normal"
                 onClick={() => navigate("/doctor/profile")}
               >
-                complètez votre compte
+                complete your profile
               </Button>
             )}
           </Flex>
         </Flex>
         <Box>
           <Stat>
-            <StatLabel>Croissance mensuelle</StatLabel>
+            <StatLabel>Monthly growth</StatLabel>
             <StatNumber>{consultations?.length}</StatNumber>
             <StatHelpText>
               <StatArrow

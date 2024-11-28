@@ -17,7 +17,7 @@ const translateStatus = (status) => {
   if (status === "completed") return "Confirmé";
 };
 
-const headers = ["Patient", "Date", "Status", "Créer le", "Modifier le"];
+const headers = ["Patient", "Date", "Status", "Created at", "Updated at"];
 
 const ConsultationsTable = ({ consultations }) => {
   const [activeTab, setActiveTab] = useState(0);
@@ -54,10 +54,10 @@ const ConsultationsTable = ({ consultations }) => {
     >
       <TabList>
         {[
-          "Consultations en attente",
-          "Consultations annulé",
-          "Consultations confirmé",
-          "Toutes les consultationss",
+          "Pending consultations",
+          "Canceled consultations",
+          "Completed consultations",
+          "All consultationss",
         ].map((item, index) => (
           <Tab
             key={index}

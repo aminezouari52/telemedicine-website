@@ -49,7 +49,7 @@ const PatientConsultations = () => {
   }, [user]);
 
   const sortedUpcomingConsultations = () => {
-    return consultations?.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return consultations?.sort((a, b) => new Date(a.date) - new Date(b.date));
   };
 
   return (
@@ -62,7 +62,7 @@ const PatientConsultations = () => {
       <Flex justifyContent="space-around" p={12}>
         <Box w="40%">
           <Flex alignItems="center" justifyContent="space-between" py={5}>
-            <Heading size="md">Consultations à venir</Heading>
+            <Heading size="md">Upcoming consultations</Heading>
             {consultations?.length > 2 && (
               <Button
                 size="xs"
@@ -70,12 +70,12 @@ const PatientConsultations = () => {
                 _hover={{ opacity: "0.8" }}
                 onClick={onOpen}
               >
-                Voir tous
+                See all
               </Button>
             )}
           </Flex>
           {sortedUpcomingConsultations()?.length < 1 && (
-            <Text>Vous n'avez encore de consultations</Text>
+            <Text>You still have no consultations</Text>
           )}
           <Flex direction="column" gap={6}>
             {sortedUpcomingConsultations()?.map((consultation) => (
@@ -112,9 +112,8 @@ const PatientConsultations = () => {
                     <Flex alignItems="center" gap="10px">
                       <Icon as={CalendarIcon} color="gray.500" />
                       <Flex fontSize="12px" flexDirection="column">
-                        <Text color="gray">Votre consultation</Text>
+                        <Text color="gray">Your consultation</Text>
                         <Text>
-                          le{" "}
                           {consultation?.date
                             ? DateTime.fromJSDate(
                                 new Date(consultation.date)
@@ -137,7 +136,7 @@ const PatientConsultations = () => {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Heading size="md">Profil</Heading>
+            <Heading size="md">Profile</Heading>
           </Flex>
           {sortedUpcomingConsultations()?.length > 0 && (
             <Card>
@@ -174,7 +173,7 @@ const PatientConsultations = () => {
                       </Flex>
                       <Flex>
                         <Text mr={2} color="gray">
-                          Heure:{" "}
+                          Time:{" "}
                         </Text>
                         <Text>
                           {DateTime.fromJSDate(
@@ -192,7 +191,7 @@ const PatientConsultations = () => {
                   </Text>
                   <UnorderedList fontSize="smaller" p={2}>
                     <ListItem>
-                      <strong>Téléphone:</strong>{" "}
+                      <strong>Phone:</strong>{" "}
                       {sortedUpcomingConsultations()[0]?.patient?.phone}
                     </ListItem>
                     <ListItem>
@@ -200,7 +199,7 @@ const PatientConsultations = () => {
                       {sortedUpcomingConsultations()[0]?.patient?.age}
                     </ListItem>
                     <ListItem>
-                      <strong>Poids: </strong>
+                      <strong>Weight: </strong>
                       {sortedUpcomingConsultations()[0]?.patient?.weight}kg
                     </ListItem>
                   </UnorderedList>

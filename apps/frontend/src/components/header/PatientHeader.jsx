@@ -75,13 +75,13 @@ export const PatientHeader = () => {
       <Logo />
       <Flex alignItems="center" gap="20px" height="100%">
         <HeaderButton pathname="/patient/home">
-          <Text fontSize="sm">Acceuil</Text>
+          <Text fontSize="sm">Home</Text>
         </HeaderButton>
         <HeaderButton pathname="/patient/consultations">
           <Text fontSize="sm">Consultations</Text>
         </HeaderButton>
         <HeaderButton pathname="/patient/doctors">
-          <Text fontSize="sm">Medecins</Text>
+          <Text fontSize="sm">Doctors</Text>
         </HeaderButton>
       </Flex>
       <Flex gap={1} alignItems="center" justifyContent="flex-end" height="100%">

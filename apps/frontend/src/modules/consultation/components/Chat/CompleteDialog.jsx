@@ -22,11 +22,10 @@ const CompleteDialog = ({ onClose, completeConsultation, isOpen }) => {
       <AlertDialogOverlay />
 
       <AlertDialogContent>
-        <AlertDialogHeader>Consultation est complète 🙂</AlertDialogHeader>
+        <AlertDialogHeader>Consultation is complete 🙂</AlertDialogHeader>
         <AlertDialogBody>
-          La personne avec qui vous aviez une consultation a mis fin à la
-          consultation, ce qui signifie que vous allez être redirigé vers la
-          page d'accueil.
+          The person you were consulting with has ended the consultation, which
+          means you will be redirected to the home page.
         </AlertDialogBody>
         <AlertDialogFooter>
           <Button
@@ -41,7 +40,7 @@ const CompleteDialog = ({ onClose, completeConsultation, isOpen }) => {
               opacity: 0.8,
             }}
           >
-            D'accord
+            Okay
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

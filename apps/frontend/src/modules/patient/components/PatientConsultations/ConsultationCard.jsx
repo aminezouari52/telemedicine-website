@@ -39,9 +39,8 @@ const ConsultationCard = ({ consultation }) => {
           <Flex alignItems="center" gap="10px">
             <Icon as={CalendarIcon} color="gray.500" />
             <Flex fontSize="12px" flexDirection="column">
-              <Text color="gray">Votre consultation</Text>
+              <Text color="gray">Your consultation</Text>
               <Text>
-                le{" "}
                 {consultation?.date
                   ? DateTime.fromJSDate(new Date(consultation.date)).toFormat(
                       "dd-MM-yyyy 'à' HH:mm"

@@ -10,14 +10,12 @@ import {
 import ConsultationCard from "./ConsultationCard";
 
 function AllConsultationsModal({ consultations, onClose, isOpen }) {
-  console.log(consultations);
-
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} size="lg">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Tout les consultations</ModalHeader>
+          <ModalHeader>All consultations</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Flex direction="column" p={4} gap={4}>

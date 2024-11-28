@@ -97,7 +97,7 @@ const DoctorCard = ({ doctor }) => {
               opacity: 0.8,
             }}
           >
-            Réservez
+            Book
           </Button>
         </Flex>
       </Flex>

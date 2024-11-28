@@ -29,16 +29,16 @@ const PatientHome = () => {
         <Flex justifyContent="space-around">
           <Flex flexDirection="column" justifyContent="center" gap="10px">
             <Heading fontSize="5xl" as="h1" p={6}>
-              Nos
+              Our
               <span
                 style={{
                   color: "#615EFC",
                 }}
               >
                 {" "}
-                médecins{" "}
+                doctors{" "}
               </span>
-              et thérapeutes sont là,{" "}
+              and therapists are here,{" "}
               <span
                 style={{
                   color: "#615EFC",
@@ -49,9 +49,8 @@ const PatientHome = () => {
               .
             </Heading>
             <Text fontWeight="semibold" p={6}>
-              N'attendez pas pour commencer à vous sentir mieux. Connectez-vous
-              avec un médecin certifié en quelques minutes. Prenez rendez-vous
-              partout.
+              Don't wait to start feeling better. Connect with a certified
+              physician in minutes. Book an appointment anywhere.
             </Text>
 
             <Flex p={6}>
@@ -67,7 +66,7 @@ const PatientHome = () => {
                 size={{ sm: "sm", md: "md", lg: "lg" }}
                 onClick={() => navigate("/patient/doctors")}
               >
-                Réservez une consultation!
+                Book a consultation!
               </Button>
             </Flex>
           </Flex>
@@ -101,17 +100,17 @@ const PatientHome = () => {
             </Flex>
 
             <Box>
-              <Heading fontSize="xl">Trouvez un medecin</Heading>
+              <Heading fontSize="xl">Find a doctor</Heading>
               <Text fontSize="smaller" py={2}>
-                Nous recrutons les meilleurs spécialistes pour vous offrir un
-                service de diagnostic de premier ordre.
+                We recruit the best specialists to offer you a first-rate
+                first-rate diagnostic service.
               </Text>
               <Button
                 variant="link"
                 color="primary.500"
                 onClick={() => navigate("/patient/doctors")}
               >
-                Trouvez medecin.
+                Find a doctor.
               </Button>
             </Box>
           </Flex>
@@ -134,17 +133,17 @@ const PatientHome = () => {
             </Flex>
 
             <Box>
-              <Heading fontSize="xl">Prenez rendez-vous</Heading>
+              <Heading fontSize="xl">Book a consultation</Heading>
               <Text fontSize="smaller" py={2}>
-                Connectez-vous avec un spécialiste en quelques minutes et
-                recevez les soins dont vous avez besoin.
+                Connect with a specialist in just a few minutes and receive the
+                care you need.
               </Text>
               <Button
                 variant="link"
                 color="primary.500"
                 onClick={() => navigate("/patient/doctors")}
               >
-                Réservez maintenant.
+                Book now.
               </Button>
             </Box>
           </Flex>
@@ -167,17 +166,17 @@ const PatientHome = () => {
             </Flex>
 
             <Box>
-              <Heading fontSize="xl">Voir mes Consultations</Heading>
+              <Heading fontSize="xl">See my Consultations</Heading>
               <Text fontSize="smaller" py={2}>
-                Consultez l'historique de vos rendez-vous médicaux passés et à
-                venir.
+                View the history of your past and future medical appointments.
+                appointments.
               </Text>
               <Button
                 variant="link"
                 color="primary.500"
                 onClick={() => navigate("/patient/consultations")}
               >
-                Mes consultations.
+                My consultations.
               </Button>
             </Box>
           </Flex>

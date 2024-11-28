@@ -185,10 +185,10 @@ const Chat = () => {
               <Text>
                 {currentUsers?.doctor ? (
                   <Text>
-                    Dr <strong>{currentUsers?.doctor}</strong> est active
+                    Dr <strong>{currentUsers?.doctor}</strong> is active
                   </Text>
                 ) : (
-                  <Text>En attente que le médecin se joigne...</Text>
+                  <Text>Waiting for the doctor to join...</Text>
                 )}
               </Text>
             </Flex>
@@ -203,24 +203,24 @@ const Chat = () => {
               </Avatar>
               {currentUsers?.patient ? (
                 <Text>
-                  <strong>{currentUsers?.patient}</strong> est active
+                  <strong>{currentUsers?.patient}</strong> is active
                 </Text>
               ) : (
-                <Text>En attente que le patient se joigne...</Text>
+                <Text>Waiting for patient to join...</Text>
               )}
             </Flex>
           )}
 
           <Flex direction="column" alignItems="end" justifyContent="flex-end">
             <Button size="sm" colorScheme="red" onClick={onOpenLeave}>
-              Quitter
+              Leave
             </Button>
           </Flex>
         </Flex>
         <Flex direction="column">
           <Flex direction="column" alignItems="center" justifyContent="center">
             <Heading textAlign="center" size="md">
-              Consultation en cours
+              Consultation in progress
             </Heading>
           </Flex>
         </Flex>

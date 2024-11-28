@@ -17,7 +17,7 @@ const DoctorProfile = () => {
     <Flex direction="column" gap={8} py={10} px={40}>
       <Box>
         <Heading fontSize="lg" lineHeight="6">
-          Profil
+          Profile
         </Heading>
         <Text
           mt={1}
@@ -27,8 +27,8 @@ const DoctorProfile = () => {
             color: "gray.400",
           }}
         >
-          Compléter votre profil être visible aux patients et pour offrir des
-          détails complets et à jour.
+          Complete your profile to be visible to patients and to offer
+          up-to-date details.
         </Text>
       </Box>
       <Divider />

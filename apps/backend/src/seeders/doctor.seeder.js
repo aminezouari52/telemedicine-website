@@ -16,26 +16,27 @@ function randomIntFromInterval(min, max) {
 }
 
 const specialities = [
-  "Généraliste",
-  "Cardiologue",
-  "Dermatologue",
-  "Endocrinologue",
-  "Gastro-entérologue",
-  "Neurologue",
-  "Pédiatre",
-  "Psychiatre",
+  "Generalist",
+  "Cardiologist",
+  "Dermatologist",
+  "Endocrinologist",
+  "Gastroenterologist",
+  "Neurologist",
+  "Pediatrician",
+  "Psychiatrist",
 ];
-const experiences = ["Moins qu'une année", "1 - 5 ans", "+5 ans"];
+
+const experiences = ["Less than a year", "1 - 5 years", "+5 years"];
 const hospitals = [
-  "Hôpital Mongi Slim",
-  "Hôpital Charles Nicolle",
-  "Hôpital La Rabta",
-  "Hôpital Razi",
-  "Hôpital Sahloul",
-  "Hôpital Farhat Hached",
-  "Hôpital Fattouma Bourguiba",
-  "Hôpital Hédi Chaker",
-  "Hôpital Habib Bourguiba",
+  "Hospitam Mongi Slim",
+  "Hospitam Charles Nicolle",
+  "Hospitam La Rabta",
+  "Hospitam Razi",
+  "Hospitam Sahloul",
+  "Hospitam Farhat Hached",
+  "Hospitam Fattouma Bourguiba",
+  "Hospitam Hédi Chaker",
+  "Hospitam Habib Bourguiba",
 ];
 
 const degrees = [
@@ -63,13 +64,13 @@ const certificats = [
 ];
 
 const schedule = [
-  "Lundi",
-  "Mardi",
-  "Mercredi",
-  "Jeudi",
-  "Vendredi",
-  "Samedi",
-  "Dimanche",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
 ];
 
 async function seedDoctorCollection() {

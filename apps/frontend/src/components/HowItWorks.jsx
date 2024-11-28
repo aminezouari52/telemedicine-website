@@ -16,7 +16,6 @@ import {
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import illustrationDate from "@/images/illustration-date.svg";
 import illustrationProfile from "@/images/illustration-profile.svg";
 import illustrationChat from "@/images/illustration-chat.svg";
@@ -24,15 +23,15 @@ import illustrationChat from "@/images/illustration-chat.svg";
 const steps = [
   {
     img: illustrationProfile,
-    text: "Créer un compte",
+    text: "Create an account",
   },
   {
     img: illustrationDate,
-    text: "Réserver une consultation",
+    text: "Book a consultation",
   },
   {
     img: illustrationChat,
-    text: "Joindre une consultation",
+    text: "Join a consultation",
   },
 ];
 
@@ -76,7 +75,6 @@ const CustomStepper = ({ activeStep }) => {
 };
 
 const HowItWorks = () => {
-  const navigate = useNavigate();
   const { activeStep, setActiveStep } = useSteps({
     index: 0,
     count: 2,
@@ -103,9 +101,9 @@ const HowItWorks = () => {
           p={12}
           justifyContent="center"
         >
-          Joindre une consultation en 3 &nbsp;
+          Join a consultation in 3 &nbsp;
           <Text color="primary.500"> simple </Text>
-          &nbsp; étapes
+          &nbsp; steps
         </Heading>
 
         <CustomStepper activeStep={activeStep} />

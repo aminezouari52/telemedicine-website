@@ -50,34 +50,34 @@ const Statistics = () => {
     <Flex direction="column" gap={4} color="white">
       <Flex gap={4}>
         <StatisticsBox
-          title="Consultations ce mois"
+          title="Consultations this month"
           number={consultationsThisMonth()}
           icon={<CalendarIcon color="primary.500" />}
         />
         <StatisticsBox
-          title="Nombre total des patiens"
+          title="Total number of patiens"
           number={doctor?.patientsCount}
           icon={<Icon color="primary.500" h={6} w={6} as={IoIosPeople} />}
         />
         <StatisticsBox
-          title="Nombre total des Consultations"
+          title="Total number of consultations"
           number={consultations?.length}
           icon={<Icon color="primary.500" h={5} w={5} as={HiDocumentText} />}
         />
       </Flex>
       <Flex gap={4}>
         <StatisticsBox
-          title="Consultations en attente"
+          title="Pending consultations"
           number={consultations?.filter((c) => c.status === "pending")?.length}
           icon={<Icon as={FaClock} color="orange.300" h={4} w={4} />}
         />
         <StatisticsBox
-          title="Consultations annulé"
+          title="Canceled consultations"
           number={consultations?.filter((c) => c.status === "canceled")?.length}
           icon={<Icon as={MdCancel} color="red.300" h={5} w={5} />}
         />
         <StatisticsBox
-          title="Consultations complète"
+          title="Completed Consultations"
           number={
             consultations?.filter((c) => c.status === "completed")?.length
           }

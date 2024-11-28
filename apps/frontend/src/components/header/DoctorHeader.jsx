@@ -114,19 +114,19 @@ export const DoctorHeader = () => {
     if (user) {
       if (isProfileCompleted !== undefined && !isProfileCompleted) {
         addNotificationIfNotExist({
-          msg: "Complèter votre profil pour attirez les patients",
+          msg: "Complete your profile to attract patients",
           route: "/doctor/profile",
         });
       }
       if (newConsultationsValue) {
         addNotificationIfNotExist({
-          msg: `Vous avez ${newConsultationsValue} nouveaux consultations`,
+          msg: `You have ${newConsultationsValue} new consultations`,
           route: "/doctor/consultations",
         });
       }
       if (consultation) {
         addNotificationIfNotExist({
-          msg: "Vous avez une consultation maintenant",
+          msg: "You have a consultation now",
           route: `/${consultation?._id}`,
         });
       }
@@ -151,7 +151,7 @@ export const DoctorHeader = () => {
 
       <Flex alignItems="center" gap="20px" height="100%">
         <HeaderButton pathname="/doctor/home">
-          <Text fontSize="sm">Acceuil</Text>
+          <Text fontSize="sm">Home</Text>
         </HeaderButton>
         <HeaderButton pathname="/doctor/consultations">
           <Text fontSize="sm">Consultations</Text>
@@ -173,7 +173,7 @@ export const DoctorHeader = () => {
               navigate(`/${consultation?._id}`);
             }}
           >
-            Joindre
+            Join
           </Button>
         )}
         <Menu>
@@ -218,7 +218,7 @@ export const DoctorHeader = () => {
             ))}
 
             {!isNotification?.length > 0 && (
-              <Text px={2}>vous n'avez pas de notifications</Text>
+              <Text px={2}>you don't have any notifications</Text>
             )}
           </MenuList>
         </Menu>

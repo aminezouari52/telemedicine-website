@@ -83,76 +83,76 @@ const General = ({ setIsLoading }) => {
 
   const validationSchema = Yup.object().shape({
     firstName: Yup.string()
-      .required("Le prénom est requis")
-      .max(50, "Le prénom ne peut pas dépasser 50 caractères"),
+      .required("First name is required")
+      .max(50, "First name cannot exceed 50 characters"),
     lastName: Yup.string()
-      .required("Le nom de famille est requis")
-      .max(50, "Le nom de famille ne peut pas dépasser 50 caractères"),
+      .required("Last name is required")
+      .max(50, "Last name cannot exceed 50 characters"),
     age: Yup.number()
-      .required("L'âge est requis")
-      .min(18, "Vous devez avoir au moins 18 ans")
-      .max(100, "L'âge ne peut pas dépasser 100 ans"),
+      .required("Age is required")
+      .min(18, "You must be at least 18 years old")
+      .max(100, "Age cannot exceed 100 years"),
     phone: Yup.string()
-      .required("Le numéro de téléphone est requis")
-      .matches(/^[0-9]*$/, "Le numéro de téléphone n'nest pas valide"),
+      .required("Phone number is required")
+      .matches(/^[0-9]*$/, "Phone number is not valid"),
     address: Yup.string()
-      .required("L'adresse est requise")
-      .max(50, "L'adresse ne peut pas dépasser 50 caractères"),
+      .required("Address is required")
+      .max(50, "Address cannot exceed 50 characters"),
     city: Yup.string()
-      .required("La ville est requise")
-      .max(50, "La ville ne peut pas dépasser 50 caractères"),
+      .required("City is required")
+      .max(50, "City cannot exceed 50 characters"),
     zip: Yup.string()
-      .required("Le code postal est requis")
-      .matches(/^[0-9]+$/, "Le code postal doit être un nombre")
-      .min(4, "Le code postal doit comporter au moins 4 chiffres")
-      .max(5, "Le code postal ne peut pas dépasser 5 chiffres"),
+      .required("Postal code is required")
+      .matches(/^[0-9]+$/, "Postal code must be a number")
+      .min(4, "Postal code must be at least 4 digits")
+      .max(5, "Postal code cannot exceed 5 digits"),
     description: Yup.string()
-      .required("La description est requise")
-      .max(500, "La description ne peut pas dépasser 500 caractères"),
+      .required("Description is required")
+      .max(500, "Description cannot exceed 500 characters"),
     hospital: Yup.string()
       .oneOf(
         [
-          "Hôpital Mongi Slim",
-          "Hôpital Charles Nicolle",
-          "Hôpital La Rabta",
-          "Hôpital Razi",
-          "Hôpital Sahloul",
-          "Hôpital Farhat Hached",
-          "Hôpital Fattouma Bourguiba",
-          "Hôpital Hédi Chaker",
-          "Hôpital Habib Bourguiba",
+          "Hospital Mongi Slim",
+          "Hospital Charles Nicolle",
+          "Hospital La Rabta",
+          "Hospital Razi",
+          "Hospital Sahloul",
+          "Hospital Farhat Hached",
+          "Hospital Fattouma Bourguiba",
+          "Hospital Hédi Chaker",
+          "Hospital Habib Bourguiba",
         ],
-        "L'hôpital sélectionné n'est pas valide"
+        "Selected hospital is not valid"
       )
-      .required("L'hôpital est requis"),
+      .required("Hospital is required"),
     specialty: Yup.string()
       .oneOf(
         [
-          "Généraliste",
-          "Cardiologue",
-          "Dermatologue",
-          "Endocrinologue",
-          "Gastro-entérologue",
-          "Neurologue",
-          "Pédiatre",
-          "Psychiatre",
+          "Generalist",
+          "Cardiologist",
+          "Dermatologist",
+          "Endocrinologist",
+          "Gastroenterologist",
+          "Neurologist",
+          "Pediatrician",
+          "Psychiatrist",
         ],
-        "La spécialité sélectionné n'est pas valide"
+        "Selected specialty is not valid"
       )
-      .required("La spécialité est requis"),
+      .required("Specialty is required"),
     degrees: Yup.array()
       .of(Yup.string())
-      .min(1, "Choisir au moins un dîplome")
-      .max(10, "Maximum 10 dîplomes"),
+      .min(1, "Add at least one degree")
+      .max(10, "Maximum 10 degrees"),
     certifications: Yup.array()
       .of(Yup.string())
-      .min(1, "Choisir au moins une certificat")
-      .max(10, "Maximum 10 certificats"),
+      .min(1, "Choose at least one certificate")
+      .max(10, "Maximum 10 certificates"),
     price: Yup.number()
-      .required("Le prix est requis")
-      .min(0, "Le prix ne peut pas être négatif")
-      .max(1000, "Le prix ne doit pas dépasser 1000dt/hr"),
-    schedule: Yup.array().of(Yup.string()).min(1, "Choisir au moins un jour"),
+      .required("Price is required")
+      .min(0, "Price cannot be negative")
+      .max(1000, "Price must not exceed 1000dt/hr"),
+    schedule: Yup.array().of(Yup.string()).min(1, "Choose at least one day"),
   });
 
   const profileImageHandler = (uri) => {
@@ -186,8 +186,8 @@ const General = ({ setIsLoading }) => {
         setIsLoading(true);
         if (!imageSrc || imageSrc === "") {
           toast({
-            title: "Image non valide",
-            description: "choisir une image valide",
+            title: "Image is not valid",
+            description: "Choose a valid image",
             status: "error",
             duration: 3000,
             isClosable: true,
@@ -214,7 +214,7 @@ const General = ({ setIsLoading }) => {
           );
         } else {
           toast({
-            title: "Utilisateur non valide",
+            title: "User is not valid",
             status: "error",
             duration: 3000,
             isClosable: true,
@@ -246,8 +246,8 @@ const General = ({ setIsLoading }) => {
                   color: "gray.400",
                 }}
               >
-                Veuillez remplir ce formulaire pour compléter votre profil avec
-                vos informations personnelles.
+                Please fill out this form to complete your profile with your
+                personal information.
               </Text>
             </Box>
 
@@ -293,7 +293,7 @@ const General = ({ setIsLoading }) => {
                       fontWeight="medium"
                       _focus={{ shadow: "none" }}
                     >
-                      Changer
+                      Change
                     </Button>
                   </Box>
                 </Flex>
@@ -302,7 +302,7 @@ const General = ({ setIsLoading }) => {
               <SimpleGrid columns={2} spacing={6}>
                 <Box>
                   <TextFormControl
-                    label="Prénom"
+                    label="Firstname"
                     autoComplete="given-name"
                     value={values?.firstName || ""}
                     name="firstName"
@@ -320,7 +320,7 @@ const General = ({ setIsLoading }) => {
                   />
                 </Box>
                 <TextFormControl
-                  label="Nom"
+                  label="Lastname"
                   autoComplete="family-name"
                   value={values?.lastName || ""}
                   name="lastName"
@@ -405,7 +405,7 @@ const General = ({ setIsLoading }) => {
                     color="gray.700"
                     mb={3}
                   >
-                    Téléphone
+                    Phone number
                   </FormLabel>
                   <InputGroup size="sm">
                     <InputLeftAddon>+216</InputLeftAddon>
@@ -461,7 +461,7 @@ const General = ({ setIsLoading }) => {
               </SimpleGrid>
               <SimpleGrid columns={3} spacing={6}>
                 <TextFormControl
-                  label="Adresse de la rue"
+                  label="Street address"
                   autoComplete="street-address"
                   value={values?.address || ""}
                   name="address"
@@ -473,7 +473,7 @@ const General = ({ setIsLoading }) => {
                   }}
                 />
                 <TextFormControl
-                  label="Ville"
+                  label="City"
                   autoComplete="home city"
                   value={values?.city || ""}
                   name="city"
@@ -486,7 +486,7 @@ const General = ({ setIsLoading }) => {
                 />
 
                 <TextFormControl
-                  label="Code postal / Poste"
+                  label="ZIP"
                   autoComplete="postal-code"
                   value={values?.zip || ""}
                   name="zip"
@@ -510,7 +510,7 @@ const General = ({ setIsLoading }) => {
                 <Field
                   as={Textarea}
                   name="description"
-                  placeholder="Brève description de votre profil."
+                  placeholder="Brief description of your profile."
                   rows={3}
                   shadow="sm"
                   borderColor={
@@ -564,7 +564,7 @@ const General = ({ setIsLoading }) => {
             <GridItem colSpan={1}>
               <Box>
                 <Heading fontSize="lg" lineHeight="6">
-                  Professionnelles
+                  Professionals
                 </Heading>
                 <Text
                   my={2}
@@ -574,8 +574,8 @@ const General = ({ setIsLoading }) => {
                     color: "gray.400",
                   }}
                 >
-                  Fournissez des informations détaillées sur votre expérience
-                  professionnelle, y compris les dîplomes , et les certificats
+                  Provide detailed information about your professional
+                  experience including degrees, diplomas and certificates
                 </Text>
               </Box>
             </GridItem>
@@ -599,7 +599,7 @@ const General = ({ setIsLoading }) => {
                       color="gray.700"
                       mb={3}
                     >
-                      Hôpital
+                      Hospital
                     </FormLabel>
 
                     <Field
@@ -636,27 +636,29 @@ const General = ({ setIsLoading }) => {
                       }}
                       value={values?.hospital}
                     >
-                      <option value="">Selectionnez un hôpital...</option>
-                      <option value="Hôpital Mongi Slim">
-                        Hôpital Mongi Slim
+                      <option value="">Select a hospital...</option>
+                      <option value="Hospital Mongi Slim">
+                        Hospital Mongi Slim
                       </option>
-                      <option value="Hôpital Charles Nicolle">
-                        Hôpital Charles Nicolle
+                      <option value="Hospital Charles Nicolle">
+                        Hospital Charles Nicolle
                       </option>
-                      <option value="Hôpital La Rabta">Hôpital La Rabta</option>
-                      <option value="Hôpital Razi">Hôpital Razi</option>
-                      <option value="Hôpital Sahloul">Hôpital Sahloul</option>
-                      <option value="Hôpital Farhat Hached">
-                        Hôpital Farhat Hached
+                      <option value="Hospital La Rabta">
+                        Hospital La Rabta
                       </option>
-                      <option value="Hôpital Fattouma Bourguiba">
-                        Hôpital Fattouma Bourguiba
+                      <option value="Hospital Razi">Hospital Razi</option>
+                      <option value="Hospital Sahloul">Hospital Sahloul</option>
+                      <option value="Hospital Farhat Hached">
+                        Hospital Farhat Hached
                       </option>
-                      <option value="Hôpital Hédi Chaker">
-                        Hôpital Hédi Chaker
+                      <option value="Hospital Fattouma Bourguiba">
+                        Hospital Fattouma Bourguiba
                       </option>
-                      <option value="Hôpital Habib Bourguiba">
-                        Hôpital Habib Bourguiba
+                      <option value="Hospital Hédi Chaker">
+                        Hospital Hédi Chaker
+                      </option>
+                      <option value="Hospital Habib Bourguiba">
+                        Hospital Habib Bourguiba
                       </option>
                     </Field>
                     {touched.hospital && errors?.hospital && (
@@ -672,7 +674,7 @@ const General = ({ setIsLoading }) => {
                       color="gray.700"
                       mb={3}
                     >
-                      Spécialité
+                      Speciality
                     </FormLabel>
                     <Field
                       as={Select}
@@ -708,16 +710,16 @@ const General = ({ setIsLoading }) => {
                         },
                       }}
                     >
-                      <option value="Généraliste">Généraliste</option>
-                      <option value="Cardiologue">Cardiologue</option>
-                      <option value="Dermatologue">Dermatologue</option>
-                      <option value="Endocrinologue">Endocrinologue</option>
-                      <option value="Gastro-entérologue">
-                        Gastro-entérologue
+                      <option value="Generalist">Generalist</option>
+                      <option value="Cardiologist">Cardiologist</option>
+                      <option value="Dermatologist">Dermatologist</option>
+                      <option value="Endocrinologist">Endocrinologist</option>
+                      <option value="Gastroenterologist">
+                        Gastroenterologist
                       </option>
-                      <option value="Neurologue">Neurologue</option>
-                      <option value="Pédiatre">Pédiatre</option>
-                      <option value="Psychiatre">Psychiatre</option>
+                      <option value="Neurologist">Neurologist</option>
+                      <option value="Pediatrician">Pediatrician</option>
+                      <option value="Psychiatrist">Psychiatrist</option>
                     </Field>
                   </FormControl>
                 </Flex>
@@ -725,7 +727,7 @@ const General = ({ setIsLoading }) => {
                 <Flex gap={6}>
                   <Flex direction="column" wrap="wrap" w="100%">
                     <Text fontWeight="md" fontSize="md" color="gray.900" mb={3}>
-                      Dîplomes
+                      Degrees
                     </Text>
                     <FieldArray
                       name="degrees"
@@ -736,7 +738,7 @@ const General = ({ setIsLoading }) => {
                               <Flex key={index} justifyContent="flex-end">
                                 <Input
                                   name={`degrees.${index}`}
-                                  placeholder="Diplôme d'État de Docteur en Médecine."
+                                  placeholder="State Diploma of Doctor of Medicine."
                                   type="text"
                                   focusBorderColor="secondary.500"
                                   borderRightRadius={0}
@@ -787,7 +789,7 @@ const General = ({ setIsLoading }) => {
                                 icon={<AddIcon color="secondary.500" />}
                               />
                               <Text fontSize="md" color="gray.500">
-                                Ajouter un dîplome
+                                Add a degree
                               </Text>
                             </Flex>
                             {errors && errors?.degrees && (
@@ -803,7 +805,7 @@ const General = ({ setIsLoading }) => {
 
                   <Flex direction="column" wrap="wrap" w="100%">
                     <Text fontSize="md" color="gray.900" mb={3}>
-                      Certificats
+                      Certificates
                     </Text>
                     <FieldArray
                       name="certifications"
@@ -814,7 +816,7 @@ const General = ({ setIsLoading }) => {
                               <Flex key={index} justifyContent="flex-end">
                                 <Input
                                   name={`certifications.${index}`}
-                                  placeholder="Fellow du Collège américain des médecins (FACP)."
+                                  placeholder="Fellow, American College of Physicians (FACP)"
                                   type="text"
                                   focusBorderColor="secondary.500"
                                   borderRightRadius={0}
@@ -867,7 +869,7 @@ const General = ({ setIsLoading }) => {
                                 icon={<AddIcon color="secondary.500" />}
                               />
                               <Text fontSize="md" color="gray.500">
-                                Ajouter une certificat
+                                Add a certificate
                               </Text>
                             </Flex>
                             {errors && errors?.certifications && (
@@ -885,7 +887,7 @@ const General = ({ setIsLoading }) => {
                   <Box as="legend" fontSize="md" color="gray.900" mb={3}>
                     Experience
                     <Text fontSize="sm" color="gray.500">
-                      Nombre d'année d'éxperience que vous avez
+                      Number of years of experience you have
                     </Text>
                   </Box>
                   <RadioGroup
@@ -893,11 +895,11 @@ const General = ({ setIsLoading }) => {
                     color="gray.700"
                     colorScheme="primary"
                     borderColor="primary.500"
-                    value={values.experience || "Moins qu'une année"}
+                    value={values.experience || "Less than a year"}
                     onChange={(value) => setFieldValue("experience", value)}
                   >
                     <Stack spacing={4}>
-                      {["Moins qu'une année", "1 - 5 ans", "+5 ans"].map(
+                      {["Less than a year", "1 - 5 years", "+5 years"].map(
                         (experience) => (
                           <Radio
                             key={experience}
@@ -922,7 +924,7 @@ const General = ({ setIsLoading }) => {
             <GridItem colSpan={1}>
               <Box>
                 <Heading fontSize="lg" lineHeight="6">
-                  Horaire
+                  Schedule
                 </Heading>
                 <Text
                   my={2}
@@ -932,8 +934,8 @@ const General = ({ setIsLoading }) => {
                     color: "gray.400",
                   }}
                 >
-                  Veuillez renseigner vos disponibilités hebdomadaires en
-                  indiquant les jours durant lesquels vous êtes disponible.
+                  Please enter your weekly availability by indicating the days
+                  on which you are available.
                 </Text>
               </Box>
             </GridItem>
@@ -958,12 +960,12 @@ const General = ({ setIsLoading }) => {
                       color="gray.700"
                       mb={3}
                     >
-                      Prix en dt / heure
+                      Price in dt / hour
                     </FormLabel>
                     <InputGroup size="sm">
                       <Input
                         id="price"
-                        placeholder="Entrer le montant"
+                        placeholder="Enter amount"
                         type="number"
                         name="price"
                         focusBorderColor="secondary.500"
@@ -997,17 +999,17 @@ const General = ({ setIsLoading }) => {
 
                 <chakra.fieldset>
                   <Text mb={3} fontSize="md" color="gray.900">
-                    Horaire
+                    Schedule
                   </Text>
                   <Flex flexWrap="wrap" rowGap={5} columnGap={20}>
                     {[
-                      "Lundi",
-                      "Mardi",
-                      "Mercredi",
-                      "Jeudi",
-                      "Vendredi",
-                      "Samedi",
-                      "Dimanche",
+                      "Monday",
+                      "Tuesday",
+                      "Wednesday",
+                      "Thursday",
+                      "Friday",
+                      "Saturday",
+                      "Sunday",
                     ].map((day, index) => (
                       <Flex key={index} alignItems="start">
                         <Checkbox
@@ -1043,7 +1045,7 @@ const General = ({ setIsLoading }) => {
                   opacity: 0.8,
                 }}
               >
-                Sauveguarder
+                Save
               </Button>
             </GridItem>
           </Form>

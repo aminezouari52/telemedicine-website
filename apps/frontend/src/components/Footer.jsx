@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Flex,
   Box,
@@ -10,10 +12,10 @@ import {
 } from "@chakra-ui/react";
 import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin } from "react-icons/fa";
 import logoDark from "@/images/logo-dark.png";
-import { useState } from "react";
 
 const Footer = () => {
   const [newsletter, setNewsletter] = useState("");
+  const navigate = useNavigate();
 
   const newsLetterEmailHandler = (event) => {
     event.preventDefault();
@@ -26,25 +28,24 @@ const Footer = () => {
         <Flex direction="column" w="35%">
           <Image objectFit="cover" src={logoDark} alt="logo" h="auto" />
           <div>
-            Découvrez notre plateforme de télémédecine, une solution moderne et
-            pratique pour accéder à des consultations médicales en ligne.
+            Discover our telemedicine platform, a modern and practical solution
+            for accessing online medical consultations.
           </div>
         </Flex>
 
         <Flex flexDirection="column" w="30%" gap={4}>
           <Heading fontSize="md">Newsletter</Heading>
           <Text fontSize="sm">
-            Inscrivez-vous à notre newsletter et recevez les dernières
-            informations sur les innovations en télémédecine, des conseils
-            santé, et bien plus encore pour prendre soin de vous et de vos
-            proches.
+            Subscribe to our newsletter and receive the latest information on
+            innovations in telemedicine, health tips, and much more to take care
+            of yourself and your loved ones.
           </Text>
           <form>
             <Input
               fontSize="sm"
               type="email"
               variant="flushed"
-              placeholder="Adresse e-mail"
+              placeholder="E-Mail address"
               borderColor="gray.200"
               onChange={(event) => setNewsletter(event.target.value)}
               _placeholder={{
@@ -57,33 +58,35 @@ const Footer = () => {
         </Flex>
 
         <Flex flexDirection="column" w="10%" gap={4}>
-          <Heading fontSize="md">Commencer par</Heading>
+          <Heading fontSize="md">Start with</Heading>
           <Flex direction="column" alignItems="start">
             <Button
               fontSize="sm"
               fontWeight="500"
               variant="link"
               colorScheme="white"
+              onClick={() => navigate("/auth/register")}
             >
-              S'inscrire
+              Register
             </Button>
             <Button
               fontSize="sm"
               fontWeight="500"
               variant="link"
               colorScheme="white"
+              onClick={() => navigate("/auth/login")}
             >
-              Se connecter
+              Login
             </Button>
           </Flex>
         </Flex>
 
         <Flex flexDirection="column" w="25%" gap={4}>
-          <Heading fontSize="md">Entreprise</Heading>
+          <Heading fontSize="md">Company</Heading>
           <Box fontSize="sm">
             <Text>Tunisia, Sousse 5054</Text>
-            <Text>Rue Ahmed bouselem</Text>
-            <Text>Bâtiment Amine Zouari, 1er étage</Text>
+            <Text>Ahmed bouselem street</Text>
+            <Text>Amine Zouari building, 1st floor</Text>
             <Text>+216 21 316 325</Text>
             <Text>zouariamine52@gmail.com</Text>
           </Box>

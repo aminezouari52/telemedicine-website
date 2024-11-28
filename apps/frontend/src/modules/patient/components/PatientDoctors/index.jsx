@@ -50,19 +50,19 @@ const PatientDoctors = () => {
 
   return (
     <Flex flexDirection="column" gap={10} p={10} bg="gray.100">
-      <Heading fontSize="xl">Trouver un docteur</Heading>
+      <Heading fontSize="xl">Find a doctor</Heading>
       <Flex bg="#fff" direction="column" gap={8} p={10} borderRadius={4}>
         <Flex justifyContent="space-between">
           <Flex gap={10}>
             <Flex direction="column" gap={4}>
               <Text fontWeight="bold" fontSize={14} color="gray.600">
-                Nom
+                Name
               </Text>
               <Search />
             </Flex>
             <Flex direction="column" gap={4}>
               <Text fontWeight="bold" fontSize={14} color="gray.600">
-                Spécialité
+                Speciality
               </Text>
               <Select
                 size="sm"
@@ -70,21 +70,21 @@ const PatientDoctors = () => {
                 focusBorderColor="primary.500"
                 onChange={(event) => setSpecialty(event.target.value)}
               >
-                <option value="">Tous</option>
-                <option value="Généraliste">Généraliste</option>
-                <option value="Cardiologue">Cardiologue</option>
-                <option value="Dermatologue">Dermatologue</option>
-                <option value="Endocrinologue">Endocrinologue</option>
-                <option value="Gastro-entérologue">Gastro-entérologue</option>
-                <option value="Neurologue">Neurologue</option>
-                <option value="Pédiatre">Pédiatre</option>
-                <option value="Psychiatre">Psychiatre</option>
+                <option value="">All</option>
+                <option value="Generalist">Generalist</option>
+                <option value="Cardiologist">Cardiologist</option>
+                <option value="Dermatologist">Dermatologist</option>
+                <option value="Endocrinologist">Endocrinologist</option>
+                <option value="Gastroenterologist">Gastroenterologist</option>
+                <option value="Neurologist">Neurologist</option>
+                <option value="Pediatrician">Pediatrician</option>
+                <option value="Psychiatrist">Psychiatrist</option>
               </Select>
             </Flex>
 
             <Flex direction="column" gap={4}>
               <Text fontWeight="bold" fontSize={14} color="gray.600">
-                Hôpital
+                Hospital
               </Text>
               <Select
                 size="sm"
@@ -92,23 +92,25 @@ const PatientDoctors = () => {
                 focusBorderColor="primary.500"
                 onChange={(event) => setHospital(event.target.value)}
               >
-                <option value="">Tous</option>
-                <option value="Hôpital Mongi Slim">Hôpital Mongi Slim</option>
-                <option value="Hôpital Charles Nicolle">
-                  Hôpital Charles Nicolle
+                <option value="">All</option>
+                <option value="Hospital Mongi Slim">Hospital Mongi Slim</option>
+                <option value="Hospital Charles Nicolle">
+                  Hospital Charles Nicolle
                 </option>
-                <option value="Hôpital La Rabta">Hôpital La Rabta</option>
-                <option value="Hôpital Razi">Hôpital Razi</option>
-                <option value="Hôpital Sahloul">Hôpital Sahloul</option>
-                <option value="Hôpital Farhat Hached">
-                  Hôpital Farhat Hached
+                <option value="Hospital La Rabta">Hospital La Rabta</option>
+                <option value="Hospital Razi">Hospital Razi</option>
+                <option value="Hospital Sahloul">Hospital Sahloul</option>
+                <option value="Hospital Farhat Hached">
+                  Hospital Farhat Hached
                 </option>
-                <option value="Hôpital Fattouma Bourguiba">
-                  Hôpital Fattouma Bourguiba
+                <option value="Hospital Fattouma Bourguiba">
+                  Hospital Fattouma Bourguiba
                 </option>
-                <option value="Hôpital Hédi Chaker">Hôpital Hédi Chaker</option>
-                <option value="Hôpital Habib Bourguiba">
-                  Hôpital Habib Bourguiba
+                <option value="Hospital Hédi Chaker">
+                  Hospital Hédi Chaker
+                </option>
+                <option value="Hospital Habib Bourguiba">
+                  Hospital Habib Bourguiba
                 </option>
               </Select>
             </Flex>
@@ -132,11 +134,11 @@ const PatientDoctors = () => {
               iconSize={14}
               onChange={(event) => setSortBy(event.target.value)}
             >
-              <option value="">Triée par: tout</option>
-              <option value="price:asc">prix: moins cher</option>
-              <option value="price:desc">prix: plus cher</option>
-              <option value="patients:asc">patients: plus bas</option>
-              <option value="patients:desc">patients: plus haut</option>
+              <option value="">Sort by: all</option>
+              <option value="price:asc">price: cheaper</option>
+              <option value="price:desc">price: more expensive</option>
+              <option value="patients:asc">patients: lower</option>
+              <option value="patients:desc">patients: higher</option>
             </Select>
           </Flex>
         </Flex>

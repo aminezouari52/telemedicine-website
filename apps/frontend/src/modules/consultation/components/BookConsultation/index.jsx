@@ -34,7 +34,7 @@ import {
   Image,
 } from "@chakra-ui/react";
 
-const steps = [{ title: "Informations de Profil" }, { title: "Date et Heure" }];
+const steps = [{ title: "Profile information" }, { title: "Date and Time" }];
 
 const Consultation = () => {
   const dispatch = useDispatch();
@@ -86,28 +86,28 @@ const Consultation = () => {
           isProfileCompleted: true,
         }}
         validationSchema={Yup.object({
-          date: Yup.string().required("La date est requis"),
-          firstName: Yup.string().required("Le prenom est requis").trim(),
-          lastName: Yup.string().required("Le nom est requis").trim(),
+          date: Yup.string().required("Date is required"),
+          firstName: Yup.string().required("Firstname is required").trim(),
+          lastName: Yup.string().required("Lastname is required").trim(),
           age: Yup.number()
-            .required("L'âge est requis")
-            .min(18, "Vous devez avoir au moins 18 ans")
-            .max(100, "L'âge ne peut pas dépasser 100 ans"),
+            .required("Age is required")
+            .min(18, "You must be at least 18 years old")
+            .max(100, "Age cannot exceed 100 years"),
           phone: Yup.string()
-            .required("Le numéro de téléphone est requis")
+            .required("Phone number is required")
             .trim()
-            .matches(/^[0-9]*$/, "Le numéro de téléphone n'nest pas valide"),
+            .matches(/^[0-9]*$/, "The phone number is not valid"),
           address: Yup.string()
-            .required("L'adresse est requise")
-            .max(50, "L'adresse ne peut pas dépasser 50 caractères"),
+            .required("Address is required")
+            .max(50, "The address cannot exceed 50 characters."),
           city: Yup.string()
-            .required("La ville est requise")
-            .max(50, "La ville ne peut pas dépasser 50 caractères"),
+            .required("City is required")
+            .max(50, "City cannot exceed 50 characters"),
           zip: Yup.string()
-            .required("Le code postal est requis")
-            .matches(/^[0-9]+$/, "Le code postal doit être un nombre")
-            .min(4, "Le code postal doit comporter au moins 4 chiffres")
-            .max(5, "Le code postal ne peut pas dépasser 5 chiffres"),
+            .required("ZIP is required")
+            .matches(/^[0-9]+$/, "ZIP must be a number")
+            .min(4, "ZIP must be at least 4 digits long")
+            .max(5, "ZIP cannot exceed 5 digits"),
         })}
         onSubmit={async (values) => {
           const { date, patient, doctor, ...resValues } = values;
@@ -141,7 +141,7 @@ const Consultation = () => {
           </Stepper>
           <Flex justifyContent="space-between" gap={10}>
             <Flex direction="column" w="35%" gap={4}>
-              <Heading size="sm">Consultation avec</Heading>
+              <Heading size="sm">Consultation with</Heading>
               <Flex direction="column" bg="#fff" w="full">
                 <Image
                   src={doctor?.photo}

@@ -37,17 +37,16 @@ const VerifyData = ({ isOpen, onClose }) => {
           <ModalOverlay bg="blackAlpha.700" />
           <ModalContent>
             <ModalHeader>
-              <Text>Votre consultation a été Enregistrer ✅</Text>
+              <Text>Your consultation has been saved ✅</Text>
               <Text fontSize="sm" fontWeight="500">
-                Veuillez vérifier vos données avant de confirmer votre
-                réservation
+                Please check your details before confirming your reservation
               </Text>
             </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               <Stack spacing={4} mt={2}>
                 <Text mr={2}>
-                  <strong> Date de la consultation:</strong> le{" "}
+                  <strong>Consultation date:</strong>
                   {values?.date
                     ? DateTime.fromJSDate(new Date(values.date)).toFormat(
                         "dd-MM-yyyy 'à' HH:mm"
@@ -55,31 +54,31 @@ const VerifyData = ({ isOpen, onClose }) => {
                     : null}
                 </Text>
                 <Text mr={2}>
-                  <strong> Nom complet:</strong> {values?.firstName}{" "}
+                  <strong>Complete name:</strong> {values?.firstName}{" "}
                   {values?.lastName}
                 </Text>
 
                 <Text mr={2}>
-                  <strong>Addresse: </strong>
+                  <strong>Address: </strong>
                   {values?.address}
                 </Text>
                 <Text mr={2}>
-                  <strong>Ville: </strong>
+                  <strong>City: </strong>
                   {values?.city}
                 </Text>
                 <Text mr={2}>
-                  <strong>Code postal: </strong>
+                  <strong>ZIP: </strong>
                   {values?.zip}
                 </Text>
                 <Text mr={2}>
-                  <strong> Téléphone:</strong> {values?.phone}
+                  <strong>Phone:</strong> {values?.phone}
                 </Text>
                 <Text mr={2}>
-                  <strong> Age:</strong> {values?.age}
+                  <strong>Age:</strong> {values?.age}
                 </Text>
                 {values?.weight && (
                   <Text mr={2}>
-                    <strong> Poids:</strong> {values?.weight}
+                    <strong>Weight:</strong> {values?.weight}
                   </Text>
                 )}
               </Stack>
@@ -96,28 +95,24 @@ const VerifyData = ({ isOpen, onClose }) => {
                   setHasSubmitted(true);
                 }}
               >
-                Soumettre & Terminé!
+                Submit & Finish!
               </Button>
             </ModalFooter>
           </ModalContent>
         </Modal>
       ) : (
-        <Modal
-          isOpen={!!hasSubmitted}
-          onClose={() => navigate("/")}
-          size={{ lg: "3xl", md: "2xl", sm: "xs", base: "xs" }}
-          isCentered
-        >
+        <Modal isOpen={!!hasSubmitted} onClose={() => navigate("/")} isCentered>
           <ModalOverlay />
           <ModalContent>
             <ModalCloseButton />
             <ModalBody mx={12} mt={12} p={8} bg="secondary.500" rounded="md">
               <Heading fontSize="xl" textAlign="center" color="#fff">
-                Votre consultation à été soumise avec succèes! 🎉
+                Your consultation has been successfully submitted! 🎉
               </Heading>
             </ModalBody>
             <ModalFooter w="100%">
               <Button
+                size="sm"
                 colorScheme="primary"
                 onClick={() => {
                   navigate("/patient/home");
@@ -126,7 +121,7 @@ const VerifyData = ({ isOpen, onClose }) => {
                   bg: "secondary.500",
                 }}
               >
-                Terminer
+                Finish
               </Button>
             </ModalFooter>
           </ModalContent>

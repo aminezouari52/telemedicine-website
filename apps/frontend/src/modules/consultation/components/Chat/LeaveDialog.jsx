@@ -24,15 +24,15 @@ const LeaveDialog = ({ onClose, isOpen, leaveConsultation }) => {
       <AlertDialogOverlay />
 
       <AlertDialogContent>
-        <AlertDialogHeader>Terminer la consultation</AlertDialogHeader>
+        <AlertDialogHeader>Finish consultation</AlertDialogHeader>
         <AlertDialogCloseButton />
         <AlertDialogBody>
-          Si vous quittez la consultation va être terminer. Vous êtes sûr de
-          terminer la consultation?
+          If you leave the consultation will be over. Are you sure you will
+          finish the consultation?
         </AlertDialogBody>
         <AlertDialogFooter>
           <Button size="sm" ml={3} ref={cancelRef} onClick={onClose}>
-            Annuler
+            Cancel
           </Button>
           <Button
             colorScheme="red"
@@ -43,7 +43,7 @@ const LeaveDialog = ({ onClose, isOpen, leaveConsultation }) => {
               leaveConsultation();
             }}
           >
-            Terminer
+            Finish
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
