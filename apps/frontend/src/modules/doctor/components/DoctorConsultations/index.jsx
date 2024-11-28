@@ -48,9 +48,7 @@ const DoctorConsultations = () => {
   }, [user]);
 
   const sortedUpcomingConsultations = () => {
-    return consultations?.sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    );
+    return consultations?.sort((a, b) => new Date(b.date) - new Date(a.date));
   };
 
   return (

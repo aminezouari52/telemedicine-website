@@ -44,3 +44,28 @@ export const generateAvailableHours = (consultationsData, selectedDate) => {
     name: `${i.toString().padStart(2, "0")}h`,
   })).filter((option) => !isHourUnavailable(parseInt(option.value)));
 };
+
+export const consultationsMonthlyGrowth = (consultations) => {
+  return (
+    ((consultations?.filter((consultation) => {
+      const date = new Date(consultation.date);
+      const now = new Date();
+      return (
+        consultation.status === "pending" &&
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear()
+      );
+    })?.length -
+      consultations?.filter((consultation) => {
+        const date = new Date(consultation.date);
+        const now = new Date();
+        return (
+          consultation.status === "pending" &&
+          date.getMonth() === now.getMonth() - 1 &&
+          date.getFullYear() === now.getFullYear()
+        );
+      })?.length) /
+      100) *
+    100
+  );
+};

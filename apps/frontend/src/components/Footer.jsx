@@ -8,7 +8,7 @@ import {
   Image,
   Button,
 } from "@chakra-ui/react";
-import { FaFacebook, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin } from "react-icons/fa";
 import logoDark from "@/images/logo-dark.png";
 import { useState } from "react";
 
@@ -91,13 +91,20 @@ const Footer = () => {
       </Flex>
       <Flex p={8} justifyContent="space-between" alignItems="center">
         <Text letterSpacing="2px" textTransform="uppercase" fontSize="sm">
-          Copyright 2023 © télémedecine.inc. All rights reserved.
+          Copyright 2025 © télémedecine.inc. All rights reserved.
         </Text>
         <Flex gap="10px">
           <IconButton size="sm" colorScheme="facebook" icon={<FaFacebook />} />
-          <IconButton size="sm" colorScheme="pink" icon={<FaInstagram />} />
           <IconButton size="sm" colorScheme="twitter" icon={<FaTwitter />} />
-          <IconButton size="sm" colorScheme="red" icon={<FaYoutube />} />
+          <IconButton size="sm" colorScheme="pink" icon={<FaInstagram />} />
+          <IconButton
+            as="a"
+            href="https://www.linkedin.com/in/amine-zouari52/"
+            target="_blank"
+            size="sm"
+            colorScheme="linkedin"
+            icon={<FaLinkedin />}
+          />
         </Flex>
       </Flex>
     </Box>

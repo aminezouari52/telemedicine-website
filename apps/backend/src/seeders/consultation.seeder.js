@@ -6,7 +6,7 @@ const express = require("express");
 const app = express();
 const { Doctor, Consultation, Patient } = require("../models");
 
-const documentNumbers = 20;
+const documentNumbers = 4000;
 
 async function seedConsultationCollection() {
   let server;
@@ -25,14 +25,23 @@ async function seedConsultationCollection() {
 
         const doctorsIds = doctors.map((doctor) => doctor._id);
         const patientsIds = patients.map((patient) => patient._id);
+        const statuses = ["pending", "canceled", "completed"];
 
         for (let i = 0; i < documentNumbers; i++) {
           const doctorIndex = Math.floor(Math.random() * doctorsIds.length);
           const patientIndex = Math.floor(Math.random() * patientsIds.length);
+          const statusIndex = Math.floor(Math.random() * statuses.length);
 
           let newConsultation = {
-            date: new Date(new Date(faker.date.anytime()).setMinutes(0, 0, 0)),
-            status: "pending",
+            date: new Date(
+              new Date(
+                faker.date.between({
+                  from: "2024-08-01T00:00:00.000Z",
+                  to: "2025-01-01T00:00:00.000Z",
+                })
+              ).setMinutes(0, 0, 0)
+            ),
+            status: statuses[statusIndex],
             doctor: doctorsIds[doctorIndex],
             patient: patientsIds[patientIndex],
           };

@@ -45,6 +45,8 @@ export const DoctorHeader = () => {
   const [isProfileCompleted, setIsProfileCompleted] = useState();
   const [consultation, setConsultation] = useState();
   const toast = useToast();
+  const [newConsultationsValue, setNewConsultationsValue] = useState(0);
+  const [isNotification, setIsNotification] = useState([]);
 
   const logoutHandler = async () => {
     try {
@@ -75,12 +77,61 @@ export const DoctorHeader = () => {
     );
   };
 
+  const newConsultations = async () => {
+    const consultationsData = (await getDoctorConsultations(user?._id)).data;
+    const now = new Date();
+    const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
+
+    const newConsultations = consultationsData?.filter((consultation) => {
+      const date = new Date(consultation.createdAt);
+      return (
+        date >= threeDaysAgo && date <= now && consultation.status === "pending"
+      );
+    });
+    setNewConsultationsValue(newConsultations?.length);
+  };
+
+  const addNotificationIfNotExist = (notification) => {
+    setIsNotification((prev) =>
+      prev.some(
+        (existingNotification) =>
+          existingNotification.route === notification.route
+      )
+        ? prev
+        : [...prev, notification]
+    );
+  };
+
   useEffect(() => {
     if (user) {
       loadConsultation();
       loadIsProfileCompleted();
+      newConsultations();
     }
-  }, [isProfileCompleted, user]);
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      if (isProfileCompleted !== undefined && !isProfileCompleted) {
+        addNotificationIfNotExist({
+          msg: "Complèter votre profil pour attirez les patients",
+          route: "/doctor/profile",
+        });
+      }
+      if (newConsultationsValue) {
+        addNotificationIfNotExist({
+          msg: `Vous avez ${newConsultationsValue} nouveaux consultations`,
+          route: "/doctor/consultations",
+        });
+      }
+      if (consultation) {
+        addNotificationIfNotExist({
+          msg: "Vous avez une consultation maintenant",
+          route: `/${consultation?._id}`,
+        });
+      }
+    }
+  }, [user, isProfileCompleted, newConsultationsValue, consultation]);
 
   return (
     <SimpleGrid
@@ -110,7 +161,7 @@ export const DoctorHeader = () => {
         </HeaderButton>
       </Flex>
       <Flex alignItems="center" justifyContent="flex-end" height="100%" gap={2}>
-        {user && !!consultation && (
+        {consultation && (
           <Button
             size="sm"
             colorScheme="primary"
@@ -119,7 +170,7 @@ export const DoctorHeader = () => {
               opacity: 0.8,
             }}
             onClick={() => {
-              navigate(`/${user?.consultationId}`);
+              navigate(`/${consultation?._id}`);
             }}
           >
             Joindre
@@ -141,7 +192,7 @@ export const DoctorHeader = () => {
             icon={
               <>
                 <FaRegBell />
-                {!isProfileCompleted && (
+                {isNotification?.length > 0 && (
                   <chakra.span
                     pos="absolute"
                     top="10px"
@@ -160,12 +211,14 @@ export const DoctorHeader = () => {
             }
           ></MenuButton>
           <MenuList>
-            {isProfileCompleted ? (
-              <Text px={2}>vous n'avez pas de notifications</Text>
-            ) : (
-              <MenuItem onClick={() => navigate("/doctor/profile")}>
-                Complèter votre profil pour attirez les patients
+            {isNotification?.map((notif, key) => (
+              <MenuItem key={key} onClick={() => navigate(notif.route)}>
+                {notif.msg}
               </MenuItem>
+            ))}
+
+            {!isNotification?.length > 0 && (
+              <Text px={2}>vous n'avez pas de notifications</Text>
             )}
           </MenuList>
         </Menu>

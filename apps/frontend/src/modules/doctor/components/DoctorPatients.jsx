@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
+import DataTable from "@/components/DataTable";
+
 // FUNCTIONS
 import { getDoctorConsultations } from "@/modules/consultation/functions/consultation";
 import { DateTime } from "luxon";
@@ -15,6 +17,8 @@ import {
   SimpleGrid,
   Stack,
   Text,
+  Tr,
+  Td,
 } from "@chakra-ui/react";
 
 const DoctorPatients = () => {
@@ -23,7 +27,9 @@ const DoctorPatients = () => {
 
   const loadConsultations = async () => {
     const consultationsData = (await getDoctorConsultations(user?._id)).data;
-    setConsultations(consultationsData);
+    setConsultations(
+      consultationsData?.filter((c) => c.status === "completed")
+    );
   };
 
   useEffect(() => {
@@ -38,42 +44,33 @@ const DoctorPatients = () => {
       self.findIndex((c) => c.patient?._id === consultation.patient?._id)
   );
 
+  const headers = ["Patient", "Phone", "Age", "Créer le"];
+
+  const renderRow = (consultation, index) => (
+    <Tr key={index} fontSize="xs">
+      <Td fontWeight="bold">
+        {consultation?.patient?.firstName} {consultation?.patient?.lastName}
+      </Td>
+      <Td>{consultation?.patient?.phone}</Td>
+      <Td>{consultation?.patient?.age}</Td>
+      <Td>
+        {DateTime.fromJSDate(new Date(consultation?.createdAt)).toFormat(
+          "dd-MM-yyyy 'à' HH:mm"
+        )}
+      </Td>
+    </Tr>
+  );
+
   return (
-    <Box mx={6} mt={5}>
-      {!uniquePatientConsultations?.length && (
-        <Text>Vous n'avez pas de patients</Text>
-      )}
-      <SimpleGrid color="#fff" columns={4} gap={4}>
-        {uniquePatientConsultations?.map((consultation, index) => {
-          return (
-            <Card key={index}>
-              <CardBody>
-                <Stack>
-                  <Heading size="md">
-                    {consultation?.patient.firstName}{" "}
-                    {consultation?.patient.lastName}
-                  </Heading>
-                  <Text>
-                    <strong>Téléphone: </strong>
-                    {consultation?.patient.phone}
-                  </Text>
-                  <Text>
-                    <strong>age: </strong>
-                    {consultation?.patient.age}
-                  </Text>
-                  <Text>
-                    <strong>Créer le: </strong>
-                    {DateTime.fromJSDate(
-                      new Date(consultation?.createdAt)
-                    ).toFormat("dd-MM-yyyy 'à' HH:mm")}
-                    {}
-                  </Text>
-                </Stack>
-              </CardBody>
-            </Card>
-          );
-        })}
-      </SimpleGrid>
+    <Box m={6}>
+      <Heading my={4} fontSize="lg">
+        Les patients qui ont compléter leur consultation
+      </Heading>
+      <DataTable
+        data={uniquePatientConsultations}
+        renderRow={renderRow}
+        headers={headers}
+      />
     </Box>
   );
 };
