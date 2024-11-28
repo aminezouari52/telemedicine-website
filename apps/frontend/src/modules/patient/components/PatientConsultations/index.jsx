@@ -78,54 +78,56 @@ const PatientConsultations = () => {
             <Text>You still have no consultations</Text>
           )}
           <Flex direction="column" gap={6}>
-            {sortedUpcomingConsultations()?.map((consultation) => (
-              <Card key={consultation._id}>
-                <CardBody>
-                  <Flex p={4} gap={4}>
-                    <Avatar
-                      size="lg"
-                      name="Doctor"
-                      src={consultation?.doctor?.photo || DoctorAvatar}
-                    />
-                    <Flex flexDirection="column">
-                      <Text fontWeight="bold">
-                        Dr. {consultation?.doctor?.firstName}{" "}
-                        {consultation?.doctor?.lastName}
-                      </Text>
-                      <Text color="gray">
-                        {consultation?.doctor?.specialty}
-                      </Text>
-                      <Flex gap={2} alignItems="center">
-                        <Icon as={FaMapPin} color="red.500" />
-                        <Text>{consultation?.doctor?.hospital}</Text>
-                      </Flex>
-                    </Flex>
-                  </Flex>
-                </CardBody>
-                <Divider borderColor="gray" />
-                <CardFooter>
-                  <Flex
-                    justifyContent="space-between"
-                    alignItems="center"
-                    w="100%"
-                  >
-                    <Flex alignItems="center" gap="10px">
-                      <Icon as={CalendarIcon} color="gray.500" />
-                      <Flex fontSize="12px" flexDirection="column">
-                        <Text color="gray">Your consultation</Text>
-                        <Text>
-                          {consultation?.date
-                            ? DateTime.fromJSDate(
-                                new Date(consultation.date)
-                              ).toFormat("dd-MM-yyyy 'à' HH:mm")
-                            : null}
+            {sortedUpcomingConsultations()
+              ?.slice(0, 2)
+              ?.map((consultation) => (
+                <Card key={consultation._id}>
+                  <CardBody>
+                    <Flex p={4} gap={4}>
+                      <Avatar
+                        size="lg"
+                        name="Doctor"
+                        src={consultation?.doctor?.photo || DoctorAvatar}
+                      />
+                      <Flex flexDirection="column">
+                        <Text fontWeight="bold">
+                          Dr. {consultation?.doctor?.firstName}{" "}
+                          {consultation?.doctor?.lastName}
                         </Text>
+                        <Text color="gray">
+                          {consultation?.doctor?.specialty}
+                        </Text>
+                        <Flex gap={2} alignItems="center">
+                          <Icon as={FaMapPin} color="red.500" />
+                          <Text>{consultation?.doctor?.hospital}</Text>
+                        </Flex>
                       </Flex>
                     </Flex>
-                  </Flex>
-                </CardFooter>
-              </Card>
-            ))}
+                  </CardBody>
+                  <Divider borderColor="gray" />
+                  <CardFooter>
+                    <Flex
+                      justifyContent="space-between"
+                      alignItems="center"
+                      w="100%"
+                    >
+                      <Flex alignItems="center" gap="10px">
+                        <Icon as={CalendarIcon} color="gray.500" />
+                        <Flex fontSize="12px" flexDirection="column">
+                          <Text color="gray">Your consultation</Text>
+                          <Text>
+                            {consultation?.date
+                              ? DateTime.fromJSDate(
+                                  new Date(consultation.date)
+                                ).toFormat("dd-MM-yyyy 'à' HH:mm")
+                              : null}
+                          </Text>
+                        </Flex>
+                      </Flex>
+                    </Flex>
+                  </CardFooter>
+                </Card>
+              ))}
           </Flex>
         </Box>
 

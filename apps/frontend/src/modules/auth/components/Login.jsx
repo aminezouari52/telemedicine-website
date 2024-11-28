@@ -14,6 +14,7 @@ import { setUser } from "@/reducers/userReducer";
 
 // COMPONENTS
 import { NavLink } from "react-router-dom";
+import Logo from "@/components/Logo";
 
 // STYLE
 import { Flex, Heading, Input, Button, Link, Text } from "@chakra-ui/react";
@@ -76,14 +77,16 @@ const Login = () => {
   return (
     <Flex
       as="form"
-      h="100vh"
       w="325px"
       direction="column"
       alignItems="center"
       justifyContent="center"
-      gap={4}
+      gap={12}
       onSubmit={handleSubmit}
     >
+      <Flex cursor="pointer" onClick={() => navigate("/")}>
+        <Logo w="280px" />
+      </Flex>
       <Flex
         gap={2}
         direction="column"
@@ -91,7 +94,7 @@ const Login = () => {
         alignItems="center"
       >
         <Heading size="lg" textAlign="center">
-          Login
+          Welcome Back!
         </Heading>
         <Text color="darkgray" textAlign="center">
           Login to access the platform
@@ -126,22 +129,22 @@ const Login = () => {
         >
           Forgot your password?
         </Link>
-      </Flex>
 
-      <Flex direction="column" gap={2} w="100%">
-        <Button
-          type="submit"
-          leftIcon={<AiOutlineMail />}
-          isDisabled={!email || password.length < 6}
-          isLoading={loading}
-          colorScheme="primary"
-          size="sm"
-          _hover={{
-            opacity: email && password.length >= 6 && 0.8,
-          }}
-        >
-          Login
-        </Button>
+        <Flex direction="column" gap={2} w="100%">
+          <Button
+            type="submit"
+            leftIcon={<AiOutlineMail />}
+            isDisabled={!email || password.length < 6}
+            isLoading={loading}
+            colorScheme="primary"
+            size="sm"
+            _hover={{
+              opacity: email && password.length >= 6 && 0.8,
+            }}
+          >
+            Login
+          </Button>
+        </Flex>
       </Flex>
 
       <Flex fontSize="sm" w="100%" justifyContent="center">

@@ -1,7 +1,7 @@
 import logo from "@/images/logo.png";
 import { useNavigate } from "react-router-dom";
 import { Image } from "@chakra-ui/react";
-const Logo = () => {
+const Logo = (props) => {
   const navigate = useNavigate();
   return (
     <Image
@@ -15,6 +15,7 @@ const Logo = () => {
         opacity: 0.8,
       }}
       onClick={() => navigate("/")}
+      {...props}
     />
   );
 };

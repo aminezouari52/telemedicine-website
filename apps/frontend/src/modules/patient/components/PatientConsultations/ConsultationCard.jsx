@@ -30,7 +30,7 @@ const ConsultationCard = ({ consultation }) => {
             <Text color="gray.500">{consultation?.doctor?.phone}</Text>
           </Flex>
           <Flex gap={2} alignItems="center">
-            <Icon as={FaMapPin} color="gray.500" />
+            <Icon as={FaMapPin} color="red.500" />
             <Text>{consultation?.doctor?.hospital}kg</Text>
           </Flex>
         </Stack>

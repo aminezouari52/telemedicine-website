@@ -1,6 +1,6 @@
 // REACT
 import { useState } from "react";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@chakra-ui/react";
 
 // REDUX
@@ -14,6 +14,10 @@ import { validateEmail } from "@/utils";
 
 // FUNCTIONS
 import { createOrUpdateUser } from "@/modules/auth/functions/auth";
+
+//  COMPONENTS
+import Logo from "@/components/Logo";
+import { NavLink } from "react-router-dom";
 
 // STYLE
 import {
@@ -95,21 +99,23 @@ const Register = () => {
   return (
     <Flex
       as="form"
-      h="100vh"
       w="325px"
       direction="column"
       alignItems="center"
       justifyContent="center"
-      gap={4}
+      gap={12}
       onSubmit={handleSubmit}
     >
+      <Flex cursor="pointer" onClick={() => navigate("/")}>
+        <Logo w="280px" />
+      </Flex>
       <Flex
         gap="6px"
         direction="column"
         justifyContent="center"
         alignItems="center"
       >
-        <Heading size="lg">Welcome!</Heading>
+        <Heading size="lg">Join Us Now!</Heading>
         <Text color="darkgray">Welcome! Please create your account</Text>
       </Flex>
       <Flex w="100%" direction="column" gap={2}>
@@ -144,20 +150,20 @@ const Register = () => {
             <option value="doctor">Doctor</option>
           </Select>
         </Flex>
-      </Flex>
-      <Flex direction="column" gap={2} w="100%">
-        <Button
-          type="submit"
-          isDisabled={!email || password.length < 6}
-          isLoading={loading}
-          colorScheme="primary"
-          size="sm"
-          _hover={{
-            opacity: email && password.length >= 6 && "0.8",
-          }}
-        >
-          Register
-        </Button>
+        <Flex direction="column" gap={2} w="100%">
+          <Button
+            type="submit"
+            isDisabled={!email || password.length < 6}
+            isLoading={loading}
+            colorScheme="primary"
+            size="sm"
+            _hover={{
+              opacity: email && password.length >= 6 && "0.8",
+            }}
+          >
+            Register
+          </Button>
+        </Flex>
       </Flex>
 
       <Flex fontSize="sm">

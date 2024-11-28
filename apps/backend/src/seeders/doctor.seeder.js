@@ -28,15 +28,15 @@ const specialities = [
 
 const experiences = ["Less than a year", "1 - 5 years", "+5 years"];
 const hospitals = [
-  "Hospitam Mongi Slim",
-  "Hospitam Charles Nicolle",
-  "Hospitam La Rabta",
-  "Hospitam Razi",
-  "Hospitam Sahloul",
-  "Hospitam Farhat Hached",
-  "Hospitam Fattouma Bourguiba",
-  "Hospitam Hédi Chaker",
-  "Hospitam Habib Bourguiba",
+  "Hospital Mongi Slim",
+  "Hospital Charles Nicolle",
+  "Hospital La Rabta",
+  "Hospital Razi",
+  "Hospital Sahloul",
+  "Hospital Farhat Hached",
+  "Hospital Fattouma Bourguiba",
+  "Hospital Hédi Chaker",
+  "Hospital Habib Bourguiba",
 ];
 
 const degrees = [

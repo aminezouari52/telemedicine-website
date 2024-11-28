@@ -137,8 +137,6 @@ const PatientDoctors = () => {
               <option value="">Sort by: all</option>
               <option value="price:asc">price: cheaper</option>
               <option value="price:desc">price: more expensive</option>
-              <option value="patients:asc">patients: lower</option>
-              <option value="patients:desc">patients: higher</option>
             </Select>
           </Flex>
         </Flex>

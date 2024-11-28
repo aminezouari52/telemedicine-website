@@ -5,7 +5,6 @@ import { useSelector } from "react-redux";
 
 // COMPONENTS
 import Spinner from "@/components/Spinner";
-import Logo from "@/components/Logo";
 
 // STYLE
 import {
@@ -58,7 +57,7 @@ export const AuthLayout = () => {
       justifyContent="space-between"
       alignItems="center"
       h="100vh"
-      bg="#fff"
+      bg="white"
     >
       <Popover>
         <PopoverTrigger>
@@ -69,7 +68,7 @@ export const AuthLayout = () => {
             icon={<FaInfoCircle />}
             pos="absolute"
             top="0"
-            right="50%"
+            right="58%"
           ></IconButton>
         </PopoverTrigger>
         <PopoverContent w="367px">
@@ -82,11 +81,11 @@ export const AuthLayout = () => {
             <Box>
               <Flex gap={1}>
                 <Text fontWeight="bold">doctor: </Text>
-                <Text>kelli79@hotmail.com</Text>
+                <Text>freddie24@yahoo.com</Text>
               </Flex>
               <Flex gap={1}>
                 <Text fontWeight="bold">patient: </Text>
-                <Text>barbara.ankunding@gmail.com</Text>
+                <Text>christop_hagenes21@gmail.com</Text>
               </Flex>
             </Box>
           </PopoverBody>
@@ -99,19 +98,10 @@ export const AuthLayout = () => {
         </PopoverContent>
       </Popover>
 
-      <Flex
-        pos="absolute"
-        top="10px"
-        left="10px"
-        cursor="pointer"
-        onClick={() => navigate("/")}
-      >
-        <Logo />
-      </Flex>
       <Flex justifyContent="center" alignItems="center" w="50%">
         <Outlet />
       </Flex>
-      <Flex h="100vh" w="50%">
+      <Flex h="100vh" w="70%">
         <Image objectFit="cover" src={loginImg} alt="product image" />
       </Flex>
     </Flex>
