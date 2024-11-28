@@ -17,7 +17,7 @@ import { Heading, Flex, Select, Text } from "@chakra-ui/react";
 // ASSETS
 import { ArrowUpDownIcon } from "@chakra-ui/icons";
 
-const Doctors = () => {
+const PatientDoctors = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [doctors, setDoctors] = useState([]);
   const [specialty, setSpecialty] = useState("");
@@ -169,4 +169,4 @@ const Doctors = () => {
   );
 };
 
-export default Doctors;
+export default PatientDoctors;

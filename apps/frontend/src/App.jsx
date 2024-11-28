@@ -21,7 +21,7 @@ import DoctorProfile from "@/modules/doctor/components/DoctorProfile";
 import DoctorConsultations from "@/modules/doctor/components/DoctorConsultations";
 import PatientHome from "@/modules/patient/components/PatientHome";
 import PatientConsultations from "@/modules/patient/components/PatientConsultations";
-import Doctors from "@/modules/patient/components/Doctors";
+import PatientDoctors from "@/modules/patient/components/PatientDoctors";
 import DoctorDetails from "@/modules/patient/components/DoctorDetails";
 import BookConsultation from "@/modules/consultation/components/BookConsultation";
 import Chat from "@/modules/consultation/components/Chat";
@@ -67,7 +67,7 @@ const App = () => {
           <Route path="home" element={<PatientHome />} />
           <Route path="consultation/:id" element={<BookConsultation />} />
           <Route path="consultations" element={<PatientConsultations />} />
-          <Route path="doctors" element={<Doctors />} />
+          <Route path="doctors" element={<PatientDoctors />} />
           <Route path="doctors/:id" element={<DoctorDetails />} />
           <Route path="*" element={<Navigate to="/patient/home" />} />
         </Route>

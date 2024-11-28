@@ -10,6 +10,8 @@ import {
 import ConsultationCard from "./ConsultationCard";
 
 function AllConsultationsModal({ consultations, onClose, isOpen }) {
+  console.log(consultations);
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} size="lg">

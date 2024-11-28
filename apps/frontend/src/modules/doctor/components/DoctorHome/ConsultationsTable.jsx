@@ -60,6 +60,7 @@ const ConsultationsTable = ({ consultations }) => {
           "Toutes les consultationss",
         ].map((item, index) => (
           <Tab
+            key={index}
             fontSize="sm"
             fontWeight="700"
             color={activeTab === index ? "primary.500" : "gray.600"}

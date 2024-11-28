@@ -86,7 +86,11 @@ const ConsultationAlert = () => {
   };
 
   useEffect(() => {
-    fetchConsultation();
+    try {
+      fetchConsultation();
+    } catch (err) {
+      console.log(err);
+    }
   }, []);
 
   const handleConfirm = () => {
