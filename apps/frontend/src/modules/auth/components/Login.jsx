@@ -5,12 +5,13 @@ import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 // HOOKS
 import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
 // FUNCTIONS
 import { loginUser } from "@/modules/auth/functions/auth";
 import { setUser } from "@/reducers/userReducer";
+import { authErrorMessage } from "@/utils";
 
 // COMPONENTS
 import { NavLink } from "react-router-dom";
@@ -27,22 +28,16 @@ const demoAccounts = ["freddie24@yahoo.com", "christop_hagenes21@gmail.com"];
 const Login = () => {
   const toast = useToast();
   const navigate = useNavigate();
-  const location = useLocation();
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const roleBasedRedirect = (res) => {
-    const intended = location.state;
-    if (intended) {
-      navigate(intended.from);
-    } else {
-      if (res.data.role === "doctor") {
-        navigate("/doctor/home");
-      } else if (res.data.role === "patient") {
-        navigate("/patient/home");
-      }
+  const roleBasedRedirect = (role) => {
+    if (role === "doctor") {
+      navigate("/doctor/home");
+    } else if (role === "patient") {
+      navigate("/patient/home");
     }
   };
 
@@ -60,23 +55,24 @@ const Login = () => {
       }
 
       const idTokenResult = await user.getIdTokenResult();
-      const res = await loginUser({ token: idTokenResult.token });
+      const response = await loginUser({ token: idTokenResult.token });
 
       dispatch(
         setUser({
-          ...res.data,
+          ...response.data,
           token: idTokenResult.token,
         })
       );
-      roleBasedRedirect(res);
+
+      roleBasedRedirect(response.data.role);
     } catch (error) {
-      console.log(error);
       toast({
-        title: error.message,
+        title: authErrorMessage(error),
         status: "error",
         duration: 3000,
         isClosable: true,
       });
+    } finally {
       setLoading(false);
     }
   };
@@ -95,10 +91,10 @@ const Login = () => {
         <Logo w="280px" />
       </Flex>
       <Flex
-        gap={2}
         direction="column"
         justifyContent="center"
         alignItems="center"
+        gap={2}
       >
         <Heading size="lg" textAlign="center">
           Welcome Back!
@@ -137,21 +133,20 @@ const Login = () => {
           Forgot your password?
         </Link>
 
-        <Flex direction="column" gap={2} w="100%">
-          <Button
-            type="submit"
-            leftIcon={<AiOutlineMail />}
-            isDisabled={!email || password.length < 6}
-            isLoading={loading}
-            colorScheme="primary"
-            size="sm"
-            _hover={{
-              opacity: email && password.length >= 6 && 0.8,
-            }}
-          >
-            Login
-          </Button>
-        </Flex>
+        <Button
+          type="submit"
+          w="100%"
+          leftIcon={<AiOutlineMail />}
+          isDisabled={!email || password.length < 6}
+          isLoading={loading}
+          colorScheme="primary"
+          size="sm"
+          _hover={{
+            opacity: email && password.length >= 6 && 0.8,
+          }}
+        >
+          Login
+        </Button>
       </Flex>
 
       <Flex fontSize="sm" w="100%" justifyContent="center">

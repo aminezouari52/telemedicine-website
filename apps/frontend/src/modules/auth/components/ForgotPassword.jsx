@@ -9,6 +9,7 @@ import { sendPasswordResetEmail } from "firebase/auth";
 
 // COMPONENTS
 import { NavLink } from "react-router-dom";
+import Logo from "@/components/Logo";
 
 // STYLE
 import { Flex, Heading, Input, Button, Text, Link } from "@chakra-ui/react";
@@ -23,46 +24,47 @@ const ForgotPassword = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const config = {
-        url: `${import.meta.env.VITE_API_BASE_URL}/login/`,
-        handleCodeInApp: true,
-      };
-      await sendPasswordResetEmail(auth, email, config);
+      await sendPasswordResetEmail(auth, email);
       setEmail("");
-      setLoading(false);
       toast({
         title: "Link sent successfully",
         description: "Please check your inbox",
-        status: "success",
+        status: "info",
         duration: 3000,
         isClosable: true,
       });
-      navigate("/");
+      navigate("/auth/login");
     } catch (err) {
-      setLoading(false);
       toast({
         title: "Failed to send password reset email",
         status: "error",
         duration: 3000,
         isClosable: true,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Flex
+      as="form"
       h="100vh"
       w="325px"
       direction="column"
       justifyContent="center"
       alignItems="center"
-      gap={4}
+      gap={12}
+      onSubmit={handleSubmit}
     >
+      <Flex cursor="pointer" onClick={() => navigate("/")}>
+        <Logo w="280px" />
+      </Flex>
       <Flex
-        gap={2}
         direction="column"
         justifyContent="center"
         alignItems="center"
+        gap={2}
       >
         <Heading textAlign="center" size="lg">
           Forgotten password
@@ -71,7 +73,7 @@ const ForgotPassword = () => {
           Enter your email below to receive a link
         </Text>
       </Flex>
-      <Flex w="100%" direction="column" gap={1}>
+      <Flex w="100%" direction="column" alignItems="end" gap={2}>
         <Input
           focusBorderColor="primary.500"
           type="email"
@@ -79,8 +81,8 @@ const ForgotPassword = () => {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="your email"
           autoFocus
-          mb={2}
         />
+
         <Button
           type="submit"
           colorScheme="primary"

@@ -70,17 +70,15 @@ const Register = () => {
         role,
         email,
       });
-
-      setLoading(false);
       navigate("/auth/login");
     } catch (error) {
-      console.log(error);
       toast({
         title: error.message,
         status: "error",
         duration: 3000,
         isClosable: true,
       });
+    } finally {
       setLoading(false);
     }
   };
@@ -140,20 +138,19 @@ const Register = () => {
             <option value="doctor">Doctor</option>
           </Select>
         </Flex>
-        <Flex direction="column" gap={2} w="100%">
-          <Button
-            type="submit"
-            isDisabled={!email || password.length < 6}
-            isLoading={loading}
-            colorScheme="primary"
-            size="sm"
-            _hover={{
-              opacity: email && password.length >= 6 && "0.8",
-            }}
-          >
-            Register
-          </Button>
-        </Flex>
+        <Button
+          type="submit"
+          w="100%"
+          isDisabled={!email || password.length < 6}
+          isLoading={loading}
+          colorScheme="primary"
+          size="sm"
+          _hover={{
+            opacity: email && password.length >= 6 && "0.8",
+          }}
+        >
+          Register
+        </Button>
       </Flex>
 
       <Flex fontSize="sm">

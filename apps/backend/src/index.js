@@ -14,11 +14,6 @@ mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
   });
 
   initializeSocket(server);
-
-  if (config.env === "production")
-    cron.schedule("*/9 * * * *", async () =>
-      logger.info("Cron job: ping to keep server alive")
-    );
 });
 
 const exitHandler = () => {

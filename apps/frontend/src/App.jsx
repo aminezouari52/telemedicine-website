@@ -28,6 +28,8 @@ import Chat from "@/modules/consultation/components/Chat";
 import NotFound from "@/components/NotFound";
 import { getLocalStorage } from "./utils";
 
+const demoAccounts = ["freddie24@yahoo.com", "christop_hagenes21@gmail.com"];
+
 const App = () => {
   const dispatch = useDispatch();
 
@@ -42,7 +44,16 @@ const App = () => {
           if (!res.data) {
             throw new Error("User not found or token expired");
           }
+
           const storedUser = getLocalStorage("user") || res.data;
+
+          if (
+            !demoAccounts.includes(storedUser.email) &&
+            !authUser.emailVerified
+          ) {
+            throw new Error("Email not verified. Please verify your email.");
+          }
+
           dispatch(setUser({ ...storedUser, token: idTokenResult.token }));
         } catch (error) {
           console.log(error);

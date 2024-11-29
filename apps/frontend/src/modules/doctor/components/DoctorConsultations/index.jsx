@@ -54,7 +54,7 @@ const DoctorConsultations = () => {
   }, [user]);
 
   const sortedUpcomingConsultations = () => {
-    return consultations?.sort((a, b) => new Date(b.date) - new Date(a.date));
+    return consultations?.sort((a, b) => new Date(a.date) - new Date(b.date));
   };
 
   return (
@@ -69,7 +69,7 @@ const DoctorConsultations = () => {
           <Flex justifyContent="flex-end">
             <Alert
               status="info"
-              w="470px"
+              w="489px"
               justifyContent="space-between"
               borderRadius="md"
               shadow="md"

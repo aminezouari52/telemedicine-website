@@ -69,7 +69,7 @@ const PatientConsultations = () => {
           <Flex justifyContent="flex-end">
             <Alert
               status="info"
-              w="470px"
+              w="489px"
               justifyContent="space-between"
               borderRadius="md"
               shadow="md"

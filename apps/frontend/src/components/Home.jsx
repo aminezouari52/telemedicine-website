@@ -1,7 +1,7 @@
 // HOOKS
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // LIBRARYES
 import { motion } from "framer-motion";
@@ -27,24 +27,15 @@ const videoStyle = {
 const Home = () => {
   const user = useSelector((state) => state.userReducer.user);
   const navigate = useNavigate();
-  const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const intended = location.state;
-    if (intended) {
-      return;
-    } else {
-      if (user && user.token) {
-        if (user.role === "doctor") {
-          navigate("/doctor");
-        } else if (user.role === "patient") {
-          navigate("/patient");
-        }
-      }
-      setIsLoading(false);
+    if (user && user.token) {
+      if (user.role === "doctor") navigate("/doctor");
+      else if (user.role === "patient") navigate("/patient");
     }
-  }, [user, navigate, location]);
+    setIsLoading(false);
+  }, [user]);
 
   return isLoading ? (
     <Spinner />

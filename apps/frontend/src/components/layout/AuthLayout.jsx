@@ -1,10 +1,11 @@
 // HOOKS
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation, Outlet } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 // COMPONENTS
 import Spinner from "@/components/Spinner";
+import { Outlet } from "react-router-dom";
 
 // STYLE
 import {
@@ -29,26 +30,16 @@ import { FaInfoCircle } from "react-icons/fa";
 
 export const AuthLayout = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [isLoading, setIsLoading] = useState(true);
-
-  // REDIRECT USER
   const user = useSelector((state) => state.userReducer.user);
+
   useEffect(() => {
-    const intended = location.state;
-    if (intended) {
-      return;
-    } else {
-      if (user && user.token) {
-        if (user.role === "doctor") {
-          navigate("/doctor");
-        } else if (user.role === "patient") {
-          navigate("/patient");
-        }
-      }
-      setIsLoading(false);
+    if (user && user.token) {
+      if (user.role === "doctor") navigate("/doctor");
+      else if (user.role === "patient") navigate("/patient");
     }
-  }, [user, navigate, location]);
+    setIsLoading(false);
+  }, [user]);
 
   return isLoading ? (
     <Spinner />
