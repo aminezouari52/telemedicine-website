@@ -24,6 +24,7 @@ import {
   StatNumber,
   StatHelpText,
   StatArrow,
+  Text,
 } from "@chakra-ui/react";
 
 // ASSETS
@@ -55,7 +56,7 @@ const DoctorHome = () => {
   }, [user]);
 
   return (
-    <Flex direction="column" gap={10} p={10}>
+    <Flex direction="column" gap={10} py={6} px={12}>
       <Flex justifyContent="space-between" alignItems="center">
         <Flex alignItems="center" gap={4}>
           <Avatar size="lg" src={doctor?.photo || DoctorAvatar} />

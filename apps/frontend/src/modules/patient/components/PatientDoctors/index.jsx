@@ -49,7 +49,7 @@ const PatientDoctors = () => {
   }, [specialty, hospital, sortBy, searchText]);
 
   return (
-    <Flex flexDirection="column" gap={10} p={10} bg="gray.100">
+    <Flex flexDirection="column" gap={10} px={12} py={6}>
       <Heading fontSize="xl">Find a doctor</Heading>
       <Flex bg="#fff" direction="column" gap={8} p={10} borderRadius={4}>
         <Flex justifyContent="space-between">

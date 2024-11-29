@@ -6,7 +6,7 @@ const logger = require("./config/logger");
 const getHourRange = require("./utils/getHourRange");
 
 const scheduleCronJob = (io) => {
-  cron.schedule("0 * * * *", async () => {
+  cron.schedule("*/2 * * * *", async () => {
     logger.info("Cron job: Schedule consultation");
 
     const { startHour, endHour } = getHourRange();

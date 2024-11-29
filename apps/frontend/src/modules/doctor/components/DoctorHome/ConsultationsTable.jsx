@@ -11,10 +11,10 @@ import {
   TabPanel,
 } from "@chakra-ui/react";
 
-const translateStatus = (status) => {
-  if (status === "pending") return "En attente";
-  if (status === "canceled") return "Annulé";
-  if (status === "completed") return "Confirmé";
+const transformStatus = (status) => {
+  if (status === "pending") return "Pending";
+  if (status === "canceled") return "Canceled";
+  if (status === "completed") return "Completed";
 };
 
 const headers = ["Patient", "Date", "Status", "Created at", "Updated at"];
@@ -32,7 +32,7 @@ const ConsultationsTable = ({ consultations }) => {
           "dd-MM-yyyy 'à' HH:mm"
         )}
       </Td>
-      <Td>{translateStatus(consultation?.status)}</Td>
+      <Td>{transformStatus(consultation?.status)}</Td>
       <Td>
         {DateTime.fromJSDate(new Date(consultation?.createdAt)).toFormat(
           "dd-MM-yyyy 'à' HH:mm"

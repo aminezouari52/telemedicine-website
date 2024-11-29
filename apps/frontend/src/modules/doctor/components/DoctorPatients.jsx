@@ -53,7 +53,7 @@ const DoctorPatients = () => {
   );
 
   return (
-    <Box m={6}>
+    <Box px={12} py={6}>
       <Heading my={4} fontSize="lg">
         Patients who have completed their consultation
       </Heading>

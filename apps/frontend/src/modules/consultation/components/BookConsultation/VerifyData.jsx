@@ -78,7 +78,7 @@ const VerifyData = ({ isOpen, onClose }) => {
                 </Text>
                 {values?.weight && (
                   <Text mr={2}>
-                    <strong>Weight:</strong> {values?.weight}
+                    <strong>Weight:</strong> {values?.weight}kg
                   </Text>
                 )}
               </Stack>

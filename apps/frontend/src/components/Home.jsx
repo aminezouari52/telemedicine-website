@@ -71,7 +71,7 @@ const Home = () => {
               colorScheme="blackAlpha"
               onClick={() => navigate("/auth/register")}
             >
-              S'inscrire
+              Register
             </Button>
             <Button
               _hover={{
