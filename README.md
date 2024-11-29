@@ -37,13 +37,18 @@ Clone the repository
 git clone https://github.com/aminezouari52/telemedecine-app.git
 ```
 
-Create a `.env` file, use `.env.example` as an example
+Create the `.env` files
+
+- navigate to the `apps/backend` and `apps/frontend` folders
+- use `.env.example` as an example
+
+Navigate to the directory
 
 ```bash
 cd telemedecine-app
 ```
 
-Use the package manager [pnpm](https://pnpm.io/) to install and run the project the Telemedecin App.
+Use the package manager [pnpm](https://pnpm.io/) to install and run the project.
 
 ```bash
 pnpm install
@@ -51,6 +56,8 @@ pnpm dev
 ```
 
 ## Contributing
+
+This project is open-source, and I’m excited to collaborate with developers around the world.
 
 Pull requests are welcome. For major changes, please open an issue first
 to discuss what you would like to change.

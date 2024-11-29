@@ -10,12 +10,9 @@ import {
   StepIcon,
   StepNumber,
   StepSeparator,
-  useSteps,
   CardBody,
   Card,
 } from "@chakra-ui/react";
-import { motion } from "framer-motion";
-import { useEffect } from "react";
 import illustrationDate from "@/images/illustration-date.svg";
 import illustrationProfile from "@/images/illustration-profile.svg";
 import illustrationChat from "@/images/illustration-chat.svg";
@@ -40,32 +37,20 @@ const CustomStepper = ({ activeStep }) => {
     <Stepper size="sm" colorScheme="primary" index={activeStep} p={12}>
       <Step>
         <StepIndicator>
-          <StepStatus
-            complete={<StepIcon />}
-            incomplete={<StepNumber />}
-            active={<StepNumber />}
-          />
+          <StepStatus complete={<StepIcon />} />
         </StepIndicator>
         <StepSeparator />
       </Step>
       <Step>
         <StepIndicator>
-          <StepStatus
-            complete={<StepIcon />}
-            incomplete={<StepNumber />}
-            active={<StepNumber />}
-          />
+          <StepStatus complete={<StepIcon />} />
         </StepIndicator>
 
         <StepSeparator />
       </Step>
       <Step>
         <StepIndicator>
-          <StepStatus
-            complete={<StepIcon />}
-            incomplete={<StepNumber />}
-            active={<StepNumber />}
-          />
+          <StepStatus complete={<StepIcon />} />
         </StepIndicator>
 
         <StepSeparator />
@@ -75,22 +60,6 @@ const CustomStepper = ({ activeStep }) => {
 };
 
 const HowItWorks = () => {
-  const { activeStep, setActiveStep } = useSteps({
-    index: 0,
-    count: 2,
-  });
-
-  // Add transition to stepper indicators and separators
-  useEffect(() => {
-    const stepper = document.querySelector(".chakra-stepper");
-    if (stepper) {
-      const inds = stepper.querySelectorAll(".chakra-step__indicator");
-      const sprs = stepper.querySelectorAll(".chakra-step__separator ");
-      inds.forEach((ind) => (ind.style.transition = "background 1s ease"));
-      sprs.forEach((spr) => (spr.style.transition = "background 1.5s ease"));
-    }
-  }, []);
-
   return (
     <Card>
       <CardBody>
@@ -106,7 +75,7 @@ const HowItWorks = () => {
           &nbsp; steps
         </Heading>
 
-        <CustomStepper activeStep={activeStep} />
+        <CustomStepper activeStep={3} />
 
         <Flex justifyContent="space-between">
           {steps.map((step, index) => (
@@ -115,23 +84,11 @@ const HowItWorks = () => {
               flexDirection="column"
               alignItems="center"
               justifyContent="space-between"
-              onMouseEnter={() => {
-                if (activeStep !== 3) {
-                  setActiveStep(index + 1);
-                }
-              }}
               py={10}
             >
-              <motion.div
-                whileHover={{
-                  scale: 1.2,
-                  rotate: (index % 2 === 0 ? -1 : 1) * 10,
-                }}
-              >
-                <Flex justifyContent="center" alignItems="center">
-                  <Image boxSize="150px" src={step.img} alt="Dan Abramov" />
-                </Flex>
-              </motion.div>
+              <Flex justifyContent="center" alignItems="center">
+                <Image boxSize="150px" src={step.img} alt="Dan Abramov" />
+              </Flex>
 
               <Heading
                 gap="10px"
