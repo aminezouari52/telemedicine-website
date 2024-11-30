@@ -72,10 +72,11 @@ function initializeSocket(server) {
       socket.join(roomId);
     });
 
-    socket.on("sendMessage", ({ roomId, message, name }) => {
+    socket.on("sendMessage", ({ roomId, message, name, time }) => {
       io.to(roomId).emit("receiveMessage", {
         name,
         message,
+        time,
       });
     });
 

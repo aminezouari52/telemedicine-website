@@ -97,7 +97,7 @@ export const PatientHeader = () => {
               navigate(`/${user?.consultationId}`);
             }}
           >
-            Joindre
+            Join
           </Button>
         )}
 

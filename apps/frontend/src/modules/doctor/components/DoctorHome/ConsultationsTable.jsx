@@ -15,6 +15,7 @@ const transformStatus = (status) => {
   if (status === "pending") return "Pending";
   if (status === "canceled") return "Canceled";
   if (status === "completed") return "Completed";
+  if (status === "in-progress") return "In progress";
 };
 
 const headers = ["Patient", "Date", "Status", "Created at", "Updated at"];

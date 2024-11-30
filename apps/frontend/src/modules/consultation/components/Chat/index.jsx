@@ -42,7 +42,6 @@ const Chat = () => {
   const user = useSelector((state) => state.userReducer.user);
   const { consultationId } = useParams();
   const message = useRef();
-  const messagesContainer = useRef();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [messages, setMessages] = useState([]);
@@ -62,10 +61,14 @@ const Chat = () => {
 
   const sendMessage = () => {
     if (message.current.value.trim()) {
+      const hours = String(new Date().getHours()).padStart(2, "0");
+      const minutes = String(new Date().getMinutes()).padStart(2, "0");
+      const time = `${hours}:${minutes}`;
       socket.emit("sendMessage", {
         roomId: consultationId,
         message: message.current.value.trim(),
         name: user?.firstName,
+        time,
       });
     }
     message.current.value = "";
@@ -121,8 +124,8 @@ const Chat = () => {
     }
   };
 
-  const socketReceiveMessageHandler = ({ name, message }) => {
-    setMessages((prevMessages) => [...prevMessages, { name, message }]);
+  const socketReceiveMessageHandler = ({ name, message, time }) => {
+    setMessages((prevMessages) => [...prevMessages, { name, message, time }]);
   };
 
   const cleanupEffect = () => {
@@ -224,29 +227,57 @@ const Chat = () => {
             </Heading>
           </Flex>
         </Flex>
-        <Flex h="90%" w="100%" justifyContent="center">
+        <Flex h="87%" w="100%" justifyContent="center">
           <Flex
             justifyContent="flex-end"
             direction="column"
             gap={8}
             p={4}
-            w="400px"
+            w="500px"
             bg="primary.100"
+            borderRadius="md"
           >
-            <Stack
-              direction="column-reverse"
-              ref={messagesContainer}
-              spacing={4}
-              overflowY="auto"
-            >
-              <Box>
-                {messages.map((user, index) => (
-                  <Text key={index}>
-                    {user.name} : {user.message}
-                  </Text>
+            <Flex direction="column-reverse" overflowY="auto" p={2}>
+              <Stack spacing={4}>
+                {messages.map(({ name, message, time }, index) => (
+                  <Flex gap={1} key={index}>
+                    {user?.firstName !== name && (
+                      <Avatar
+                        name={user?.role !== "doctor" ? "Doctor" : "Patient"}
+                        src={
+                          user?.role !== "doctor" ? DoctorAvatar : PatientAvatar
+                        }
+                      ></Avatar>
+                    )}
+                    <Flex
+                      w="100%"
+                      justifyContent={
+                        user?.firstName !== name ? "flex-start" : "flex-end"
+                      }
+                    >
+                      <Box>
+                        {user?.firstName !== name && (
+                          <Text fontWeight="bold">{name}</Text>
+                        )}
+                        <Flex
+                          direction="column"
+                          alignItems="flex-end"
+                          maxW="200px"
+                          bg="white"
+                          p={2}
+                          borderRadius="lg"
+                        >
+                          <Text>{message}</Text>
+                          <Text fontSize="xs" color="gray">
+                            {time}
+                          </Text>
+                        </Flex>
+                      </Box>
+                    </Flex>
+                  </Flex>
                 ))}
-              </Box>
-            </Stack>
+              </Stack>
+            </Flex>
             <InputGroup>
               <Input
                 ref={message}

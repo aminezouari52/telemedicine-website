@@ -126,7 +126,7 @@ const TimeModal = ({ date, isOpen, onClose, onSaveTime }) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xs">
+    <Modal isOpen={isOpen} onClose={onClose} size="xs" isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Available times</ModalHeader>
