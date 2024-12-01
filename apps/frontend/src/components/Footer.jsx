@@ -10,7 +10,7 @@ import {
   Image,
   Button,
 } from "@chakra-ui/react";
-import { FaFacebook, FaInstagram, FaTwitter, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaGithub, FaLinkedin } from "react-icons/fa";
 import logoDark from "@/images/logo-dark.png";
 
 const Footer = () => {
@@ -98,7 +98,14 @@ const Footer = () => {
         </Text>
         <Flex gap="10px">
           <IconButton size="sm" colorScheme="facebook" icon={<FaFacebook />} />
-          <IconButton size="sm" colorScheme="twitter" icon={<FaTwitter />} />
+          <IconButton
+            as="a"
+            href="https://github.com/aminezouari52/telemedecine-app/"
+            target="_blank"
+            size="sm"
+            colorScheme="gray"
+            icon={<FaGithub />}
+          />
           <IconButton size="sm" colorScheme="pink" icon={<FaInstagram />} />
           <IconButton
             as="a"
