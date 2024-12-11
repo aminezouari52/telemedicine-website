@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 // FUNCTIONS
 import { createConsultation } from "@/modules/consultation/functions/consultation";
-import { updatePatient } from "../../../patient/functions/patient";
+import { updatePatient } from "@/modules/patient/functions/patient";
 import { getDoctor } from "@/modules/doctor/functions/doctor";
 import { setUser } from "@/reducers/userReducer";
 import * as Yup from "yup";

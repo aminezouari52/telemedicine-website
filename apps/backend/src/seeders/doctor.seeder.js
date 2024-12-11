@@ -147,9 +147,8 @@ async function seedDoctorCollection() {
 
         await Doctor.create(doctors);
 
-        console.log("Doctor model seeded! :)");
+        logger.info("Doctor model seeded! :)");
 
-        // close database and exit process
         server.close();
         process.exit();
       });

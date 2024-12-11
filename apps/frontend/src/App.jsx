@@ -1,12 +1,13 @@
 // HOOKS
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 // FUNCTIONS
 import { setUser } from "@/reducers/userReducer";
 import { getCurrentUser } from "@/modules/auth/functions/auth";
 import { auth } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { getLocalStorage } from "@/utils";
 
 // COMPONENTS
 import { Routes, Route, Navigate } from "react-router-dom";
@@ -26,7 +27,6 @@ import DoctorDetails from "@/modules/patient/components/DoctorDetails";
 import BookConsultation from "@/modules/consultation/components/BookConsultation";
 import Chat from "@/modules/consultation/components/Chat";
 import NotFound from "@/components/NotFound";
-import { getLocalStorage } from "./utils";
 
 const demoAccounts = ["freddie24@yahoo.com", "christop_hagenes21@gmail.com"];
 

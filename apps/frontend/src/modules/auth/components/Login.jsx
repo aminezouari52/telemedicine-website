@@ -90,6 +90,7 @@ const Login = () => {
       <Flex cursor="pointer" onClick={() => navigate("/")}>
         <Logo w="280px" />
       </Flex>
+
       <Flex
         direction="column"
         justifyContent="center"
@@ -103,6 +104,7 @@ const Login = () => {
           Login to access the platform
         </Text>
       </Flex>
+
       <Flex w="100%" direction="column" alignItems="end" gap={2}>
         <Input
           focusBorderColor="primary.500"
