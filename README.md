@@ -1,4 +1,4 @@
-# Telemedecine
+# Platform for Real-Time Doctor-Patient Consultations
 
 This project is an open-source platform designed to facilitate secure, real-time text-based consultations between doctors and patients. With a focus on simplicity and ease of use, the app allows users to engage in private, secure conversations without the need for in-person visits, leveraging modern web technologies.
 
