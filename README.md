@@ -11,7 +11,6 @@ You can try the app live at: [Live Website Link](https://bucolic-malabi-07ed64.n
 - Appointment Scheduling: Patients can book consultations with doctors, ensuring a smooth experience.
 - User Profiles: Both doctors and patients have personalized profiles for storing essential information.
 - Real-time Notifications: Receive notifications when your consultation is about to begin, or when a doctor is available.
-- Open-source Contribution: Actively accepting pull requests for new features, bug fixes, and improvements.
 - Responsive Design: Accessible on all devices, ensuring users can connect from anywhere.
 
 ## Screeshots
