@@ -3,7 +3,7 @@
 This project is an open-source platform designed to facilitate secure, real-time text-based consultations between doctors and patients. With a focus on simplicity and ease of use, the website allows patients and doctors to engage in private, secure conversations without the need for in-person visits, leveraging modern web technologies.
 
 **Live Website**
-You can try the app live at: [Live Website Link](https://bucolic-malabi-07ed64.netlify.app)
+You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed64.netlify.app)
 
 ## Features
 
@@ -50,7 +50,7 @@ You can try the app live at: [Live Website Link](https://bucolic-malabi-07ed64.n
 Clone the repository
 
 ```bash
-git clone https://github.com/aminezouari52/telemedecine-app.git
+git clone https://github.com/aminezouari52/telemedicine-website.git
 ```
 
 Create the `.env` files
@@ -61,7 +61,7 @@ Create the `.env` files
 Navigate to the directory
 
 ```bash
-cd telemedecine-app
+cd telemedicine-website
 ```
 
 Use the package manager [pnpm](https://pnpm.io/) to install and run the project.
