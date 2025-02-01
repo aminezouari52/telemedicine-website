@@ -1,0 +1,1 @@
+{ "*.js": ["prettier --color --write", "eslint -f pretty --color"] }
