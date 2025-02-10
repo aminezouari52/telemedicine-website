@@ -1,11 +1,11 @@
 // HOOKS
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
 
 // FUNCTIONS
 import { paginate } from "@/components/pagination/Pagination";
 import { getAllDoctors } from "@/modules/doctor/functions/doctor";
-import { useSelector } from "react-redux";
 
 // COMPONENTS
 import Search from "@/components/Search";
@@ -21,7 +21,6 @@ import { ArrowUpDownIcon } from "@chakra-ui/icons";
 
 const PatientDoctors = () => {
   const [currentPage, setCurrentPage] = useState(0);
-  const [doctors, setDoctors] = useState([]);
   const [specialty, setSpecialty] = useState("");
   const [hospital, setHospital] = useState("");
   const [sortBy, setSortBy] = useState("");
@@ -43,17 +42,22 @@ const PatientDoctors = () => {
     if (text) queryParams.text = text;
     const filters = new URLSearchParams(queryParams).toString();
     const response = await getAllDoctors(filters, sortBy);
-    return paginate(response.data.results)
-  }
+    return paginate(response.data.results);
+  };
 
   //Query Invoked Using useQuery
-  const {data, isPending, isError, error} = useQuery({
-    queryKey : ['doctors', specialty, hospital, sortBy, searchText],
-    queryFn : () => getAllDoctorsQuery()
-  })
+  const {
+    data: doctors,
+    isPending,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["doctors", specialty, hospital, sortBy, searchText],
+    queryFn: () => getAllDoctorsQuery(),
+  });
 
   return (
-    <Flex flexDirection="column" gap={10} px={12} py={6} >
+    <Flex flexDirection="column" gap={10} px={12} py={6}>
       <Heading fontSize="xl">Find a doctor</Heading>
       <Flex bg="#fff" direction="column" gap={8} p={10} borderRadius={4}>
         <Flex justifyContent="space-between">
@@ -145,9 +149,14 @@ const PatientDoctors = () => {
           </Flex>
         </Flex>
         <Flex gap={20} py={4} flexWrap="wrap" justifyContent="center">
-          {isPending ? <LoadingSpinner/> : isError ? <span>Error : {error.message}</span> : (data &&
-            data?.length !== 0 &&
-            data[currentPage]?.map((doctor) => (
+          {isPending ? (
+            <LoadingSpinner />
+          ) : isError ? (
+            <span>Error : {error.message}</span>
+          ) : (
+            doctors &&
+            doctors?.length !== 0 &&
+            doctors[currentPage]?.map((doctor) => (
               <DoctorCard
                 key={doctor._id}
                 doctor={{
@@ -159,7 +168,8 @@ const PatientDoctors = () => {
                   hospital: doctor.hospital,
                 }}
               />
-            )))}
+            ))
+          )}
         </Flex>
       </Flex>
       <Pagination
