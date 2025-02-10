@@ -15,9 +15,6 @@ import Footer from "@/components/Footer";
 // STYLE
 import { Heading, Flex, Box, Text, Button } from "@chakra-ui/react";
 
-// ASSETS
-import HeroVid from "@/images/hero-video2.mp4";
-
 const videoStyle = {
   width: "100%",
   height: "100%",
@@ -79,7 +76,10 @@ const Home = () => {
         </Flex>
         <Box h="100vh">
           <video loop muted autoPlay={true} style={videoStyle}>
-            <source src={HeroVid} type="video/mp4" />
+            <source
+              src="https://res.cloudinary.com/dfzx2pdi3/video/upload/v1739200039/dn3xyzxsq8qruqojnpkj.mp4"
+              type="video/mp4"
+            />
           </video>
         </Box>
         <Flex

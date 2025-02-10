@@ -25,7 +25,7 @@ import {
 } from "@chakra-ui/react";
 
 // ASSETS
-import loginImg from "@/images/login.webp";
+import loginImg from "@/assets/login.webp";
 import { FaInfoCircle } from "react-icons/fa";
 
 export const AuthLayout = () => {

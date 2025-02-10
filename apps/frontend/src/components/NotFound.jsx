@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Flex, Image, Heading, Button } from "@chakra-ui/react";
-import NotFoundImg from "@/images/not-found.svg";
+import NotFoundImg from "@/assets/not-found.svg";
 
 const NotFound = () => {
   const navigate = useNavigate();

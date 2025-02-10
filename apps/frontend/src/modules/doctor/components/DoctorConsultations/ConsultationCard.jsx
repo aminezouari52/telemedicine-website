@@ -13,7 +13,7 @@ import {
 import { PhoneIcon } from "@chakra-ui/icons";
 import { FaWeight } from "react-icons/fa";
 import { CalendarIcon } from "@chakra-ui/icons";
-import PatientAvatar from "@/images/avatar-patient.png";
+import PatientAvatar from "@/assets/avatar-patient.png";
 
 const ConsultationCard = ({ consultation }) => {
   return (

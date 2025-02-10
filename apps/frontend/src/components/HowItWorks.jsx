@@ -13,9 +13,9 @@ import {
   CardBody,
   Card,
 } from "@chakra-ui/react";
-import illustrationDate from "@/images/illustration-date.svg";
-import illustrationProfile from "@/images/illustration-profile.svg";
-import illustrationChat from "@/images/illustration-chat.svg";
+import illustrationDate from "@/assets/illustration-date.svg";
+import illustrationProfile from "@/assets/illustration-profile.svg";
+import illustrationChat from "@/assets/illustration-chat.svg";
 
 const steps = [
   {

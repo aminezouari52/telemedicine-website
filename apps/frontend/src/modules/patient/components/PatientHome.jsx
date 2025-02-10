@@ -11,7 +11,6 @@ import {
 
 // ASSETS
 import { RxArrowTopRight } from "react-icons/rx";
-import patientHome from "@/images/patient-home.jpeg";
 import { FaRegHospital } from "react-icons/fa";
 import { GiMedicalPackAlt } from "react-icons/gi";
 import { FaHandHoldingMedical } from "react-icons/fa";
@@ -76,7 +75,7 @@ const PatientHome = () => {
             w="70%"
             h="600px"
             objectFit="cover"
-            src={patientHome}
+            src="https://res.cloudinary.com/dfzx2pdi3/image/upload/v1739200306/patient-home_ebcahl.jpg"
             alt="product image"
           />
         </Flex>

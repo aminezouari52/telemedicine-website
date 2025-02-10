@@ -29,7 +29,7 @@ import {
 
 // ASSETS
 import { ArrowForwardIcon } from "@chakra-ui/icons";
-import DoctorAvatar from "@/images/avatar-doctor.jpg";
+import DoctorAvatar from "@/assets/avatar-doctor.jpg";
 
 const DoctorHome = () => {
   const navigate = useNavigate();

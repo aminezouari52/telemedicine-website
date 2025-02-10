@@ -11,7 +11,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { FaFacebook, FaInstagram, FaGithub, FaLinkedin } from "react-icons/fa";
-import logoDark from "@/images/logo-dark.png";
+import logoDark from "@/assets/logo-dark.png";
 
 const Footer = () => {
   const [newsletter, setNewsletter] = useState("");

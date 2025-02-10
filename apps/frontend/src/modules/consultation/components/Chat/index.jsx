@@ -35,8 +35,8 @@ import {
 
 // ASSETS
 import { IoSend } from "react-icons/io5";
-import PatientAvatar from "@/images/avatar-patient.png";
-import DoctorAvatar from "@/images/avatar-doctor.jpg";
+import PatientAvatar from "@/assets/avatar-patient.png";
+import DoctorAvatar from "@/assets/avatar-doctor.jpg";
 
 const Chat = () => {
   const user = useSelector((state) => state.userReducer.user);

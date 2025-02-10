@@ -31,8 +31,8 @@ import { DateTime } from "luxon";
 // ASSETS
 import { CalendarIcon, InfoIcon } from "@chakra-ui/icons";
 import { FaMapPin } from "react-icons/fa";
-import DoctorAvatar from "@/images/avatar-doctor.jpg";
-import PatientAvatar from "@/images/avatar-patient.png";
+import DoctorAvatar from "@/assets/avatar-doctor.jpg";
+import PatientAvatar from "@/assets/avatar-patient.png";
 
 const PatientConsultations = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

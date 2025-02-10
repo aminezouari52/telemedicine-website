@@ -34,7 +34,7 @@ import {
 import { FaRegBell } from "react-icons/fa";
 import { IoChatboxSharp } from "react-icons/io5";
 import { TbLogout } from "react-icons/tb";
-import DoctorAvatar from "@/images/avatar-doctor.jpg";
+import DoctorAvatar from "@/assets/avatar-doctor.jpg";
 
 export const DoctorHeader = () => {
   const navigate = useNavigate();
