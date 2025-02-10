@@ -6,15 +6,32 @@
   "author": "Amine Zouari <zouariamine52@gmail.com>",
   "license": "MIT",
   "engines": {
-    "node": "20.12.1"
+    "node": ">=20"
   },
   "scripts": {
     "start": "pm2 start ecosystem.config.json --no-daemon",
     "dev": "cross-env NODE_ENV=development nodemon src/index.js",
     "seed:doctor": "node src/seeders/doctor.seeder.js",
     "seed:patient": "node src/seeders/patient.seeder.js",
-    "seed:consultation": "node src/seeders/consultation.seeder.js"
+    "seed:consultation": "node src/seeders/consultation.seeder.js",
+    "lint": "eslint src/**/*.js -f pretty --color"
   },
+  "keywords": [
+    "node",
+    "node.js",
+    "express",
+    "rest",
+    "api",
+    "mongodb",
+    "mongoose",
+    "es6",
+    "es7",
+    "es8",
+    "es9",
+    "joi",
+    "eslint",
+    "prettier"
+  ],
   "dependencies": {
     "cloudinary": "^1.41.3",
     "compression": "^1.7.4",
@@ -32,14 +49,19 @@
     "mongoose": "^7.2.1",
     "morgan": "^1.10.0",
     "node-cron": "^3.0.3",
-    "nodemon": "^2.0.22",
     "pm2": "^5.4.3",
     "socket.io": "^4.8.0",
     "validator": "^13.12.0",
     "winston": "^3.13.1"
   },
   "devDependencies": {
+    "@eslint/js": "9.16.0",
     "@faker-js/faker": "^9.0.1",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "eslint": "9.16.0",
+    "eslint-formatter-pretty": "5.0.0",
+    "globals": "15.13.0",
+    "nodemon": "^2.0.22",
+    "prettier": "3.3.2"
   }
 }

@@ -1,6 +1,6 @@
-# Platform for Real-Time Doctor-Patient Consultations
+# Real-Time Doctor-Patient Consultations Website
 
-This project is an open-source platform designed to facilitate secure, real-time text-based consultations between doctors and patients. With a focus on simplicity and ease of use, the website allows patients and doctors to engage in private, secure conversations without the need for in-person visits, leveraging modern web technologies.
+This project is a Real-Time Doctor-Patient consultations website designed to facilitate secure, real-time text-based consultations between doctors and patients. With a focus on simplicity and ease of use, the website allows patients and doctors to engage in private, secure conversations without the need for in-person visits, leveraging modern web technologies.
 
 **Live Website**
 You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed64.netlify.app)
