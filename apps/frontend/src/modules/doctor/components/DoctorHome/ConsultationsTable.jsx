@@ -58,7 +58,7 @@ const ConsultationsTable = ({ consultations }) => {
           "Pending consultations",
           "Canceled consultations",
           "Completed consultations",
-          "All consultationss",
+          "All consultations",
         ].map((item, index) => (
           <Tab
             key={index}

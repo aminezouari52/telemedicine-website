@@ -1,4 +1,5 @@
 // HOOKS
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 // // FUNCTIONS
@@ -9,11 +10,9 @@ import { Input, IconButton, Flex } from "@chakra-ui/react";
 
 // ICONS
 import { Search2Icon } from "@chakra-ui/icons";
-import React from "react";
 
 const Search = () => {
   const dispatch = useDispatch();
-
   const handleChange = (event) => {
     dispatch(
       setSearchText({
@@ -21,6 +20,12 @@ const Search = () => {
       })
     );
   };
+
+  useEffect(()=>{
+    dispatch(setSearchText({
+      text : ""
+    }))
+  },[])
 
   return (
     <Flex>

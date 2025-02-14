@@ -1,5 +1,4 @@
 // HOOKS
-import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -9,6 +8,7 @@ import { getDoctorConsultations } from "@/modules/consultation/functions/consult
 import { consultationsMonthlyGrowth } from "@/utils";
 
 // COMPONENTS
+import LoadingSpinner from "@/components/LoadingSpinner";
 import Statistics from "./Statistics";
 import ConsultationsTable from "./ConsultationsTable";
 
@@ -24,44 +24,53 @@ import {
   StatNumber,
   StatHelpText,
   StatArrow,
-  Text,
 } from "@chakra-ui/react";
 
 // ASSETS
 import { ArrowForwardIcon } from "@chakra-ui/icons";
 import DoctorAvatar from "@/assets/avatar-doctor.jpg";
+import { useQuery } from "@tanstack/react-query";
 
 const DoctorHome = () => {
   const navigate = useNavigate();
-  const [doctor, setDoctor] = useState();
-  const [consultations, setConsultations] = useState([]);
   const user = useSelector((state) => state.userReducer.user);
 
-  const loadConsultations = async () => {
+  const getConsultationsQuery = async () => {
     const consultationsData = (await getDoctorConsultations(user?._id)).data;
-    setConsultations(consultationsData);
+    return consultationsData
   };
 
-  const loadDoctor = async () => {
+  const getPatientsCountQuery = async () => {
     const patientsCount = (await getDoctorPatientsCount(user._id)).data
       .patientsCount;
-    setDoctor({ ...user, patientsCount });
+    return patientsCount
   };
 
-  useEffect(() => {
-    if (user) {
-      loadDoctor(user);
-      loadConsultations(user);
+  //Query Invoked Using useQuery
+  const {data, isPending, isError, error} = useQuery({
+    queryKey : ['doctor', 'consultations'],
+    queryFn : async() => {
+      const consultations = await getConsultationsQuery()
+      const patientsCount = await getPatientsCountQuery()
+      return {doctor : {...user, patientsCount}, consultations}
     }
-  }, [user]);
+  })
+
+  if(isPending){
+    return <Flex direction='row' justifyContent='center' marginTop={10}><LoadingSpinner/></Flex>
+  }
+
+  if(isError){
+    return <Flex direction='row' justifyContent='center' marginTop={10}>Error : {error.message}</Flex>
+  }
 
   return (
     <Flex direction="column" gap={10} py={6} px={12}>
       <Flex justifyContent="space-between" alignItems="center">
         <Flex alignItems="center" gap={4}>
-          <Avatar size="lg" src={doctor?.photo || DoctorAvatar} />
+          <Avatar size="lg" src={data.doctor?.photo || DoctorAvatar} />
           <Flex flexDirection="column" gap={3}>
-            <Heading size="md">Hello, Dr {doctor?.firstName}!</Heading>
+            <Heading size="md">Hello, Dr {data.doctor?.firstName}!</Heading>
             {!user?.isProfileCompleted && (
               <Button
                 rightIcon={<ArrowForwardIcon />}
@@ -78,25 +87,23 @@ const DoctorHome = () => {
         <Box>
           <Stat>
             <StatLabel>Monthly growth</StatLabel>
-            <StatNumber>{consultations?.length}</StatNumber>
+            <StatNumber>{data.consultations?.length}</StatNumber>
             <StatHelpText>
               <StatArrow
                 type={
-                  consultationsMonthlyGrowth(consultations) < 0
+                  consultationsMonthlyGrowth(data.consultations) < 0
                     ? "decrease"
                     : "increase"
                 }
               />{" "}
-              {consultationsMonthlyGrowth(consultations) < 0 ? "" : "+"}
-              {consultationsMonthlyGrowth(consultations)}%
+              {consultationsMonthlyGrowth(data.consultations) < 0 ? "" : "+"}
+              {consultationsMonthlyGrowth(data.consultations)}%
             </StatHelpText>
           </Stat>
         </Box>
       </Flex>
-
-      <Statistics />
-
-      <ConsultationsTable consultations={consultations} />
+      <Statistics doctor={data.doctor} consultations={data.consultations}/>
+      <ConsultationsTable consultations={data.consultations} />
     </Flex>
   );
 };

@@ -20,10 +20,12 @@ import { Flex, Text, IconButton, SimpleGrid, Button } from "@chakra-ui/react";
 // ASSETS
 import { IoChatboxSharp } from "react-icons/io5";
 import { TbLogout } from "react-icons/tb";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const PatientHeader = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const toast = useToast();
   const user = useSelector((state) => state.userReducer.user);
 
@@ -40,6 +42,7 @@ export const PatientHeader = () => {
     try {
       await signOut(auth);
       dispatch(logout(null));
+      queryClient.removeQueries()
       navigate("/auth/login");
     } catch (err) {
       console.log(err);

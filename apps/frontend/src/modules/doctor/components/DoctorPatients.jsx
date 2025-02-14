@@ -1,34 +1,40 @@
 // HOOKS
-import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 //  COMPONENTS
 import DataTable from "@/components/DataTable";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 // FUNCTIONS
 import { getDoctorConsultations } from "@/modules/consultation/functions/consultation";
 import { DateTime } from "luxon";
 
 // STYLE
-import { Box, Heading, Tr, Td } from "@chakra-ui/react";
+import { Box, Heading, Tr, Td, Flex } from "@chakra-ui/react";
+import { useQuery } from "@tanstack/react-query";
 
 const DoctorPatients = () => {
-  const [consultations, setConsultations] = useState([]);
   const user = useSelector((state) => state.userReducer.user);
 
-  const loadConsultations = async () => {
+  const getConsultations = async () => {
     const consultationsData = (await getDoctorConsultations(user?._id)).data;
-    setConsultations(
-      consultationsData?.filter((c) => c.status === "completed")
-    );
+    return consultationsData?.filter((c) => c.status === "completed")
   };
 
-  useEffect(() => {
-    if (user) {
-      loadConsultations();
-    }
-  }, [user]);
+   //Query Invoked Using useQuery
+  const { data: consultations, isPending, isError, error} = useQuery({
+    queryKey : ['patients'],
+    queryFn : () => getConsultations()
+  })
 
+    if(isPending){
+      return <Flex direction='row' justifyContent='center' marginTop={10}><LoadingSpinner/></Flex>
+    }
+  
+    if(isError){
+      return <Flex direction='row' justifyContent='center' marginTop={10}>Error : {error.message}</Flex>
+    }
+  
   const uniquePatientConsultations = consultations?.filter(
     (consultation, index, self) =>
       index ===

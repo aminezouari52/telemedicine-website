@@ -1,5 +1,4 @@
 // HOOKS
-import { useEffect, useState } from "react";
 import { useDisclosure } from "@chakra-ui/react";
 
 import AllConsultationsModal from "./AllConsultationsModal";
@@ -28,11 +27,15 @@ import { useSelector } from "react-redux";
 import { getPatientConsultations } from "@/modules/consultation/functions/consultation";
 import { DateTime } from "luxon";
 
+//COMPONENTS
+import LoadingSpinner from "@/components/LoadingSpinner";
+
 // ASSETS
 import { CalendarIcon, InfoIcon } from "@chakra-ui/icons";
 import { FaMapPin } from "react-icons/fa";
 import DoctorAvatar from "@/assets/avatar-doctor.jpg";
 import PatientAvatar from "@/assets/avatar-patient.png";
+import { useQuery } from "@tanstack/react-query";
 
 const PatientConsultations = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -40,22 +43,29 @@ const PatientConsultations = () => {
     defaultIsOpen: true,
   });
   const user = useSelector((state) => state.userReducer.user);
-  const [consultations, setConsultations] = useState([]);
 
-  const loadConsultations = async () => {
+  const getPatientConsultationsQuery = async () => {
     const consultationsData = (await getPatientConsultations(user?._id)).data;
-    setConsultations(consultationsData.filter((c) => c.status === "pending"));
+    return consultationsData.filter((c) => c.status === "pending");
   };
 
-  useEffect(() => {
-    if (user) {
-      loadConsultations();
-    }
-  }, [user]);
-
+//Query Invoked Using useQuery
+const { data: consultations, isPending, isError, error} = useQuery({
+  queryKey : ['consultations'],
+  queryFn : () => getPatientConsultationsQuery()
+})
+  
   const sortedUpcomingConsultations = () => {
     return consultations?.sort((a, b) => new Date(a.date) - new Date(b.date));
   };
+
+  if(isPending){
+    return <Flex direction='row' justifyContent='center' marginTop={10}><LoadingSpinner/></Flex>
+  }
+
+  if(isError){
+    return <Flex direction='row' justifyContent='center' marginTop={10}>Error : {error.message}</Flex>
+  }
 
   return (
     <>

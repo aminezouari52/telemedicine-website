@@ -1,9 +1,11 @@
 // HOOKS
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
 
 // FUNCTIONS
 import { getDoctorPatientsCount } from "@/modules/doctor/functions/doctor";
+
+//COMPONENTS
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 // STYLE
 import { Flex, Image, Heading, Text, Button, Icon } from "@chakra-ui/react";
@@ -12,10 +14,10 @@ import { motion } from "framer-motion";
 // ASSETS
 import { FaRegHospital } from "react-icons/fa";
 import { IoPeopleOutline } from "react-icons/io5";
+import { useQuery } from "@tanstack/react-query";
 
 const DoctorCard = ({ doctor }) => {
   const navigate = useNavigate();
-  const [patientsCount, setPatientsCount] = useState(0);
   const {
     photo,
     firstName = "first name",
@@ -25,16 +27,18 @@ const DoctorCard = ({ doctor }) => {
     id,
   } = doctor;
 
-  const fetchData = async () => {
-    if (id) {
+  const getPatientCount = async (doctorID) => {
+    if (doctorID) {
       const response = (await getDoctorPatientsCount(id)).data.patientsCount;
-      setPatientsCount(response);
+      return response
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [patientsCount]);
+  //Query Invoked Using useQuery
+  const { data: patientsCount, isPending} = useQuery({
+    queryKey : ['patientCount', id],
+    queryFn : () => getPatientCount(id)
+  })
 
   return (
     <Flex
@@ -78,7 +82,7 @@ const DoctorCard = ({ doctor }) => {
         <Flex justifyContent="center" alignItems="center" gap={2}>
           <Icon as={IoPeopleOutline} color="gray" />
           <Text fontWeight="bolder" color="#000">
-            {patientsCount}
+            {isPending ? <LoadingSpinner size='small'/> : patientsCount}
           </Text>
           <Text color="gray">Patients</Text>
         </Flex>
