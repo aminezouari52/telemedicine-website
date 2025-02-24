@@ -1,5 +1,4 @@
 // HOOKS
-import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useDisclosure } from "@chakra-ui/react";
 
@@ -32,6 +31,10 @@ import {
 // ASSETS
 import { CalendarIcon, InfoIcon } from "@chakra-ui/icons";
 import { FaMapPin } from "react-icons/fa";
+import { useQuery } from "@tanstack/react-query";
+
+//COMPONENTS
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const DoctorConsultations = () => {
   const { isOpen: isOpenAlert, onClose: onCloseAlert } = useDisclosure({
@@ -39,23 +42,30 @@ const DoctorConsultations = () => {
   });
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [consultations, setConsultations] = useState([]);
   const user = useSelector((state) => state.userReducer.user);
 
-  const loadConsultations = async () => {
+  const getDoctorConsultationsQuery = async () => {
     const consultationsData = (await getDoctorConsultations(user?._id)).data;
-    setConsultations(consultationsData.filter((c) => c.status === "pending"));
+    return consultationsData.filter((c) => c.status === "pending");
   };
 
-  useEffect(() => {
-    if (user) {
-      loadConsultations();
-    }
-  }, [user]);
+  //Query Invoked Using useQuery
+const { data: consultations, isPending, isError, error} = useQuery({
+  queryKey : ['consultations'],
+  queryFn : () => getDoctorConsultationsQuery()
+})
 
   const sortedUpcomingConsultations = () => {
     return consultations?.sort((a, b) => new Date(a.date) - new Date(b.date));
   };
+
+  if(isPending){
+    return <Flex direction='row' justifyContent='center' marginTop={10}><LoadingSpinner/></Flex>
+  }
+
+  if(isError){
+    return <Flex direction='row' justifyContent='center' marginTop={10}>Error : {error.message}</Flex>
+  }
 
   return (
     <>

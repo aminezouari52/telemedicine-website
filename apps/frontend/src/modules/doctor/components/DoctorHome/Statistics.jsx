@@ -1,7 +1,3 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { getDoctorPatientsCount } from "@/modules/doctor/functions/doctor";
-import { getDoctorConsultations } from "@/modules/consultation/functions/consultation";
 import { Flex, Icon } from "@chakra-ui/react";
 import StatisticsBox from "./StatisticsBox";
 import { IoIosPeople } from "react-icons/io";
@@ -11,29 +7,7 @@ import { MdCancel } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
 import { CalendarIcon } from "@chakra-ui/icons";
 
-const Statistics = () => {
-  const [doctor, setDoctor] = useState();
-  const [consultations, setConsultations] = useState([]);
-  const user = useSelector((state) => state.userReducer.user);
-
-  const loadConsultations = async () => {
-    const consultationsData = (await getDoctorConsultations(user?._id)).data;
-    setConsultations(consultationsData);
-  };
-
-  const loadDoctor = async () => {
-    const patientsCount = (await getDoctorPatientsCount(user._id)).data
-      .patientsCount;
-    setDoctor({ ...user, patientsCount });
-  };
-
-  useEffect(() => {
-    if (user) {
-      loadDoctor(user);
-      loadConsultations(user);
-    }
-  }, [user]);
-
+const Statistics = ({doctor, consultations}) => {
   const consultationsThisMonth = () => {
     return consultations?.filter((consultation) => {
       const date = new Date(consultation.date);

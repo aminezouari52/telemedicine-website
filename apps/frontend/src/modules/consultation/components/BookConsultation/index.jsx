@@ -1,7 +1,7 @@
 // HOOKS
 import { useDisclosure, useSteps } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 // FUNCTIONS
@@ -16,6 +16,8 @@ import VerifyData from "./VerifyData";
 import DateStep from "./forms/DateStep";
 import PorfileInfo from "./forms/PorfileInfo";
 import { Formik, Form } from "formik";
+import LoadingSpinner from "@/components/LoadingSpinner";
+
 
 // STYLE
 import {
@@ -33,6 +35,7 @@ import {
   StepNumber,
   Image,
 } from "@chakra-ui/react";
+import { useQuery } from "@tanstack/react-query";
 
 const steps = [{ title: "Profile information" }, { title: "Date and Time" }];
 
@@ -41,16 +44,17 @@ const Consultation = () => {
   const user = useSelector((state) => state.userReducer.user);
   const { onClose } = useDisclosure();
   const params = useParams();
-  const [doctor, setDoctor] = useState();
 
-  const loadDoctor = async () => {
+  const getDoctorDetailsQuery = async () => {
     const response = await getDoctor(params.id);
-    setDoctor(response.data);
+    return response.data
   };
 
-  useEffect(() => {
-    loadDoctor();
-  }, []);
+ //Query Invoked Using useQuery
+const { data: doctor, isPending, isError, error} = useQuery({
+  queryKey : ['doctor', params.id],
+  queryFn : () => getDoctorDetailsQuery()
+})
 
   const { activeStep, goToNext, goToPrevious } = useSteps({
     index: 0,
@@ -67,6 +71,14 @@ const Consultation = () => {
       goToNext();
     }
   }, [user]);
+
+  if(isPending){
+    return <Flex direction='row' justifyContent='center' marginTop={10}><LoadingSpinner/></Flex>
+  }
+
+  if(isError){
+    return <Flex direction='row' justifyContent='center' marginTop={10}>Error : {error.message}</Flex>
+  }
 
   return (
     <Flex direction="column" bg="#fff" p={10} w="100%">

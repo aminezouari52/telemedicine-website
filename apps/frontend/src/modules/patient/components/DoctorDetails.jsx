@@ -1,9 +1,11 @@
 // HOOKS
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 
 // FUNCTIONS
 import { getDoctor } from "@/modules/doctor/functions/doctor";
+
+//COMPONENTS
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 // STYLE
 import {
@@ -15,20 +17,30 @@ import {
   Text,
   UnorderedList,
 } from "@chakra-ui/react";
+import { useQuery } from "@tanstack/react-query";
 
 function DoctorDetails() {
   const params = useParams();
   const navigate = useNavigate();
-  const [doctor, setDoctor] = useState();
 
-  const loadDoctor = async () => {
+  const getDoctorDetailsQuery = async () => {
     const response = await getDoctor(params.id);
-    setDoctor(response.data);
+    return response.data
   };
 
-  useEffect(() => {
-    loadDoctor();
-  }, []);
+  //Query Invoked Using useQuery
+  const { data: doctor, isPending, isError, error} = useQuery({
+    queryKey : ['doctor', params.id],
+    queryFn : () => getDoctorDetailsQuery()
+  })
+
+  if(isPending){
+    return <Flex direction='row' justifyContent='center' marginTop={10}><LoadingSpinner/></Flex>
+  }
+
+  if(isError){
+    return <Flex direction='row' justifyContent='center' marginTop={10}>Error : {error.message}</Flex>
+  }
 
   return (
     <Flex>
