@@ -1,6 +1,7 @@
 // HOOKS
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
 
 // FUNCTIONS
 import { setUser } from "@/reducers/userReducer";
@@ -32,38 +33,40 @@ const demoAccounts = ["freddie24@yahoo.com", "christop_hagenes21@gmail.com"];
 
 const App = () => {
   const dispatch = useDispatch();
+  const [token, setToken] = useState(null);
+  const { data: _userData } = useQuery({
+    queryKey: ["currentUser", token],
+    queryFn: () => getCurrentUser(token),
+    enabled: !!token,
+    onSuccess: (data) => handleAuthenticatedUser(data),
+    onError: (err) => console.log("Failed to fetch user:", err),
+  });
+
+  const handleAuthenticatedUser = (data) => {
+    if (!data) throw new Error("User not found");
+    const storedUser = getLocalStorage("user") || data;
+
+    const isDemoAccount = demoAccounts.includes(storedUser.email);
+    const isVerified = auth.currentUser?.emailVerified;
+
+    if (!isDemoAccount && !isVerified)
+      throw new Error("Email not verified. Please verify your email.");
+    dispatch(setUser({ ...storedUser, token }));
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       if (authUser) {
         await authUser.reload();
-
-        const idTokenResult = await authUser.getIdTokenResult();
-        try {
-          const res = await getCurrentUser(idTokenResult.token);
-          if (!res.data) {
-            throw new Error("User not found or token expired");
-          }
-
-          const storedUser = getLocalStorage("user") || res.data;
-
-          if (
-            !demoAccounts.includes(storedUser.email) &&
-            !authUser.emailVerified
-          ) {
-            throw new Error("Email not verified. Please verify your email.");
-          }
-
-          dispatch(setUser({ ...storedUser, token: idTokenResult.token }));
-        } catch (error) {
-          console.log(error);
-        }
+        const token = (await authUser.getIdTokenResult()).token;
+        setToken(token);
+      } else {
+        setToken(null);
       }
     });
 
     return () => unsubscribe();
-  }, [dispatch]);
-
+  }, []);
   return (
     <>
       <Routes>
