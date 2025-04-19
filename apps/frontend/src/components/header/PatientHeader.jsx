@@ -1,14 +1,14 @@
 // HOOKS
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useToast } from "@chakra-ui/react";
+import { useToast } from "@/hooks";
 import { useState, useEffect } from "react";
 
 // FUNCTIONS
 import { auth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { logout } from "@/reducers/userReducer";
-import { getPatientConsultations } from "@/modules/consultation/functions/consultation";
+import { getPatientConsultations } from "@/services/consultationService";
 
 // COMPONENTS
 import HeaderButton from "./HeaderButton";
@@ -32,7 +32,7 @@ export const PatientHeader = () => {
   const loadConsultation = async () => {
     const consultationsData = (await getPatientConsultations(user?._id)).data;
     setConsultation(
-      consultationsData.filter((c) => c.status === "in-progress")[0]
+      consultationsData.filter((c) => c.status === "in-progress")[0],
     );
   };
 
@@ -43,12 +43,7 @@ export const PatientHeader = () => {
       navigate("/auth/login");
     } catch (err) {
       console.log(err);
-      toast({
-        title: "Logout failed!",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      toast("Logout failed!", "error");
     }
   };
 

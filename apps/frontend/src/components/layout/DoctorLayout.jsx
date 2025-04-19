@@ -29,7 +29,7 @@ export const DoctorLayout = () => {
   }, []);
 
   useEffect(() => {
-    if (user && user?.role !== "doctor") {
+    if (user?.role !== "doctor") {
       navigate("/auth/login");
     }
   }, [user]);

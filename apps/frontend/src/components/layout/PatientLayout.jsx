@@ -31,7 +31,7 @@ export const PatientLayout = () => {
   }, []);
 
   useEffect(() => {
-    if (user && user?.role !== "patient") {
+    if (user?.role !== "patient") {
       navigate("/auth/login");
     }
   }, [user]);

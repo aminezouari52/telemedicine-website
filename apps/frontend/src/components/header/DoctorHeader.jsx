@@ -1,14 +1,14 @@
 // HOOKS
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useToast } from "@/hooks";
 
 // FUNCTIONS
 import { signOut } from "firebase/auth";
 import { logout } from "@/reducers/userReducer";
 import { auth } from "@/firebase";
-import { getDoctorConsultations } from "@/modules/consultation/functions/consultation";
+import { getDoctorConsultations } from "@/services/consultationService";
 
 // COMPONENTS
 import HeaderButton from "./HeaderButton";
@@ -27,7 +27,6 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  useToast,
 } from "@chakra-ui/react";
 
 // ASSETS
@@ -55,17 +54,12 @@ export const DoctorHeader = () => {
       navigate("/auth/login");
     } catch (err) {
       console.log(err);
-      toast({
-        title: "Logout failed!",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      toast("Logout failed!", "error");
     }
   };
 
   const loadIsProfileCompleted = async () => {
-    if (user && user.token) {
+    if (user?.token) {
       setIsProfileCompleted(user.isProfileCompleted);
     }
   };
@@ -73,7 +67,7 @@ export const DoctorHeader = () => {
   const loadConsultation = async () => {
     const consultationsData = (await getDoctorConsultations(user?._id)).data;
     setConsultation(
-      consultationsData.filter((c) => c.status === "in-progress")[0]
+      consultationsData.filter((c) => c.status === "in-progress")[0],
     );
   };
 
@@ -95,10 +89,10 @@ export const DoctorHeader = () => {
     setIsNotification((prev) =>
       prev.some(
         (existingNotification) =>
-          existingNotification.route === notification.route
+          existingNotification.route === notification.route,
       )
         ? prev
-        : [...prev, notification]
+        : [...prev, notification],
     );
   };
 

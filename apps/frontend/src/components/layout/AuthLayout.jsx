@@ -34,7 +34,7 @@ export const AuthLayout = () => {
   const user = useSelector((state) => state.userReducer.user);
 
   useEffect(() => {
-    if (user && user.token) {
+    if (user?.token) {
       if (user.role === "doctor") navigate("/doctor");
       else if (user.role === "patient") navigate("/patient");
     }

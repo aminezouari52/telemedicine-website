@@ -4,28 +4,28 @@ import { useDispatch } from "react-redux";
 
 // FUNCTIONS
 import { setUser } from "@/reducers/userReducer";
-import { getCurrentUser } from "@/modules/auth/functions/auth";
+import { getCurrentUser } from "@/services/authService";
 import { auth } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { getLocalStorage } from "@/utils";
+import { getLocalStorage } from "@/utils/localStorage";
 
 // COMPONENTS
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthLayout, DoctorLayout, PatientLayout } from "@/components/layout";
-import Home from "@/components/Home";
-import Login from "@/modules/auth/components/Login";
-import Register from "@/modules/auth/components/Register";
-import ForgotPassword from "@/modules/auth/components/ForgotPassword";
-import DoctorPatients from "@/modules/doctor/components/DoctorPatients.jsx";
-import DoctorHome from "@/modules/doctor/components/DoctorHome";
-import DoctorProfile from "@/modules/doctor/components/DoctorProfile";
-import DoctorConsultations from "@/modules/doctor/components/DoctorConsultations";
-import PatientHome from "@/modules/patient/components/PatientHome";
-import PatientConsultations from "@/modules/patient/components/PatientConsultations";
-import PatientDoctors from "@/modules/patient/components/PatientDoctors";
-import DoctorDetails from "@/modules/patient/components/DoctorDetails";
-import BookConsultation from "@/modules/consultation/components/BookConsultation";
-import Chat from "@/modules/consultation/components/Chat";
+import Home from "@/pages/Home";
+import Login from "@/pages/auth/Login";
+import Register from "@/pages/auth/Register";
+import ForgotPassword from "@/pages/auth/ForgotPassword";
+import DoctorPatients from "@/pages/doctor/DoctorPatients.jsx";
+import DoctorHome from "@/pages/doctor/DoctorHome";
+import DoctorProfile from "@/pages/doctor/DoctorProfile";
+import DoctorConsultations from "@/pages/doctor/DoctorConsultations";
+import PatientHome from "@/pages/patient/PatientHome";
+import PatientConsultations from "@/pages/patient/PatientConsultations";
+import PatientDoctors from "@/pages/patient/PatientDoctors";
+import DoctorDetails from "@/pages/patient/DoctorDetails";
+import BookConsultation from "@/pages/consultation/BookConsultation";
+import Chat from "@/pages/consultation/Chat";
 import NotFound from "@/components/NotFound";
 
 const demoAccounts = ["freddie24@yahoo.com", "christop_hagenes21@gmail.com"];
