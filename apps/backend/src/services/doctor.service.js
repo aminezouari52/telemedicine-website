@@ -48,7 +48,7 @@ const query = async function (Schema, filter, options) {
         populateOption
           .split(".")
           .reverse()
-          .reduce((a, b) => ({ path: b, populate: a }))
+          .reduce((a, b) => ({ path: b, populate: a })),
       );
     });
   }

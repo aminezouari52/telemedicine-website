@@ -17,15 +17,17 @@ const Search = () => {
     dispatch(
       setSearchText({
         text: event.target.value,
-      })
+      }),
     );
   };
 
-  useEffect(()=>{
-    dispatch(setSearchText({
-      text : ""
-    }))
-  },[])
+  useEffect(() => {
+    dispatch(
+      setSearchText({
+        text: "",
+      }),
+    );
+  }, []);
 
   return (
     <Flex>

@@ -10,7 +10,7 @@ import { socket } from "@/socket";
 import {
   getDoctorConsultations,
   getPatientConsultations,
-} from "@/modules/consultation/functions/consultation";
+} from "@/services/consultationService";
 
 // STYLE
 import {
@@ -40,7 +40,7 @@ const ConsultationAlert = () => {
     if (userRef.current) {
       if (
         [consultation.patientId, consultation.doctorId].includes(
-          userRef.current?._id
+          userRef.current?._id,
         )
       ) {
         onOpen();
@@ -48,7 +48,7 @@ const ConsultationAlert = () => {
           setUser({
             ...userRef.current,
             consultationId: consultation.consultationId,
-          })
+          }),
         );
       }
     }
@@ -69,7 +69,7 @@ const ConsultationAlert = () => {
     }
 
     const inProgressconsultation = consultations?.data?.find(
-      (c) => c.status === "in-progress"
+      (c) => c.status === "in-progress",
     );
 
     if (

@@ -1,69 +1,72 @@
 // HOOKS
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
 
 // FUNCTIONS
 import { setUser } from "@/reducers/userReducer";
-import { getCurrentUser } from "@/modules/auth/functions/auth";
+import { getCurrentUser } from "@/services/authService";
 import { auth } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { getLocalStorage } from "@/utils";
+import { getLocalStorage } from "@/utils/localStorage";
 
 // COMPONENTS
 import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthLayout, DoctorLayout, PatientLayout } from "@/components/layout";
-import Home from "@/components/Home";
-import Login from "@/modules/auth/components/Login";
-import Register from "@/modules/auth/components/Register";
-import ForgotPassword from "@/modules/auth/components/ForgotPassword";
-import DoctorPatients from "@/modules/doctor/components/DoctorPatients.jsx";
-import DoctorHome from "@/modules/doctor/components/DoctorHome";
-import DoctorProfile from "@/modules/doctor/components/DoctorProfile";
-import DoctorConsultations from "@/modules/doctor/components/DoctorConsultations";
-import PatientHome from "@/modules/patient/components/PatientHome";
-import PatientConsultations from "@/modules/patient/components/PatientConsultations";
-import PatientDoctors from "@/modules/patient/components/PatientDoctors";
-import DoctorDetails from "@/modules/patient/components/DoctorDetails";
-import BookConsultation from "@/modules/consultation/components/BookConsultation";
-import Chat from "@/modules/consultation/components/Chat";
+import Home from "@/pages/Home";
+import Login from "@/pages/auth/Login";
+import Register from "@/pages/auth/Register";
+import ForgotPassword from "@/pages/auth/ForgotPassword";
+import DoctorPatients from "@/pages/doctor/DoctorPatients.jsx";
+import DoctorHome from "@/pages/doctor/DoctorHome";
+import DoctorProfile from "@/pages/doctor/DoctorProfile";
+import DoctorConsultations from "@/pages/doctor/DoctorConsultations";
+import PatientHome from "@/pages/patient/PatientHome";
+import PatientConsultations from "@/pages/patient/PatientConsultations";
+import PatientDoctors from "@/pages/patient/PatientDoctors";
+import DoctorDetails from "@/pages/patient/DoctorDetails";
+import BookConsultation from "@/pages/consultation/BookConsultation";
+import Chat from "@/pages/consultation/Chat";
 import NotFound from "@/components/NotFound";
 
 const demoAccounts = ["freddie24@yahoo.com", "christop_hagenes21@gmail.com"];
 
 const App = () => {
   const dispatch = useDispatch();
+  const [token, setToken] = useState(null);
+  const { data: _userData } = useQuery({
+    queryKey: ["currentUser", token],
+    queryFn: () => getCurrentUser(token),
+    enabled: !!token,
+    onSuccess: (data) => handleAuthenticatedUser(data),
+    onError: (err) => console.log("Failed to fetch user:", err),
+  });
+
+  const handleAuthenticatedUser = (data) => {
+    if (!data) throw new Error("User not found");
+    const storedUser = getLocalStorage("user") || data;
+
+    const isDemoAccount = demoAccounts.includes(storedUser.email);
+    const isVerified = auth.currentUser?.emailVerified;
+
+    if (!isDemoAccount && !isVerified)
+      throw new Error("Email not verified. Please verify your email.");
+    dispatch(setUser({ ...storedUser, token }));
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       if (authUser) {
         await authUser.reload();
-
-        const idTokenResult = await authUser.getIdTokenResult();
-        try {
-          const res = await getCurrentUser(idTokenResult.token);
-          if (!res.data) {
-            throw new Error("User not found or token expired");
-          }
-
-          const storedUser = getLocalStorage("user") || res.data;
-
-          if (
-            !demoAccounts.includes(storedUser.email) &&
-            !authUser.emailVerified
-          ) {
-            throw new Error("Email not verified. Please verify your email.");
-          }
-
-          dispatch(setUser({ ...storedUser, token: idTokenResult.token }));
-        } catch (error) {
-          console.log(error);
-        }
+        const token = (await authUser.getIdTokenResult()).token;
+        setToken(token);
+      } else {
+        setToken(null);
       }
     });
 
     return () => unsubscribe();
-  }, [dispatch]);
-
+  }, []);
   return (
     <>
       <Routes>

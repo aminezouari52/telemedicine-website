@@ -1,14 +1,15 @@
 // HOOKS
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useToast } from "@/hooks";
+import { useQueryClient, useQuery } from "@chakra-ui/react";
 
 // FUNCTIONS
 import { signOut } from "firebase/auth";
 import { logout } from "@/reducers/userReducer";
 import { auth } from "@/firebase";
-import { getDoctorConsultations } from "@/modules/consultation/functions/consultation";
+import { getDoctorConsultations } from "@/services/consultationService";
 
 // COMPONENTS
 import HeaderButton from "./HeaderButton";
@@ -27,7 +28,6 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  useToast,
 } from "@chakra-ui/react";
 
 // ASSETS
@@ -40,74 +40,67 @@ export const DoctorHeader = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
-
+  const queryClient = useQueryClient();
   const user = useSelector((state) => state.userReducer.user);
   const [isProfileCompleted, setIsProfileCompleted] = useState();
-  const [consultation, setConsultation] = useState();
   const toast = useToast();
-  const [newConsultationsValue, setNewConsultationsValue] = useState(0);
   const [isNotification, setIsNotification] = useState([]);
+
+  const { data: consultation } = useQuery({
+    queryKey: ["consultation", user?._id],
+    queryFn: async () => {
+      const consultationsData = (await getDoctorConsultations(user?._id)).data;
+      return consultationsData.find((c) => c.status === "in-progress") || null;
+    },
+    enabled: !!user?._id,
+  });
+
+  const { data: newConsultationsValue } = useQuery({
+    queryKey: ["newConsultations", user?._id],
+    queryFn: async () => {
+      const consultationsData = (await getDoctorConsultations(user?._id)).data;
+      const now = new Date();
+      const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
+
+      const newConsultations = consultationsData?.filter((consultation) => {
+        const date = new Date(consultation.createdAt);
+        return (
+          date >= threeDaysAgo &&
+          date <= now &&
+          consultation.status === "pending"
+        );
+      });
+
+      return newConsultations.length;
+    },
+    enabled: !!user?._id,
+  });
 
   const logoutHandler = async () => {
     try {
       await signOut(auth);
       dispatch(logout(null));
+      queryClient.removeQueries();
       navigate("/auth/login");
     } catch (err) {
       console.log(err);
-      toast({
-        title: "Logout failed!",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      toast("Logout failed!", "error");
     }
-  };
-
-  const loadIsProfileCompleted = async () => {
-    if (user && user.token) {
-      setIsProfileCompleted(user.isProfileCompleted);
-    }
-  };
-
-  const loadConsultation = async () => {
-    const consultationsData = (await getDoctorConsultations(user?._id)).data;
-    setConsultation(
-      consultationsData.filter((c) => c.status === "in-progress")[0]
-    );
-  };
-
-  const newConsultations = async () => {
-    const consultationsData = (await getDoctorConsultations(user?._id)).data;
-    const now = new Date();
-    const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
-
-    const newConsultations = consultationsData?.filter((consultation) => {
-      const date = new Date(consultation.createdAt);
-      return (
-        date >= threeDaysAgo && date <= now && consultation.status === "pending"
-      );
-    });
-    setNewConsultationsValue(newConsultations?.length);
   };
 
   const addNotificationIfNotExist = (notification) => {
     setIsNotification((prev) =>
       prev.some(
         (existingNotification) =>
-          existingNotification.route === notification.route
+          existingNotification.route === notification.route,
       )
         ? prev
-        : [...prev, notification]
+        : [...prev, notification],
     );
   };
 
   useEffect(() => {
-    if (user) {
-      loadConsultation();
-      loadIsProfileCompleted();
-      newConsultations();
-    }
+    if (user?.token) setIsProfileCompleted(user.isProfileCompleted);
   }, [user]);
 
   useEffect(() => {

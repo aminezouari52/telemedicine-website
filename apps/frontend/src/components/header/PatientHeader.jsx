@@ -1,14 +1,14 @@
 // HOOKS
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useToast } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useToast } from "@/hooks";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // FUNCTIONS
 import { auth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { logout } from "@/reducers/userReducer";
-import { getPatientConsultations } from "@/modules/consultation/functions/consultation";
+import { getPatientConsultations } from "@/services/consultationService";
 
 // COMPONENTS
 import HeaderButton from "./HeaderButton";
@@ -20,7 +20,6 @@ import { Flex, Text, IconButton, SimpleGrid, Button } from "@chakra-ui/react";
 // ASSETS
 import { IoChatboxSharp } from "react-icons/io5";
 import { TbLogout } from "react-icons/tb";
-import { useQueryClient } from "@tanstack/react-query";
 
 export const PatientHeader = () => {
   const navigate = useNavigate();
@@ -29,37 +28,26 @@ export const PatientHeader = () => {
   const toast = useToast();
   const user = useSelector((state) => state.userReducer.user);
 
-  const [consultation, setConsultation] = useState();
-
-  const loadConsultation = async () => {
-    const consultationsData = (await getPatientConsultations(user?._id)).data;
-    setConsultation(
-      consultationsData.filter((c) => c.status === "in-progress")[0]
-    );
-  };
+  const { data: consultation } = useQuery({
+    queryKey: ["consultation", user?._id],
+    queryFn: async () => {
+      const consultationsData = (await getPatientConsultations(user?._id)).data;
+      return consultationsData.find((c) => c.status === "in-progress") || null;
+    },
+    enabled: !!user?._id,
+  });
 
   const logoutHandler = async () => {
     try {
       await signOut(auth);
       dispatch(logout(null));
-      queryClient.removeQueries()
+      queryClient.removeQueries();
       navigate("/auth/login");
     } catch (err) {
       console.log(err);
-      toast({
-        title: "Logout failed!",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
+      toast("Logout failed!", "error");
     }
   };
-
-  useEffect(() => {
-    if (user) {
-      loadConsultation();
-    }
-  }, [user]);
 
   return (
     <SimpleGrid
