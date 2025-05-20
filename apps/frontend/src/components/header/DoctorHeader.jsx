@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useToast } from "@/hooks";
-import { useQueryClient, useQuery } from "@chakra-ui/react";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 
 // FUNCTIONS
 import { signOut } from "firebase/auth";

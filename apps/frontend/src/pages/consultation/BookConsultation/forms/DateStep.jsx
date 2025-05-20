@@ -1,5 +1,4 @@
 // HOOKS
-import { useFormikContext } from "formik";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -28,9 +27,9 @@ import {
 
 // DATE
 import DatePicker from "react-datepicker";
+import { Controller } from "react-hook-form";
 
-const DateStep = ({ goToNext, goToPrevious }) => {
-  const { values, setFieldValue } = useFormikContext();
+const DateStep = ({ control, setValue, getValues, goToNext, goToPrevious }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const { isOpen, onClose, onOpen } = useDisclosure();
 
@@ -40,7 +39,7 @@ const DateStep = ({ goToNext, goToPrevious }) => {
   };
 
   const onSaveTime = (date) => {
-    setFieldValue("date", date);
+    setValue("date", date, { shouldValidate: true });
     onClose();
   };
 
@@ -58,42 +57,54 @@ const DateStep = ({ goToNext, goToPrevious }) => {
           <Heading size="xs" color="gray.600" pb={4}>
             Choose date and time
           </Heading>
-          <DatePicker
-            required
+          <Controller
+            control={control}
             name="date"
-            selected={selectedDate}
-            onChange={datePickerOnChangeHandler}
-            inline
+            render={({ field }) => (
+              <DatePicker
+                selected={field.value}
+                onChange={(date) => datePickerOnChangeHandler(date)}
+                inline
+                minDate={new Date()}
+                filterDate={(date) => date.getDay() !== 0} // Disable Sundays
+              />
+            )}
           />
         </Flex>
         <Stack spacing={7} maxWidth="600px">
           <Text mr={2}>
             <strong>Selected date: </strong>
-            {values?.date
-              ? DateTime.fromJSDate(new Date(values.date)).toFormat(
-                  "dd-MM-yyyy 'à' HH:00",
-                )
-              : null}
+            <Controller
+              control={control}
+              name="date"
+              render={({ field }) =>
+                field.value
+                  ? DateTime.fromJSDate(new Date(field.value)).toFormat(
+                      "dd-MM-yyyy 'à' HH:00",
+                    )
+                  : null
+              }
+            />
           </Text>
           <Flex justifyContent="end">
             <Button
               size="sm"
               variant="ghost"
               color="#000"
-              _hover={{
-                opacity: 0.8,
-              }}
               onClick={goToPrevious}
             >
               Previous
             </Button>
             <Button
               size="sm"
-              onClick={() => goToNext(values)}
-              colorScheme="secondary"
-              _hover={{
-                opacity: 0.8,
+              onClick={() => {
+                const values = getValues();
+                if (values.date) {
+                  goToNext();
+                }
               }}
+              colorScheme="secondary"
+              isDisabled={!getValues().date}
             >
               Save & Continue
             </Button>

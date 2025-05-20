@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useQuery } from "@tanstack/react-query";
 
 // FUNCTIONS
 import { createConsultation } from "@/services/consultationService";
@@ -35,7 +36,6 @@ import {
   StepNumber,
   Image,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
 
 const steps = [{ title: "Profile information" }, { title: "Date and Time" }];
 
