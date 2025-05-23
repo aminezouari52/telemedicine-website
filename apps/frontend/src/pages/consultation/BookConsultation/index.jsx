@@ -124,7 +124,7 @@ const Consultation = () => {
       doctor: params?.id,
       isProfileCompleted: true,
     },
-    mode: "onChange", // Enable real-time validation
+    mode: "onChange",
   });
 
   const onSubmit = async (values) => {
@@ -138,9 +138,7 @@ const Consultation = () => {
           ...resValues,
         }),
       );
-      // Show success message or redirect
     } catch (error) {
-      // Handle error
       console.error(error);
     }
   };

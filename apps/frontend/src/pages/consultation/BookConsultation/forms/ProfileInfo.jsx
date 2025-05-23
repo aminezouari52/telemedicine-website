@@ -1,57 +1,28 @@
-// HOOKS
-import { useState, useEffect } from "react";
-import { useFormikContext } from "formik";
-
 // COMPONENTS
 import InputField from "@/components/InputField";
 
 // STYLE
 import { Flex, Button } from "@chakra-ui/react";
 
-const ProfileInfo = ({ goToNext }) => {
-  const [disableButton, setDisableButton] = useState(false);
-
-  const { values, errors, validateForm } = useFormikContext();
-
-  const nextFormHandler = async () => {
-    const asyncErrors = await validateForm();
-    if (
-      asyncErrors.firstName ||
-      asyncErrors.lastName ||
-      asyncErrors.phone ||
-      asyncErrors.address ||
-      asyncErrors.city ||
-      asyncErrors.zip ||
-      asyncErrors.age
-    ) {
-      setDisableButton(true);
-    } else {
-      setDisableButton(false);
-      goToNext(values);
-    }
-  };
-
-  useEffect(() => {
-    if (
-      errors.firstName ||
-      errors.lastName ||
-      errors.phone ||
-      errors.address ||
-      errors.city ||
-      errors.zip ||
-      errors.age
-    ) {
-      setDisableButton(true);
-    } else {
-      setDisableButton(false);
-    }
-  }, [errors]);
+const ProfileInfo = ({ control, errors, goToNext }) => {
+  const hasErrors = Object.keys(errors).some((key) =>
+    [
+      "firstName",
+      "lastName",
+      "phone",
+      "address",
+      "city",
+      "zip",
+      "age",
+    ].includes(key),
+  );
 
   return (
     <Flex w="80%" direction="column" gap={8}>
       <Flex flexDirection="column" gap={15} w="100%">
         <Flex>
           <InputField
+            control={control}
             label="Prenom"
             name="firstName"
             placeholder="your firstname"
@@ -60,6 +31,7 @@ const ProfileInfo = ({ goToNext }) => {
             secondarycolor="secondary.500"
           />
           <InputField
+            control={control}
             label="Nom"
             name="lastName"
             placeholder="your lastname"
@@ -70,6 +42,7 @@ const ProfileInfo = ({ goToNext }) => {
         </Flex>
         <Flex>
           <InputField
+            control={control}
             label="Adresse"
             name="address"
             placeholder="your address"
@@ -78,6 +51,7 @@ const ProfileInfo = ({ goToNext }) => {
             secondarycolor="secondary.500"
           />
           <InputField
+            control={control}
             label="Phone"
             name="phone"
             placeholder="your phone number"
@@ -88,6 +62,7 @@ const ProfileInfo = ({ goToNext }) => {
         </Flex>
         <Flex>
           <InputField
+            control={control}
             label="Ville"
             autoComplete="home city"
             placeholder="your city"
@@ -96,8 +71,8 @@ const ProfileInfo = ({ goToNext }) => {
             labelColor="#000"
             secondarycolor="secondary.500"
           />
-
           <InputField
+            control={control}
             label="Code postal / Poste"
             autoComplete="postal-code"
             name="zip"
@@ -107,9 +82,9 @@ const ProfileInfo = ({ goToNext }) => {
             secondarycolor="secondary.500"
           />
         </Flex>
-
         <Flex>
           <InputField
+            control={control}
             label="Age"
             type="number"
             name="age"
@@ -119,6 +94,7 @@ const ProfileInfo = ({ goToNext }) => {
             secondarycolor="secondary.500"
           />
           <InputField
+            control={control}
             label="Poids"
             name="weight"
             placeholder="your weight"
@@ -133,11 +109,11 @@ const ProfileInfo = ({ goToNext }) => {
         <Button
           size="sm"
           colorScheme="secondary"
-          isDisabled={disableButton}
+          isDisabled={hasErrors}
           _hover={{
-            opacity: !disableButton && 0.8,
+            opacity: !hasErrors && 0.8,
           }}
-          onClick={nextFormHandler}
+          onClick={goToNext}
         >
           Save & Continue
         </Button>
