@@ -228,6 +228,8 @@ const Consultation = () => {
         <VerifyData
           isOpen={activeStep === steps.length}
           onClose={resetHandler}
+          getValues={getValues}
+          handleSubmit={handleSubmit(onSubmit)}
         />
       </form>
     </Flex>
