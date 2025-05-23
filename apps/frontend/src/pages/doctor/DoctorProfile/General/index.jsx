@@ -2,6 +2,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useToast, useUserCheck } from "@/hooks";
+import { useForm, useFieldArray, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 // FUNCTIONS
 import { updateDoctor, uploadProfilePicture } from "@/services/doctorService";
@@ -13,7 +15,6 @@ import * as Yup from "yup";
 // COMPONENTS
 import ImageUpload from "@/components/ImageUpload";
 import TextFormControl from "./TextFormControl";
-import { Field, FieldArray, Form, Formik } from "formik";
 
 // STYLE
 import {
@@ -53,32 +54,6 @@ import { FaUser } from "react-icons/fa";
 import { AddIcon, CloseIcon } from "@chakra-ui/icons";
 
 const General = ({ setIsLoading }) => {
-  const dispatch = useDispatch();
-  const toast = useToast();
-  const user = useSelector((state) => state.userReducer.user);
-  const userCheck = useUserCheck();
-  const memoizeDebounceFieldValue = useCallback(debounceFieldValue, []);
-  const [currentUser, setCurrentUser] = useState();
-  const [imageSrc, setImageSrc] = useState();
-
-  const initialValues = {
-    firstName: currentUser?.firstName,
-    lastName: currentUser?.lastName,
-    age: currentUser?.age,
-    phone: currentUser?.phone,
-    address: currentUser?.address,
-    city: currentUser?.city,
-    zip: currentUser?.zip,
-    description: currentUser?.description,
-    hospital: currentUser?.hospital,
-    specialty: currentUser?.specialty,
-    degrees: currentUser?.degrees,
-    certifications: currentUser?.certifications,
-    experience: currentUser?.experience,
-    price: currentUser?.price,
-    schedule: currentUser?.schedule,
-  };
-
   const validationSchema = Yup.object().shape({
     firstName: Yup.string()
       .required("First name is required")
@@ -139,11 +114,11 @@ const General = ({ setIsLoading }) => {
       )
       .required("Specialty is required"),
     degrees: Yup.array()
-      .of(Yup.string())
+      .of(Yup.string().required("Degree is required"))
       .min(1, "Add at least one degree")
       .max(10, "Maximum 10 degrees"),
     certifications: Yup.array()
-      .of(Yup.string())
+      .of(Yup.string().required("Certification is required"))
       .min(1, "Choose at least one certificate")
       .max(10, "Maximum 10 certificates"),
     price: Yup.number()
@@ -151,6 +126,61 @@ const General = ({ setIsLoading }) => {
       .min(0, "Price cannot be negative")
       .max(1000, "Price must not exceed 1000dt/hr"),
     schedule: Yup.array().of(Yup.string()).min(1, "Choose at least one day"),
+  });
+
+  const dispatch = useDispatch();
+  const toast = useToast();
+  const user = useSelector((state) => state.userReducer.user);
+  const userCheck = useUserCheck();
+  const memoizeDebounceFieldValue = useCallback(debounceFieldValue, []);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [imageSrc, setImageSrc] = useState("");
+
+  const {
+    handleSubmit,
+    control,
+    setValue,
+    watch,
+    formState: { errors, touchedFields },
+    register,
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      age: 0,
+      phone: "",
+      address: "",
+      city: "",
+      zip: "",
+      description: "",
+      hospital: "",
+      specialty: "",
+      degrees: [],
+      certifications: [],
+      experience: "Less than a year",
+      price: 0,
+      schedule: [],
+    },
+    mode: "onChange",
+  });
+
+  const {
+    fields: degreeFields,
+    append: appendDegree,
+    remove: removeDegree,
+  } = useFieldArray({
+    control,
+    name: "degrees",
+  });
+
+  const {
+    fields: certFields,
+    append: appendCert,
+    remove: removeCert,
+  } = useFieldArray({
+    control,
+    name: "certifications",
   });
 
   const profileImageHandler = (uri) => {
@@ -167,877 +197,864 @@ const General = ({ setIsLoading }) => {
       });
     };
     getUser();
-  }, [user]);
+  }, [userCheck, user]);
 
   useEffect(() => {
     if (currentUser) {
-      setImageSrc(currentUser.photo);
+      setValue("firstName", currentUser.firstName);
+      setValue("lastName", currentUser.lastName);
+      setValue("age", currentUser.age);
+      setValue("phone", currentUser.phone);
+      setValue("address", currentUser.address);
+      setValue("city", currentUser.city);
+      setValue("zip", currentUser.zip);
+      setValue("description", currentUser.description);
+      setValue("hospital", currentUser.hospital);
+      setValue("specialty", currentUser.specialty);
+      setValue("degrees", currentUser.degrees || []);
+      setValue("certifications", currentUser.certifications || []);
+      setValue("experience", currentUser.experience || "Less than a year");
+      setValue("price", currentUser.price || 0);
+      setValue("schedule", currentUser.schedule || []);
+
+      if (currentUser.photo) {
+        setImageSrc(currentUser.photo);
+      }
     }
-  }, [currentUser]);
+  }, [currentUser, setValue]);
+
+  const onSubmit = async (values) => {
+    setIsLoading(true);
+    try {
+      if (!imageSrc || imageSrc === "") {
+        toast("Image is not valid", "error");
+        setIsLoading(false);
+        return;
+      }
+
+      if (user) {
+        const imageResponse = await uploadProfilePicture(user, imageSrc);
+        await updateDoctor(
+          { id: user._id, token: user.token },
+          {
+            ...values,
+            photo: imageResponse.data.url,
+            isProfileCompleted: true,
+          },
+        );
+        dispatch(
+          setUser({
+            ...user,
+            isProfileCompleted: true,
+          }),
+        );
+      } else {
+        toast("User is not valid", "error");
+      }
+    } catch (error) {
+      toast(error.message, "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onSelectChange = (e, fieldName) => {
+    setValue(fieldName, e.target.value, { shouldValidate: true });
+  };
 
   return (
-    <Formik
-      enableReinitialize
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={async (values) => {
-        setIsLoading(true);
-        if (!imageSrc || imageSrc === "") {
-          toast("Image is not valid", "error");
-          setIsLoading(false);
-          return;
-        }
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Box>
+        <Heading fontSize="lg" lineHeight="6">
+          Personelles
+        </Heading>
+        <Text
+          my={2}
+          fontSize="sm"
+          color="gray.600"
+          _dark={{
+            color: "gray.400",
+          }}
+        >
+          Please fill out this form to complete your profile with your personal
+          information.
+        </Text>
+      </Box>
 
-        if (user) {
-          const imageResponse = await uploadProfilePicture(user, imageSrc);
-          await updateDoctor(
-            { id: user._id, token: user.token },
-            {
-              ...values,
-              photo: imageResponse.data.url,
-              isProfileCompleted: true,
-            },
-          );
-          dispatch(
-            setUser({
-              ...user,
-              isProfileCompleted: true,
-            }),
-          );
-        } else {
-          toast("User is not valid", "error");
-        }
-        setIsLoading(false);
-      }}
-    >
-      {({
-        handleChange,
-        setFieldValue,
-        values,
-        errors,
-        handleBlur,
-        touched,
-      }) => {
-        return (
-          <Form as={Flex} direction="column" gap={8}>
-            <Box>
-              <Heading fontSize="lg" lineHeight="6">
-                Personelles
-              </Heading>
-              <Text
-                my={2}
-                fontSize="sm"
-                color="gray.600"
-                _dark={{
-                  color: "gray.400",
-                }}
+      <Stack
+        shadow="base"
+        rounded="md"
+        overflow="hidden"
+        bg="#fff"
+        spacing={6}
+        p={6}
+      >
+        <FormControl>
+          <FormLabel fontSize="sm" fontWeight="md" color="gray.700" mb={3}>
+            Photo
+          </FormLabel>
+          <Flex alignItems="center" gap={4}>
+            <Avatar
+              boxSize={12}
+              bg="gray.100"
+              src={imageSrc}
+              icon={
+                <Icon
+                  as={FaUser}
+                  boxSize={9}
+                  mt={3}
+                  rounded="full"
+                  color="gray.300"
+                />
+              }
+            />
+            <Box as="label" cursor="pointer">
+              <ImageUpload onChange={profileImageHandler} />
+              <Button
+                as="span"
+                type="button"
+                variant="outline"
+                size="sm"
+                fontWeight="medium"
+                _focus={{ shadow: "none" }}
               >
-                Please fill out this form to complete your profile with your
-                personal information.
-              </Text>
+                Change
+              </Button>
             </Box>
+          </Flex>
+        </FormControl>
 
-            <Stack
-              shadow="base"
-              rounded="md"
-              overflow="hidden"
-              bg="#fff"
-              spacing={6}
-              p={6}
-            >
-              <FormControl>
-                <FormLabel
-                  fontSize="sm"
-                  fontWeight="md"
-                  color="gray.700"
-                  mb={3}
-                >
-                  Photo
-                </FormLabel>
-                <Flex alignItems="center" gap={4}>
-                  <Avatar
-                    boxSize={12}
-                    bg="gray.100"
-                    src={imageSrc}
-                    icon={
-                      <Icon
-                        as={FaUser}
-                        boxSize={9}
-                        mt={3}
-                        rounded="full"
-                        color="gray.300"
-                      />
+        <SimpleGrid columns={2} spacing={6}>
+          <Controller
+            control={control}
+            name="firstName"
+            render={({ field }) => (
+              <TextFormControl
+                label="Firstname"
+                autoComplete="given-name"
+                error={errors.firstName}
+                isInvalid={!!errors.firstName}
+                {...field}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="lastName"
+            render={({ field }) => (
+              <TextFormControl
+                label="Lastname"
+                autoComplete="family-name"
+                error={errors.lastName}
+                isInvalid={!!errors.lastName}
+                {...field}
+              />
+            )}
+          />
+        </SimpleGrid>
+
+        <SimpleGrid columns={6} spacing={6}>
+          <FormControl as={GridItem} colSpan={3}>
+            <Box>
+              <FormLabel
+                htmlFor="age"
+                fontSize="sm"
+                fontWeight="md"
+                color="gray.700"
+                mb={3}
+              >
+                Age
+              </FormLabel>
+              <Controller
+                control={control}
+                name="age"
+                render={({ field }) => (
+                  <NumberInput
+                    isValidCharacter={(value) => {
+                      const regex = /^\d+$/;
+                      return regex.test(value);
+                    }}
+                    {...field}
+                    size="sm"
+                    min={18}
+                    max={100}
+                    borderColor={
+                      touchedFields.age && errors?.age ? "red.300" : "inherit"
                     }
-                  />
-                  <Box as="label" cursor="pointer">
-                    <ImageUpload onChange={profileImageHandler} />
-                    <Button
-                      as="span"
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      fontWeight="medium"
-                      _focus={{ shadow: "none" }}
-                    >
-                      Change
-                    </Button>
-                  </Box>
-                </Flex>
-              </FormControl>
-
-              <SimpleGrid columns={2} spacing={6}>
-                <Box>
-                  <TextFormControl
-                    label="Firstname"
-                    autoComplete="given-name"
-                    value={values?.firstName || ""}
-                    name="firstName"
-                    onBlur={handleBlur}
-                    error={touched.firstName && errors.firstName}
-                    onChange={(event) => {
-                      const { value } = event.target;
-                      setFieldValue("firstName", value, false);
-                      memoizeDebounceFieldValue(
-                        "firstName",
-                        value,
-                        setFieldValue,
-                      );
+                    focusBorderColor={
+                      touchedFields.age && errors?.age
+                        ? "red.500"
+                        : "secondary.500"
+                    }
+                    onChange={(value) => {
+                      setValue("age", +value, { shouldValidate: true });
+                      memoizeDebounceFieldValue("age", +value, setValue);
+                    }}
+                    errorBorderColor="red"
+                  >
+                    <NumberInputField
+                      rounded="md"
+                      shadow="sm"
+                      _hover={{
+                        borderColor:
+                          touchedFields.age && errors?.age
+                            ? "red.400"
+                            : "gray.300",
+                      }}
+                      _focus={{
+                        _hover: {
+                          borderColor:
+                            touchedFields.age && errors?.age
+                              ? "red.400"
+                              : "secondary.500",
+                        },
+                      }}
+                    />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                )}
+              />
+            </Box>
+            {touchedFields.age && errors?.age && (
+              <Text mt={1} color="red.400" fontSize="xs">
+                {errors?.age.message}
+              </Text>
+            )}
+          </FormControl>
+          <FormControl as={GridItem} colSpan={3}>
+            <FormLabel
+              htmlFor="phone"
+              fontSize="sm"
+              fontWeight="md"
+              color="gray.700"
+              mb={3}
+            >
+              Phone number
+            </FormLabel>
+            <InputGroup size="sm">
+              <InputLeftAddon>+216</InputLeftAddon>
+              <Controller
+                control={control}
+                name="phone"
+                render={({ field }) => (
+                  <Input
+                    type="tel"
+                    id="phone"
+                    autoComplete="tel"
+                    {...field}
+                    borderColor={
+                      touchedFields.phone && errors?.phone
+                        ? "red.300"
+                        : "inherit"
+                    }
+                    focusBorderColor={
+                      touchedFields.phone && errors?.phone
+                        ? "red.500"
+                        : "secondary.500"
+                    }
+                    shadow="sm"
+                    w="full"
+                    rounded="md"
+                    _hover={{
+                      borderColor:
+                        touchedFields.phone && errors?.phone
+                          ? "red.400"
+                          : "gray.300",
+                    }}
+                    _focus={{
+                      _hover: {
+                        borderColor:
+                          touchedFields.phone && errors?.phone
+                            ? "red.400"
+                            : "secondary.500",
+                      },
                     }}
                   />
-                </Box>
-                <TextFormControl
-                  label="Lastname"
-                  autoComplete="family-name"
-                  value={values?.lastName || ""}
-                  name="lastName"
-                  error={touched.lastName && errors.lastName}
-                  onBlur={handleBlur}
-                  onChange={(event) => {
-                    const { value } = event.target;
-                    setFieldValue("lastName", value, false);
-                    memoizeDebounceFieldValue("lastName", value, setFieldValue);
-                  }}
-                />
-              </SimpleGrid>
+                )}
+              />
+            </InputGroup>
+            {touchedFields.phone && errors?.phone && (
+              <Text mt={1} color="red.400" fontSize="xs">
+                {errors?.phone.message}
+              </Text>
+            )}
+          </FormControl>
+        </SimpleGrid>
+        <SimpleGrid columns={3} spacing={6}>
+          <Controller
+            control={control}
+            name="address"
+            render={({ field }) => (
+              <TextFormControl
+                label="Street address"
+                autoComplete="street-address"
+                error={errors.address}
+                isInvalid={!!errors.address}
+                {...field}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="city"
+            render={({ field }) => (
+              <TextFormControl
+                label="City"
+                autoComplete="home city"
+                error={errors.city}
+                isInvalid={!!errors.city}
+                {...field}
+              />
+            )}
+          />
 
-              <SimpleGrid columns={6} spacing={6}>
-                <FormControl as={GridItem} colSpan={3}>
-                  <Box>
-                    <FormLabel
-                      htmlFor="age"
-                      fontSize="sm"
-                      fontWeight="md"
-                      color="gray.700"
-                      mb={3}
-                    >
-                      Age
-                    </FormLabel>
-                    <Field
-                      as={NumberInput}
-                      isValidCharacter={(value) => {
-                        const regex = /^\d+$/;
-                        return regex.test(value);
-                      }}
-                      name="age"
-                      size="sm"
-                      value={values?.age}
-                      min={18}
-                      max={100}
-                      borderColor={
-                        touched.age && errors?.age ? "red.300" : "inherit"
-                      }
-                      focusBorderColor={
-                        touched.age && errors?.age ? "red.500" : "secondary.500"
-                      }
-                      onChange={(value) => {
-                        setFieldValue("age", +value, false);
-                        memoizeDebounceFieldValue("age", +value, setFieldValue);
-                      }}
-                      errorBorderColor="red"
-                    >
-                      <NumberInputField
-                        rounded="md"
-                        shadow="sm"
-                        _hover={{
-                          borderColor:
-                            touched.age && errors?.age ? "red.400" : "gray.300",
-                        }}
-                        _focus={{
-                          _hover: {
-                            borderColor:
-                              touched.age && errors?.age
-                                ? "red.400"
-                                : "secondary.500",
-                          },
-                        }}
-                      />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </Field>
-                  </Box>
-                  {touched.age && errors?.age && (
-                    <Text mt={1} color="red.400" fontSize="xs">
-                      {errors?.age}
-                    </Text>
-                  )}
-                </FormControl>
-                <FormControl as={GridItem} colSpan={3}>
-                  <FormLabel
-                    htmlFor="phone"
-                    fontSize="sm"
-                    fontWeight="md"
-                    color="gray.700"
-                    mb={3}
-                  >
-                    Phone number
-                  </FormLabel>
-                  <InputGroup size="sm">
-                    <InputLeftAddon>+216</InputLeftAddon>
-                    <Field
-                      as={Input}
-                      type="tel"
-                      name="phone"
-                      id="phone"
-                      autoComplete="tel"
-                      borderColor={
-                        touched.phone && errors?.phone ? "red.300" : "inherit"
-                      }
-                      focusBorderColor={
-                        touched.phone && errors?.phone
-                          ? "red.500"
-                          : "secondary.500"
-                      }
-                      shadow="sm"
-                      w="full"
-                      rounded="md"
-                      value={values.phone || ""}
-                      onChange={(event) => {
-                        const { value } = event.target;
-                        setFieldValue("phone", value, false);
-                        memoizeDebounceFieldValue(
-                          "phone",
-                          value,
-                          setFieldValue,
-                        );
-                      }}
-                      _hover={{
-                        borderColor:
-                          touched.phone && errors?.phone
-                            ? "red.400"
-                            : "gray.300",
-                      }}
-                      _focus={{
-                        _hover: {
-                          borderColor:
-                            touched.phone && errors?.phone
-                              ? "red.400"
-                              : "secondary.500",
-                        },
-                      }}
-                    />
-                  </InputGroup>
-                  {touched.phone && errors?.phone && (
-                    <Text mt={1} color="red.400" fontSize="xs">
-                      {errors?.phone}
-                    </Text>
-                  )}
-                </FormControl>
-              </SimpleGrid>
-              <SimpleGrid columns={3} spacing={6}>
-                <TextFormControl
-                  label="Street address"
-                  autoComplete="street-address"
-                  value={values?.address || ""}
-                  name="address"
-                  error={touched.address && errors?.address}
-                  onChange={(event) => {
-                    const { value } = event.target;
-                    setFieldValue("address", value, false);
-                    memoizeDebounceFieldValue("address", value, setFieldValue);
-                  }}
-                />
-                <TextFormControl
-                  label="City"
-                  autoComplete="home city"
-                  value={values?.city || ""}
-                  name="city"
-                  error={touched.city && errors?.city}
-                  onChange={(event) => {
-                    const { value } = event.target;
-                    setFieldValue("city", value, false);
-                    memoizeDebounceFieldValue("city", value, setFieldValue);
-                  }}
-                />
-
-                <TextFormControl
-                  label="ZIP"
-                  autoComplete="postal-code"
-                  value={values?.zip || ""}
-                  name="zip"
-                  error={touched.zip && errors?.zip}
-                  onChange={(event) => {
-                    const { value } = event.target;
-                    setFieldValue("zip", value, false);
-                    memoizeDebounceFieldValue("zip", value, setFieldValue);
-                  }}
-                />
-              </SimpleGrid>
-              <FormControl>
-                <FormLabel
-                  fontSize="sm"
-                  fontWeight="md"
-                  color="gray.700"
-                  mb={3}
-                >
-                  Description
-                </FormLabel>
-                <Field
-                  as={Textarea}
-                  name="description"
-                  placeholder="Brief description of your profile."
-                  rows={3}
-                  shadow="sm"
-                  borderColor={
-                    touched.description && errors?.description
-                      ? "red.300"
-                      : "inherit"
-                  }
-                  focusBorderColor={
-                    touched.description && errors?.description
-                      ? "red.500"
-                      : "secondary.500"
-                  }
-                  fontSize="sm"
-                  value={values.description || ""}
-                  onChange={(event) => {
-                    const { value } = event.target;
-                    setFieldValue("description", value, false);
-                    memoizeDebounceFieldValue(
-                      "description",
-                      value,
-                      setFieldValue,
-                    );
-                  }}
-                  _hover={{
+          <Controller
+            control={control}
+            name="zip"
+            render={({ field }) => (
+              <TextFormControl
+                label="ZIP"
+                autoComplete="postal-code"
+                error={errors.zip}
+                isInvalid={!!errors.zip}
+                {...field}
+              />
+            )}
+          />
+        </SimpleGrid>
+        <FormControl>
+          <FormLabel fontSize="sm" fontWeight="md" color="gray.700" mb={3}>
+            Description
+          </FormLabel>
+          <Controller
+            control={control}
+            name="description"
+            render={({ field }) => (
+              <Textarea
+                placeholder="Brief description of your profile."
+                rows={3}
+                shadow="sm"
+                borderColor={
+                  touchedFields.description && errors?.description
+                    ? "red.300"
+                    : "inherit"
+                }
+                focusBorderColor={
+                  touchedFields.description && errors?.description
+                    ? "red.500"
+                    : "secondary.500"
+                }
+                fontSize="sm"
+                {...field}
+                _hover={{
+                  borderColor:
+                    touchedFields.description && errors?.description
+                      ? "red.400"
+                      : "gray.300",
+                }}
+                _focus={{
+                  _hover: {
                     borderColor:
-                      touched.description && errors?.description
+                      touchedFields.description && errors?.description
                         ? "red.400"
-                        : "gray.300",
-                  }}
-                  _focus={{
-                    _hover: {
+                        : "secondary.500",
+                  },
+                }}
+              />
+            )}
+          />
+          {touchedFields.description && errors?.description && (
+            <Text mt={1} color="red.400" fontSize="xs">
+              {errors?.description.message}
+            </Text>
+          )}
+        </FormControl>
+      </Stack>
+
+      <GridItem colSpan={3}>
+        <Divider my="5" borderColor="gray.300" />
+      </GridItem>
+
+      <GridItem colSpan={1}>
+        <Box>
+          <Heading fontSize="lg" lineHeight="6">
+            Professionals
+          </Heading>
+          <Text
+            my={2}
+            fontSize="sm"
+            color="gray.600"
+            _dark={{
+              color: "gray.400",
+            }}
+          >
+            Provide detailed information about your professional experience
+            including degrees, diplomas and certificates
+          </Text>
+        </Box>
+      </GridItem>
+
+      <GridItem colSpan={2}>
+        <Stack
+          shadow="base"
+          rounded="md"
+          overflow="hidden"
+          px={4}
+          py={5}
+          bg="#fff"
+          spacing={6}
+          p={6}
+        >
+          <Flex gap={6}>
+            <FormControl as={Flex} direction="column">
+              <FormLabel fontSize="sm" fontWeight="md" color="gray.700" mb={3}>
+                Hospital
+              </FormLabel>
+
+              <Controller
+                control={control}
+                name="hospital"
+                render={({ field }) => (
+                  <Select
+                    size="sm"
+                    variant="outline"
+                    {...field}
+                    onChange={(e) => onSelectChange(e, "hospital")}
+                    borderColor={
+                      touchedFields.hospital && errors?.hospital
+                        ? "red.300"
+                        : "inherit"
+                    }
+                    focusBorderColor={
+                      touchedFields.hospital && errors?.hospital
+                        ? "red.500"
+                        : "secondary.500"
+                    }
+                    _hover={{
                       borderColor:
-                        touched.description && errors?.description
+                        touchedFields.hospital && errors?.hospital
                           ? "red.400"
-                          : "secondary.500",
-                    },
-                  }}
-                />
-                {touched.description && errors?.description && (
-                  <Text mt={1} color="red.400" fontSize="xs">
-                    {errors?.description}
+                          : "gray.300",
+                    }}
+                    _focus={{
+                      _hover: {
+                        borderColor:
+                          touchedFields.hospital && errors?.hospital
+                            ? "red.400"
+                            : "secondary.500",
+                      },
+                    }}
+                  >
+                    <option value="">Select a hospital...</option>
+                    <option value="Hospital Mongi Slim">
+                      Hospital Mongi Slim
+                    </option>
+                    <option value="Hospital Charles Nicolle">
+                      Hospital Charles Nicolle
+                    </option>
+                    <option value="Hospital La Rabta">Hospital La Rabta</option>
+                    <option value="Hospital Razi">Hospital Razi</option>
+                    <option value="Hospital Sahloul">Hospital Sahloul</option>
+                    <option value="Hospital Farhat Hached">
+                      Hospital Farhat Hached
+                    </option>
+                    <option value="Hospital Fattouma Bourguiba">
+                      Hospital Fattouma Bourguiba
+                    </option>
+                    <option value="Hospital Hédi Chaker">
+                      Hospital Hédi Chaker
+                    </option>
+                    <option value="Hospital Habib Bourguiba">
+                      Hospital Habib Bourguiba
+                    </option>
+                  </Select>
+                )}
+              />
+              {touchedFields.hospital && errors?.hospital && (
+                <Text mt={1} color="red.400" fontSize="xs">
+                  {errors?.hospital.message}
+                </Text>
+              )}
+            </FormControl>
+            <FormControl as={Flex} direction="column">
+              <FormLabel fontSize="sm" fontWeight="md" color="gray.700" mb={3}>
+                Speciality
+              </FormLabel>
+              <Controller
+                control={control}
+                name="specialty"
+                render={({ field }) => (
+                  <Select
+                    size="sm"
+                    variant="outline"
+                    {...field}
+                    onChange={(e) => onSelectChange(e, "specialty")}
+                    borderColor={
+                      touchedFields.specialty && errors?.specialty
+                        ? "red.300"
+                        : "inherit"
+                    }
+                    focusBorderColor={
+                      touchedFields.specialty && errors?.specialty
+                        ? "red.500"
+                        : "secondary.500"
+                    }
+                    _hover={{
+                      borderColor:
+                        touchedFields.specialty && errors?.specialty
+                          ? "red.400"
+                          : "gray.300",
+                    }}
+                    _focus={{
+                      _hover: {
+                        borderColor:
+                          touchedFields.specialty && errors?.specialty
+                            ? "red.400"
+                            : "secondary.500",
+                      },
+                    }}
+                  >
+                    <option value="">Select a specialty...</option>
+                    <option value="Generalist">Generalist</option>
+                    <option value="Cardiologist">Cardiologist</option>
+                    <option value="Dermatologist">Dermatologist</option>
+                    <option value="Endocrinologist">Endocrinologist</option>
+                    <option value="Gastroenterologist">
+                      Gastroenterologist
+                    </option>
+                    <option value="Neurologist">Neurologist</option>
+                    <option value="Pediatrician">Pediatrician</option>
+                    <option value="Psychiatrist">Psychiatrist</option>
+                  </Select>
+                )}
+              />
+              {touchedFields.specialty && errors?.specialty && (
+                <Text mt={1} color="red.400" fontSize="xs">
+                  {errors?.specialty.message}
+                </Text>
+              )}
+            </FormControl>
+          </Flex>
+
+          <Flex gap={6}>
+            <Flex direction="column" wrap="wrap" w="100%">
+              <Text fontWeight="md" fontSize="md" color="gray.900" mb={3}>
+                Degrees
+              </Text>
+              <Stack spacing={4}>
+                {degreeFields.map((field, index) => (
+                  <Flex key={field.id} justifyContent="flex-end">
+                    <Controller
+                      control={control}
+                      name={`degrees.${index}`}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          placeholder="State Diploma of Doctor of Medicine."
+                          type="text"
+                          focusBorderColor="secondary.500"
+                          borderRightRadius={0}
+                          shadow="sm"
+                          size="sm"
+                          w="full"
+                          rounded="md"
+                          pr={6}
+                          isInvalid={errors?.degrees?.[index]}
+                          borderColor={
+                            errors?.degrees?.[index] ? "red.300" : "inherit"
+                          }
+                        />
+                      )}
+                    />
+                    <IconButton
+                      onClick={() => removeDegree(index)}
+                      colorScheme="red"
+                      size="sm"
+                      icon={<CloseIcon h="10px" w="10px" />}
+                      borderLeftRadius={0}
+                    />
+                  </Flex>
+                ))}
+              </Stack>
+              <Box mt={degreeFields.length > 0 ? 4 : 2}>
+                <Flex gap={2}>
+                  <IconButton
+                    size="xs"
+                    type="button"
+                    borderColor="secondary.500"
+                    variant="outline"
+                    isRound={true}
+                    onClick={() => appendDegree("")}
+                    _hover={{
+                      bg: "secondary.500",
+                      "& svg": { color: "white" },
+                    }}
+                    icon={<AddIcon color="secondary.500" />}
+                  />
+                  <Text fontSize="md" color="gray.500">
+                    Add a degree
+                  </Text>
+                </Flex>
+                {errors?.degrees && (
+                  <Text mt={2} color="red.400" fontSize="sm">
+                    {errors?.degrees.message}
                   </Text>
                 )}
-              </FormControl>
-            </Stack>
-
-            <GridItem colSpan={3}>
-              <Divider my="5" borderColor="gray.300" />
-            </GridItem>
-
-            <GridItem colSpan={1}>
-              <Box>
-                <Heading fontSize="lg" lineHeight="6">
-                  Professionals
-                </Heading>
-                <Text
-                  my={2}
-                  fontSize="sm"
-                  color="gray.600"
-                  _dark={{
-                    color: "gray.400",
-                  }}
-                >
-                  Provide detailed information about your professional
-                  experience including degrees, diplomas and certificates
-                </Text>
               </Box>
-            </GridItem>
+            </Flex>
 
-            <GridItem colSpan={2}>
-              <Stack
-                shadow="base"
-                rounded="md"
-                overflow="hidden"
-                px={4}
-                py={5}
-                bg="#fff"
-                spacing={6}
-                p={6}
-              >
-                <Flex gap={6}>
-                  <FormControl as={Flex} direction="column">
-                    <FormLabel
-                      fontSize="sm"
-                      fontWeight="md"
-                      color="gray.700"
-                      mb={3}
-                    >
-                      Hospital
-                    </FormLabel>
-
-                    <Field
-                      as={Select}
-                      name="hospital"
-                      size="sm"
-                      variant="outline"
-                      rounded="md"
-                      shadow="sm"
-                      onChange={handleChange}
-                      borderColor={
-                        touched.hospital && errors?.hospital
-                          ? "red.300"
-                          : "inherit"
-                      }
-                      focusBorderColor={
-                        touched.hospital && errors?.hospital
-                          ? "red.500"
-                          : "secondary.500"
-                      }
-                      _hover={{
-                        borderColor:
-                          touched.hospital && errors?.hospital
-                            ? "red.400"
-                            : "gray.300",
-                      }}
-                      _focus={{
-                        _hover: {
-                          borderColor:
-                            touched.hospital && errors?.hospital
-                              ? "red.400"
-                              : "secondary.500",
-                        },
-                      }}
-                      value={values?.hospital}
-                    >
-                      <option value="">Select a hospital...</option>
-                      <option value="Hospital Mongi Slim">
-                        Hospital Mongi Slim
-                      </option>
-                      <option value="Hospital Charles Nicolle">
-                        Hospital Charles Nicolle
-                      </option>
-                      <option value="Hospital La Rabta">
-                        Hospital La Rabta
-                      </option>
-                      <option value="Hospital Razi">Hospital Razi</option>
-                      <option value="Hospital Sahloul">Hospital Sahloul</option>
-                      <option value="Hospital Farhat Hached">
-                        Hospital Farhat Hached
-                      </option>
-                      <option value="Hospital Fattouma Bourguiba">
-                        Hospital Fattouma Bourguiba
-                      </option>
-                      <option value="Hospital Hédi Chaker">
-                        Hospital Hédi Chaker
-                      </option>
-                      <option value="Hospital Habib Bourguiba">
-                        Hospital Habib Bourguiba
-                      </option>
-                    </Field>
-                    {touched.hospital && errors?.hospital && (
-                      <Text mt={1} color="red.400" fontSize="xs">
-                        {errors?.hospital}
-                      </Text>
-                    )}
-                  </FormControl>
-                  <FormControl as={Flex} direction="column">
-                    <FormLabel
-                      fontSize="sm"
-                      fontWeight="md"
-                      color="gray.700"
-                      mb={3}
-                    >
-                      Speciality
-                    </FormLabel>
-                    <Field
-                      as={Select}
-                      size="sm"
-                      variant="outline"
-                      rounded="md"
-                      shadow="sm"
-                      name="specialty"
-                      value={values?.specialty}
-                      onChange={handleChange}
-                      borderColor={
-                        touched.specialty && errors?.specialty
-                          ? "red.300"
-                          : "inherit"
-                      }
-                      focusBorderColor={
-                        touched.specialty && errors?.specialty
-                          ? "red.500"
-                          : "secondary.500"
-                      }
-                      _hover={{
-                        borderColor:
-                          touched.specialty && errors?.specialty
-                            ? "red.400"
-                            : "gray.300",
-                      }}
-                      _focus={{
-                        _hover: {
-                          borderColor:
-                            touched.specialty && errors?.specialty
-                              ? "red.400"
-                              : "secondary.500",
-                        },
-                      }}
-                    >
-                      <option value="Generalist">Generalist</option>
-                      <option value="Cardiologist">Cardiologist</option>
-                      <option value="Dermatologist">Dermatologist</option>
-                      <option value="Endocrinologist">Endocrinologist</option>
-                      <option value="Gastroenterologist">
-                        Gastroenterologist
-                      </option>
-                      <option value="Neurologist">Neurologist</option>
-                      <option value="Pediatrician">Pediatrician</option>
-                      <option value="Psychiatrist">Psychiatrist</option>
-                    </Field>
-                  </FormControl>
-                </Flex>
-
-                <Flex gap={6}>
-                  <Flex direction="column" wrap="wrap" w="100%">
-                    <Text fontWeight="md" fontSize="md" color="gray.900" mb={3}>
-                      Degrees
-                    </Text>
-                    <FieldArray
-                      name="degrees"
-                      render={({ remove, push }) => (
-                        <>
-                          <Stack spacing={4}>
-                            {values.degrees?.map((_, index) => (
-                              <Flex key={index} justifyContent="flex-end">
-                                <Input
-                                  name={`degrees.${index}`}
-                                  placeholder="State Diploma of Doctor of Medicine."
-                                  type="text"
-                                  focusBorderColor="secondary.500"
-                                  borderRightRadius={0}
-                                  shadow="sm"
-                                  size="sm"
-                                  w="full"
-                                  rounded="md"
-                                  pr={6}
-                                  value={values.degrees[index] || ""}
-                                  onChange={(event) => {
-                                    const { value } = event.target;
-                                    setFieldValue(
-                                      `degrees.${index}`,
-                                      value,
-                                      false,
-                                    );
-                                    memoizeDebounceFieldValue(
-                                      `degrees.${index}`,
-                                      value,
-                                      setFieldValue,
-                                    );
-                                  }}
-                                />
-                                <IconButton
-                                  type="button"
-                                  colorScheme="red"
-                                  size="sm"
-                                  icon={<CloseIcon h="10px" w="10px" />}
-                                  borderLeftRadius={0}
-                                  onClick={() => remove(index)}
-                                />
-                              </Flex>
-                            ))}
-                          </Stack>
-                          <Box mt={values.degrees?.length > 0 ? 4 : 2}>
-                            <Flex gap={2}>
-                              <IconButton
-                                size="xs"
-                                type="button"
-                                borderColor="secondary.500"
-                                variant="outline"
-                                isRound={true}
-                                onClick={() => push("")}
-                                _hover={{
-                                  bg: "secondary.500",
-                                  "& svg": { color: "white" },
-                                }}
-                                icon={<AddIcon color="secondary.500" />}
-                              />
-                              <Text fontSize="md" color="gray.500">
-                                Add a degree
-                              </Text>
-                            </Flex>
-                            {errors && errors?.degrees && (
-                              <Text mt={2} color="red.400" fontSize="sm">
-                                {errors?.degrees}
-                              </Text>
-                            )}
-                          </Box>
-                        </>
-                      )}
-                    />
-                  </Flex>
-
-                  <Flex direction="column" wrap="wrap" w="100%">
-                    <Text fontSize="md" color="gray.900" mb={3}>
-                      Certificates
-                    </Text>
-                    <FieldArray
-                      name="certifications"
-                      render={({ remove, push }) => (
-                        <>
-                          <Stack spacing={4}>
-                            {values?.certifications?.map((_, index) => (
-                              <Flex key={index} justifyContent="flex-end">
-                                <Input
-                                  name={`certifications.${index}`}
-                                  placeholder="Fellow, American College of Physicians (FACP)"
-                                  type="text"
-                                  focusBorderColor="secondary.500"
-                                  borderRightRadius={0}
-                                  shadow="sm"
-                                  size="sm"
-                                  w="full"
-                                  rounded="md"
-                                  pr={6}
-                                  value={values.certifications[index] || ""}
-                                  onChange={(event) => {
-                                    const { value } = event.target;
-                                    setFieldValue(
-                                      `certifications.${index}`,
-                                      value,
-                                      false,
-                                    );
-                                    memoizeDebounceFieldValue(
-                                      `certifications.${index}`,
-                                      value,
-                                      setFieldValue,
-                                    );
-                                  }}
-                                />
-                                <IconButton
-                                  type="button"
-                                  colorScheme="red"
-                                  size="sm"
-                                  icon={<CloseIcon h="10px" w="10px" />}
-                                  borderLeftRadius={0}
-                                  onClick={() => remove(index)}
-                                />
-                              </Flex>
-                            ))}
-                          </Stack>
-                          <Box mt={values.certifications?.length > 0 ? 4 : 2}>
-                            <Flex gap={2}>
-                              <IconButton
-                                size="xs"
-                                type="button"
-                                borderColor="secondary.500"
-                                variant="outline"
-                                isRound={true}
-                                onClick={() => push("")}
-                                _hover={{
-                                  bg: "secondary.500",
-                                  "& svg": {
-                                    color: "white",
-                                  },
-                                }}
-                                icon={<AddIcon color="secondary.500" />}
-                              />
-                              <Text fontSize="md" color="gray.500">
-                                Add a certificate
-                              </Text>
-                            </Flex>
-                            {errors && errors?.certifications && (
-                              <Text mt={2} color="red.400" fontSize="sm">
-                                {errors?.certifications}
-                              </Text>
-                            )}
-                          </Box>
-                        </>
-                      )}
-                    />
-                  </Flex>
-                </Flex>
-                <chakra.fieldset>
-                  <Box as="legend" fontSize="md" color="gray.900" mb={3}>
-                    Experience
-                    <Text fontSize="sm" color="gray.500">
-                      Number of years of experience you have
-                    </Text>
-                  </Box>
-                  <RadioGroup
-                    fontSize="sm"
-                    color="gray.700"
-                    colorScheme="primary"
-                    borderColor="primary.500"
-                    value={values.experience || "Less than a year"}
-                    onChange={(value) => setFieldValue("experience", value)}
-                  >
-                    <Stack spacing={4}>
-                      {["Less than a year", "1 - 5 years", "+5 years"].map(
-                        (experience) => (
-                          <Radio
-                            key={experience}
-                            spacing={3}
-                            name="experience"
-                            value={experience}
-                          >
-                            {experience}
-                          </Radio>
-                        ),
-                      )}
-                    </Stack>
-                  </RadioGroup>
-                </chakra.fieldset>
-              </Stack>
-            </GridItem>
-
-            <GridItem colSpan={3}>
-              <Divider my="5" borderColor="gray.300" />
-            </GridItem>
-
-            <GridItem colSpan={1}>
-              <Box>
-                <Heading fontSize="lg" lineHeight="6">
-                  Schedule
-                </Heading>
-                <Text
-                  my={2}
-                  fontSize="sm"
-                  color="gray.600"
-                  _dark={{
-                    color: "gray.400",
-                  }}
-                >
-                  Please enter your weekly availability by indicating the days
-                  on which you are available.
-                </Text>
-              </Box>
-            </GridItem>
-
-            <GridItem colSpan={2}>
-              <Stack
-                shadow="base"
-                rounded="md"
-                overflow="hidden"
-                px={4}
-                py={5}
-                bg="#fff"
-                spacing={6}
-                p={6}
-              >
-                <SimpleGrid columns={6} spacing={6}>
-                  <FormControl as={GridItem} colSpan={3}>
-                    <FormLabel
-                      htmlFor="price"
-                      fontSize="sm"
-                      fontWeight="md"
-                      color="gray.700"
-                      mb={3}
-                    >
-                      Price in dt / hour
-                    </FormLabel>
-                    <InputGroup size="sm">
-                      <Input
-                        id="price"
-                        placeholder="Enter amount"
-                        type="number"
-                        name="price"
-                        focusBorderColor="secondary.500"
-                        shadow="sm"
-                        w="full"
-                        rounded="md"
-                        min={1}
-                        max={1000}
-                        value={values.price || 0}
-                        onChange={(event) => {
-                          const { value } = event.target;
-                          setFieldValue("price", value, false);
-                          memoizeDebounceFieldValue(
-                            "price",
-                            value,
-                            setFieldValue,
-                          );
-                        }}
-                      />
-                      <InputRightElement
-                        pointerEvents="none"
-                        color="gray.500"
-                        fontSize="sm"
-                        h="100%"
-                      >
-                        dt
-                      </InputRightElement>
-                    </InputGroup>
-                  </FormControl>
-                </SimpleGrid>
-
-                <chakra.fieldset>
-                  <Text mb={3} fontSize="md" color="gray.900">
-                    Schedule
-                  </Text>
-                  <Flex flexWrap="wrap" rowGap={5} columnGap={20}>
-                    {[
-                      "Monday",
-                      "Tuesday",
-                      "Wednesday",
-                      "Thursday",
-                      "Friday",
-                      "Saturday",
-                      "Sunday",
-                    ].map((day, index) => (
-                      <Flex key={index} alignItems="start">
-                        <Checkbox
-                          type="checkbox"
-                          name="schedule"
-                          colorScheme="primary"
-                          borderColor="primary.500"
+            <Flex direction="column" wrap="wrap" w="100%">
+              <Text fontSize="md" color="gray.900" mb={3}>
+                Certificates
+              </Text>
+              <Stack spacing={4}>
+                {certFields.map((field, index) => (
+                  <Flex key={field.id} justifyContent="flex-end">
+                    <Controller
+                      control={control}
+                      name={`certifications.${index}`}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          placeholder="Fellow, American College of Physicians (FACP)"
+                          type="text"
+                          focusBorderColor="secondary.500"
+                          borderRightRadius={0}
+                          shadow="sm"
+                          size="sm"
+                          w="full"
                           rounded="md"
-                          value={day}
-                          isChecked={values?.schedule?.includes(day)}
-                          onChange={handleChange}
-                        >
-                          {day}
-                        </Checkbox>
-                      </Flex>
-                    ))}
+                          pr={6}
+                          isInvalid={errors?.certifications?.[index]}
+                          borderColor={
+                            errors?.certifications?.[index]
+                              ? "red.300"
+                              : "inherit"
+                          }
+                        />
+                      )}
+                    />
+                    <IconButton
+                      onClick={() => removeCert(index)}
+                      colorScheme="red"
+                      size="sm"
+                      icon={<CloseIcon h="10px" w="10px" />}
+                      borderLeftRadius={0}
+                    />
                   </Flex>
-                  {errors && errors?.schedule && (
-                    <Text mt={2} color="red.400" fontSize="sm">
-                      {errors?.schedule}
-                    </Text>
-                  )}
-                </chakra.fieldset>
+                ))}
               </Stack>
-            </GridItem>
+              <Box mt={certFields.length > 0 ? 4 : 2}>
+                <Flex gap={2}>
+                  <IconButton
+                    size="xs"
+                    type="button"
+                    borderColor="secondary.500"
+                    variant="outline"
+                    isRound={true}
+                    onClick={() => appendCert("")}
+                    _hover={{
+                      bg: "secondary.500",
+                      "& svg": {
+                        color: "white",
+                      },
+                    }}
+                    icon={<AddIcon color="secondary.500" />}
+                  />
+                  <Text fontSize="md" color="gray.500">
+                    Add a certificate
+                  </Text>
+                </Flex>
+                {errors?.certifications && (
+                  <Text mt={2} color="red.400" fontSize="sm">
+                    {errors?.certifications.message}
+                  </Text>
+                )}
+              </Box>
+            </Flex>
+          </Flex>
+          <chakra.fieldset>
+            <Box as="legend" fontSize="md" color="gray.900" mb={3}>
+              Experience
+              <Text fontSize="sm" color="gray.500">
+                Number of years of experience you have
+              </Text>
+            </Box>
+            <RadioGroup
+              fontSize="sm"
+              color="gray.700"
+              colorScheme="primary"
+              borderColor="primary.500"
+              value={watch("experience")}
+              onChange={(value) => setValue("experience", value)}
+            >
+              <Stack spacing={4}>
+                {["Less than a year", "1 - 5 years", "+5 years"].map(
+                  (experience) => (
+                    <Radio
+                      key={experience}
+                      spacing={3}
+                      name="experience"
+                      value={experience}
+                    >
+                      {experience}
+                    </Radio>
+                  ),
+                )}
+              </Stack>
+            </RadioGroup>
+          </chakra.fieldset>
+        </Stack>
+      </GridItem>
 
-            <GridItem colSpan={3} py={3} textAlign="right">
-              <Button
-                type="submit"
-                colorScheme="primary"
-                size="sm"
-                _hover={{
-                  opacity: 0.8,
-                }}
+      <GridItem colSpan={3}>
+        <Divider my="5" borderColor="gray.300" />
+      </GridItem>
+
+      <GridItem colSpan={1}>
+        <Box>
+          <Heading fontSize="lg" lineHeight="6">
+            Schedule
+          </Heading>
+          <Text
+            my={2}
+            fontSize="sm"
+            color="gray.600"
+            _dark={{
+              color: "gray.400",
+            }}
+          >
+            Please enter your weekly availability by indicating the days on
+            which you are available.
+          </Text>
+        </Box>
+      </GridItem>
+
+      <GridItem colSpan={2}>
+        <Stack
+          shadow="base"
+          rounded="md"
+          overflow="hidden"
+          px={4}
+          py={5}
+          bg="#fff"
+          spacing={6}
+          p={6}
+        >
+          <SimpleGrid columns={6} spacing={6}>
+            <FormControl as={GridItem} colSpan={3}>
+              <FormLabel
+                htmlFor="price"
+                fontSize="sm"
+                fontWeight="md"
+                color="gray.700"
+                mb={3}
               >
-                Save
-              </Button>
-            </GridItem>
-          </Form>
-        );
-      }}
-    </Formik>
+                Price in dt / hour
+              </FormLabel>
+              <InputGroup size="sm">
+                <Input
+                  id="price"
+                  placeholder="Enter amount"
+                  type="number"
+                  name="price"
+                  focusBorderColor="secondary.500"
+                  shadow="sm"
+                  w="full"
+                  rounded="md"
+                  min={1}
+                  max={1000}
+                  value={watch("price") || 0}
+                  onChange={(event) => {
+                    const { value } = event.target;
+                    setValue("price", value, { shouldValidate: true });
+                    memoizeDebounceFieldValue("price", value, setValue);
+                  }}
+                  borderColor={
+                    touchedFields.price && errors?.price ? "red.300" : "inherit"
+                  }
+                />
+                <InputRightElement
+                  pointerEvents="none"
+                  color="gray.500"
+                  fontSize="sm"
+                  h="100%"
+                >
+                  dt
+                </InputRightElement>
+              </InputGroup>
+              {touchedFields.price && errors?.price && (
+                <Text mt={1} color="red.400" fontSize="xs">
+                  {errors?.price.message}
+                </Text>
+              )}
+            </FormControl>
+          </SimpleGrid>
+
+          <chakra.fieldset>
+            <Text mb={3} fontSize="md" color="gray.900">
+              Schedule
+            </Text>
+            <Flex flexWrap="wrap" rowGap={5} columnGap={20}>
+              {[
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday",
+              ].map((day, index) => (
+                <Flex key={index} alignItems="start">
+                  <Checkbox
+                    {...register("schedule")}
+                    value={day}
+                    onChange={(e) => {
+                      const currentSchedule = watch("schedule") || [];
+                      if (e.target.checked) {
+                        setValue("schedule", [...currentSchedule, day], {
+                          shouldValidate: true,
+                        });
+                      } else {
+                        setValue(
+                          "schedule",
+                          currentSchedule.filter((d) => d !== day),
+                          { shouldValidate: true },
+                        );
+                      }
+                    }}
+                    isChecked={watch("schedule")?.includes(day)}
+                  >
+                    {day}
+                  </Checkbox>
+                </Flex>
+              ))}
+            </Flex>
+            {errors?.schedule && (
+              <Text mt={2} color="red.400" fontSize="sm">
+                {errors?.schedule.message}
+              </Text>
+            )}
+          </chakra.fieldset>
+        </Stack>
+      </GridItem>
+
+      <GridItem colSpan={3} py={3} textAlign="right">
+        <Button
+          type="submit"
+          colorScheme="primary"
+          size="sm"
+          _hover={{
+            opacity: 0.8,
+          }}
+        >
+          Save
+        </Button>
+      </GridItem>
+    </form>
   );
 };
 
