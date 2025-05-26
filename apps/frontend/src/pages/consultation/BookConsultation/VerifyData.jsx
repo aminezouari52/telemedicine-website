@@ -2,28 +2,26 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-// STYLED
+// STYLE
 import {
   Modal,
   ModalOverlay,
-  ModalHeader,
   ModalContent,
+  ModalHeader,
   ModalBody,
   ModalCloseButton,
+  Text,
+  Button,
   ModalFooter,
   Stack,
   Heading,
-  Text,
-  Button,
 } from "@chakra-ui/react";
-import { useFormikContext } from "formik";
 import { DateTime } from "luxon";
 
-const VerifyData = ({ isOpen, onClose }) => {
+const VerifyData = ({ isOpen, onClose, getValues, handleSubmit }) => {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const navigate = useNavigate();
-
-  const { values, submitForm } = useFormikContext();
+  const formValues = getValues ? getValues() : {};
 
   return (
     <>
@@ -46,39 +44,39 @@ const VerifyData = ({ isOpen, onClose }) => {
             <ModalBody>
               <Stack spacing={4} mt={2}>
                 <Text mr={2}>
-                  <strong>Consultation date:</strong>
-                  {values?.date
-                    ? DateTime.fromJSDate(new Date(values.date)).toFormat(
+                  <strong>Consultation date:</strong>{" "}
+                  {formValues?.date
+                    ? DateTime.fromJSDate(new Date(formValues.date)).toFormat(
                         "dd-MM-yyyy 'à' HH:mm",
                       )
                     : null}
                 </Text>
                 <Text mr={2}>
-                  <strong>Complete name:</strong> {values?.firstName}{" "}
-                  {values?.lastName}
+                  <strong>Complete name:</strong> {formValues?.firstName}{" "}
+                  {formValues?.lastName}
                 </Text>
 
                 <Text mr={2}>
                   <strong>Address: </strong>
-                  {values?.address}
+                  {formValues?.address}
                 </Text>
                 <Text mr={2}>
                   <strong>City: </strong>
-                  {values?.city}
+                  {formValues?.city}
                 </Text>
                 <Text mr={2}>
                   <strong>ZIP: </strong>
-                  {values?.zip}
+                  {formValues?.zip}
                 </Text>
                 <Text mr={2}>
-                  <strong>Phone:</strong> {values?.phone}
+                  <strong>Phone:</strong> {formValues?.phone}
                 </Text>
                 <Text mr={2}>
-                  <strong>Age:</strong> {values?.age}
+                  <strong>Age:</strong> {formValues?.age}
                 </Text>
-                {values?.weight && (
+                {formValues?.weight && (
                   <Text mr={2}>
-                    <strong>Weight:</strong> {values?.weight}kg
+                    <strong>Weight:</strong> {formValues?.weight}kg
                   </Text>
                 )}
               </Stack>
@@ -91,7 +89,7 @@ const VerifyData = ({ isOpen, onClose }) => {
                   opacity: 0.8,
                 }}
                 onClick={() => {
-                  submitForm();
+                  handleSubmit();
                   setHasSubmitted(true);
                 }}
               >

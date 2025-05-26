@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useQuery } from "@tanstack/react-query";
 
 // FUNCTIONS
 import { createConsultation } from "@/services/consultationService";
@@ -35,7 +36,6 @@ import {
   StepNumber,
   Image,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
 
 const steps = [{ title: "Profile information" }, { title: "Date and Time" }];
 
@@ -124,7 +124,7 @@ const Consultation = () => {
       doctor: params?.id,
       isProfileCompleted: true,
     },
-    mode: "onChange",
+    mode: "onChange", // Enable real-time validation
   });
 
   const onSubmit = async (values) => {
@@ -138,7 +138,9 @@ const Consultation = () => {
           ...resValues,
         }),
       );
+      // Show success message or redirect
     } catch (error) {
+      // Handle error
       console.error(error);
     }
   };
@@ -226,8 +228,6 @@ const Consultation = () => {
         <VerifyData
           isOpen={activeStep === steps.length}
           onClose={resetHandler}
-          getValues={getValues}
-          handleSubmit={handleSubmit(onSubmit)}
         />
       </form>
     </Flex>
