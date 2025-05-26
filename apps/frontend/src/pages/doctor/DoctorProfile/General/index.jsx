@@ -262,6 +262,14 @@ const General = ({ setIsLoading }) => {
     setValue(fieldName, e.target.value, { shouldValidate: true });
   };
 
+  if (!currentUser) {
+    return (
+      <Flex justify="center" align="center" minH="200px">
+        <Text>Loading profile...</Text>
+      </Flex>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box>
