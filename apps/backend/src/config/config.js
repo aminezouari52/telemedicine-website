@@ -21,6 +21,10 @@ const envVarsSchema = Joi.object()
     CLOUDINARY_API_SECRET: Joi.string()
       .required()
       .description("Cloudinary API Secret"),
+    LIVEKIT_API_KEY: Joi.string().required().description("LiveKit Api Key"),
+    LIVEKIT_API_SECRET: Joi.string()
+      .required()
+      .description("LiveKit Api Secret"),
   })
   .unknown();
 
@@ -51,5 +55,9 @@ module.exports = {
     cloud_name: envVars.CLOUDINARY_CLOUD_NAME,
     api_key: envVars.CLOUDINARY_API_KEY,
     api_secret: envVars.CLOUDINARY_API_SECRET,
+  },
+  livekit: {
+    api_key: envVars.LIVEKIT_API_KEY,
+    api_secret: envVars.LIVEKIT_API_SECRET,
   },
 };
