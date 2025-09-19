@@ -7,8 +7,10 @@ import { Box, Icon } from "@chakra-ui/react";
 import { FiCameraOff } from "react-icons/fi";
 
 const VideoRenderer = () => {
-  const trackRefs = useTracks([{ source: Track.Source.Camera }]);
-  const [fullscreenTrackIndex, setFullscreenTrackIndex] = useState(1);
+  const trackRefs = useTracks([
+    { source: Track.Source.Camera, withPlaceholder: true },
+  ]);
+  const [fullscreenTrackIndex, setFullscreenTrackIndex] = useState(0);
   const fullscreenTrackRef = useMemo(
     () => trackRefs[fullscreenTrackIndex],
     [trackRefs, fullscreenTrackIndex],
@@ -26,7 +28,9 @@ const VideoRenderer = () => {
       justifyContent="center"
       alignItems="center"
     >
-      {fullscreenTrackRef && !fullscreenTrackRef.publication.isMuted ? (
+      {fullscreenTrackRef &&
+      fullscreenTrackRef.publication &&
+      !fullscreenTrackRef.publication.isMuted ? (
         <VideoTrack
           trackRef={fullscreenTrackRef}
           style={{ objectFit: "contain" }}
@@ -57,7 +61,9 @@ const VideoRenderer = () => {
         justifyContent="center"
         alignItems="center"
       >
-        {minimizedTrackRef && !minimizedTrackRef.publication.isMuted ? (
+        {minimizedTrackRef &&
+        minimizedTrackRef.publication &&
+        !minimizedTrackRef.publication.isMuted ? (
           <VideoTrack
             trackRef={minimizedTrackRef}
             style={{ objectFit: "contain" }}

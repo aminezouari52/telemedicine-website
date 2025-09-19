@@ -5,7 +5,7 @@ import "@livekit/components-styles";
 import { useRef, useState } from "react";
 import { Box } from "@chakra-ui/react";
 import ControlsBar from "./ControlsBar";
-import VideoRenderer from "./VideoRederer";
+import VideoRenderer from "./VideoRenderer";
 
 const Player = ({ token, url, chatVisible, setChatVisible }) => {
   const [controlsVisible, setControlsVisible] = useState(true);
@@ -19,7 +19,7 @@ const Player = ({ token, url, chatVisible, setChatVisible }) => {
   };
 
   return (
-    <LiveKitRoom audio={false} video={false} token={token} serverUrl={url}>
+    <LiveKitRoom token={token} serverUrl={url}>
       <Box
         h="full"
         w="full"
