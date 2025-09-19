@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useDisclosure } from "@chakra-ui/react";
 import { useUserCheck } from "@/hooks";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 
 // FUNCTIONS
 import { socket } from "@/socket";
@@ -17,6 +18,7 @@ import {
 // COMPONENTS
 import CompleteDialog from "./CompleteDialog";
 import LeaveDialog from "./LeaveDialog";
+import Player from "./Player";
 
 // STYLE
 import {
@@ -38,6 +40,7 @@ import {
 import { IoSend } from "react-icons/io5";
 import PatientAvatar from "@/assets/avatar-patient.png";
 import DoctorAvatar from "@/assets/avatar-doctor.jpg";
+import { generateToken } from "@/services/livekitService";
 
 const Chat = () => {
   const user = useSelector((state) => state.userReducer.user);
@@ -48,6 +51,8 @@ const Chat = () => {
   const dispatch = useDispatch();
   const [messages, setMessages] = useState([]);
   const [currentUsers, setCurrentUsers] = useState({});
+  const [token, setToken] = useState();
+  const [chatVisible, setChatVisible] = useState(true);
 
   const {
     isOpen: isOpenLeave,
@@ -113,11 +118,22 @@ const Chat = () => {
     }
   };
 
+  const loadToken = async () => {
+    const { data } = await generateToken(
+      consultationId,
+      `${user.firstName} ${user.lastName}`,
+    );
+    setToken(data);
+  };
+
   useEffect(() => {
     if (user) {
       loadConsultation();
+      loadToken();
     }
   }, [user]);
+
+  const toggleChat = () => setChatVisible((prev) => !prev);
 
   const socketJoinedHandler = ({ role, name }) => {
     if (role && name) {
@@ -231,86 +247,124 @@ const Chat = () => {
             </Heading>
           </Flex>
         </Flex>
-        <Flex h="87%" w="100%" justifyContent="center">
-          <Flex
-            justifyContent="flex-end"
-            direction="column"
-            gap={8}
-            p={4}
-            w="500px"
-            bg="primary.100"
-            borderRadius="md"
-          >
-            <Flex direction="column-reverse" overflowY="auto" p={2}>
-              <Stack spacing={4}>
-                {messages.map(({ name, message, time }, index) => (
-                  <Flex gap={1} key={index}>
-                    {user?.firstName !== name && (
-                      <Avatar
-                        name={user?.role !== "doctor" ? "Doctor" : "Patient"}
-                        src={
-                          user?.role !== "doctor" ? DoctorAvatar : PatientAvatar
-                        }
-                      ></Avatar>
-                    )}
-                    <Flex
-                      w="100%"
-                      justifyContent={
-                        user?.firstName !== name ? "flex-start" : "flex-end"
-                      }
-                    >
-                      <Box>
-                        {user?.firstName !== name && (
-                          <Text fontWeight="bold">{name}</Text>
-                        )}
-                        <Flex
-                          direction="column"
-                          alignItems="flex-end"
-                          maxW="200px"
-                          bg="white"
-                          p={2}
-                          borderRadius="lg"
-                        >
-                          <Text>{message}</Text>
-                          <Text fontSize="xs" color="gray">
-                            {time}
-                          </Text>
-                        </Flex>
-                      </Box>
-                    </Flex>
-                  </Flex>
-                ))}
-              </Stack>
-            </Flex>
-            <InputGroup>
-              <Input
-                ref={message}
-                focusBorderColor="primary.500"
-                borderColor="primary.500"
-                color="#000"
-                type="text"
-                placeholder="type a message"
-                _placeholder={{ fontSize: "sm" }}
-                _hover={{
-                  borderColor: "primary.500",
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") sendMessage();
-                }}
+        <Flex h="87%" w="100%" gap={4} justifyContent="center">
+          {token && (
+            <Box
+              w="full"
+              h="full"
+              display={{ base: chatVisible ? "none" : "block", md: "block" }}
+            >
+              <Player
+                url={import.meta.env.VITE_LIVEKIT_URL}
+                token={token}
+                chatVisible={chatVisible}
+                setChatVisible={setChatVisible}
               />
-              <InputRightElement p={0}>
-                <IconButton
-                  colorScheme="primary"
-                  onClick={sendMessage}
-                  size="sm"
-                  h="25px"
-                  icon={<IoSend />}
+            </Box>
+          )}
+          <Flex
+            hidden={!chatVisible}
+            p={4}
+            gap={4}
+            bg="primary.100"
+            w="500px"
+            direction="column"
+            borderRadius="md"
+            justifyContent="space-between"
+            height="full"
+          >
+            <IconButton
+              w="fit-content"
+              alignSelf="flex-end"
+              colorScheme="secondary"
+              onClick={toggleChat}
+              size="md"
+              _hover={{
+                opacity: 0.8,
+              }}
+            >
+              <ChevronRightIcon w={6} h={6} />
+            </IconButton>
+            <Flex
+              justifyContent="flex-end"
+              direction="column"
+              gap={8}
+              height="full"
+              overflowY="auto"
+            >
+              <Flex direction="column-reverse" overflowY="auto" p={2}>
+                <Stack spacing={4}>
+                  {messages.map(({ name, message, time }, index) => (
+                    <Flex gap={1} key={index}>
+                      {user?.firstName !== name && (
+                        <Avatar
+                          name={user?.role !== "doctor" ? "Doctor" : "Patient"}
+                          src={
+                            user?.role !== "doctor"
+                              ? DoctorAvatar
+                              : PatientAvatar
+                          }
+                        ></Avatar>
+                      )}
+                      <Flex
+                        w="100%"
+                        justifyContent={
+                          user?.firstName !== name ? "flex-start" : "flex-end"
+                        }
+                      >
+                        <Box>
+                          {user?.firstName !== name && (
+                            <Text fontWeight="bold">{name}</Text>
+                          )}
+                          <Flex
+                            direction="column"
+                            alignItems="flex-end"
+                            maxW="200px"
+                            bg="white"
+                            p={2}
+                            borderRadius="lg"
+                          >
+                            <Text>{message}</Text>
+                            <Text fontSize="xs" color="gray">
+                              {time}
+                            </Text>
+                          </Flex>
+                        </Box>
+                      </Flex>
+                    </Flex>
+                  ))}
+                </Stack>
+              </Flex>
+              <InputGroup>
+                <Input
+                  ref={message}
+                  focusBorderColor="primary.500"
+                  borderColor="primary.500"
+                  color="#000"
+                  type="text"
+                  placeholder="type a message"
+                  _placeholder={{ fontSize: "sm" }}
                   _hover={{
-                    opacity: 0.8,
+                    borderColor: "primary.500",
                   }}
-                ></IconButton>
-              </InputRightElement>
-            </InputGroup>
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") sendMessage();
+                  }}
+                />
+                <InputRightElement p={0}>
+                  <IconButton
+                    colorScheme="primary"
+                    onClick={sendMessage}
+                    size="sm"
+                    h="25px"
+                    icon={<IoSend />}
+                    _hover={{
+                      opacity: 0.8,
+                    }}
+                  ></IconButton>
+                </InputRightElement>
+              </InputGroup>
+            </Flex>
           </Flex>
         </Flex>
       </Flex>
