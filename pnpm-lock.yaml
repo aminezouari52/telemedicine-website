@@ -7,13 +7,14 @@ settings:
 importers:
 
   .:
+    dependencies:
+      husky:
+        specifier: 9.1.7
+        version: 9.1.7
     devDependencies:
       eslint:
         specifier: 9.16.0
         version: 9.16.0
-      husky:
-        specifier: 9.1.7
-        version: 9.1.7
       lint-staged:
         specifier: 15.2.0
         version: 15.2.0
@@ -6388,7 +6389,7 @@ packages:
     resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
     engines: {node: '>=18'}
     hasBin: true
-    dev: true
+    dev: false
 
   /iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
