@@ -28,6 +28,7 @@ import DoctorDetails from "@/pages/patient/DoctorDetails";
 import BookConsultation from "@/pages/consultation/BookConsultation";
 import Chat from "@/pages/consultation/Chat";
 import NotFound from "@/components/NotFound";
+import PatientAI from "@/pages/PatientAI";
 
 const demoAccounts = ["freddie24@yahoo.com", "christop_hagenes21@gmail.com"];
 
@@ -85,6 +86,7 @@ const App = () => {
           <Route path="consultations" element={<PatientConsultations />} />
           <Route path="doctors" element={<PatientDoctors />} />
           <Route path="doctors/:id" element={<DoctorDetails />} />
+          <Route path="AI" element={<PatientAI />} />
           <Route path="*" element={<Navigate to="/patient/home" />} />
         </Route>
 

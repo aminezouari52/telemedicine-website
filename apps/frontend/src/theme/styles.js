@@ -1,14 +1,18 @@
 export const globalStyles = {
   colors: {
     primary: {
-      900: "#2A269A",
-      800: "#3C38B0",
-      700: "#4E4AD6",
+      900: "#131332",
+      800: "#272665",
+      700: "#3a3897",
+      600: "#4e4bca",
       500: "#615EFC",
-      300: "#b0afff",
-      200: "#d7d6fd",
-      100: "#e2e6ff",
+      400: "#9896fd",
+      300: "#b0aefe",
+      200: "#c8c7fe",
+      100: "#dfdffe",
+      50: "#efefff",
     },
+
     secondary: { 500: "#7E8EF1" },
     silver: { 500: "#c0c0c0" },
     lightgray: { 500: "#DBD8C9." },

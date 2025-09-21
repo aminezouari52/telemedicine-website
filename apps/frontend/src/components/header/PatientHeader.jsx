@@ -20,6 +20,7 @@ import { Flex, Text, IconButton, SimpleGrid, Button } from "@chakra-ui/react";
 // ASSETS
 import { IoChatboxSharp } from "react-icons/io5";
 import { TbLogout } from "react-icons/tb";
+import { MdAutoAwesome } from "react-icons/md";
 
 export const PatientHeader = () => {
   const navigate = useNavigate();
@@ -77,20 +78,38 @@ export const PatientHeader = () => {
       </Flex>
       <Flex gap={1} alignItems="center" justifyContent="flex-end" height="100%">
         {user && !!consultation && (
-          <Button
-            size="sm"
-            colorScheme="primary"
-            rightIcon={<IoChatboxSharp />}
-            _hover={{
-              opacity: 0.8,
-            }}
-            onClick={() => {
-              navigate(`/${user?.consultationId}`);
-            }}
-          >
-            Join
-          </Button>
+          <>
+            <Button
+              size="sm"
+              colorScheme="primary"
+              rightIcon={<IoChatboxSharp />}
+              _hover={{
+                opacity: 0.8,
+              }}
+              onClick={() => {
+                navigate(`/${user?.consultationId}`);
+              }}
+            >
+              Join
+            </Button>
+          </>
         )}
+        <Button
+          size="sm"
+          leftIcon={<MdAutoAwesome className="animated-icon" size="20px" />}
+          variant="outline"
+          colorScheme="primary"
+          ml={2}
+          _hover={{
+            bg: "#f3f4f6",
+            opacity: 0.9,
+          }}
+          onClick={() => {
+            navigate("/patient/ai");
+          }}
+        >
+          AI Consultation
+        </Button>
 
         <IconButton
           size="md"

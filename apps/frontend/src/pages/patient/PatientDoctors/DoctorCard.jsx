@@ -81,9 +81,15 @@ const DoctorCard = ({ doctor }) => {
         </Flex>
         <Flex justifyContent="center" alignItems="center" gap={2}>
           <Icon as={IoPeopleOutline} color="gray" />
-          <Text fontWeight="bolder" color="#000">
-            {isPending ? <LoadingSpinner size="small" /> : patientsCount}
-          </Text>
+
+          {isPending ? (
+            <LoadingSpinner />
+          ) : (
+            <Text fontWeight="bolder" color="#000">
+              {patientsCount}
+            </Text>
+          )}
+
           <Text color="gray">Patients</Text>
         </Flex>
 

@@ -5,6 +5,13 @@ This project is a Real-Time Doctor-Patient consultations website designed to fac
 **Live Website**
 You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed64.netlify.app)
 
+## New
+
+### AI feature
+
+- Consultation with AI
+  - Conversation aware
+
 ## Features
 
 - Real-time Secure Chat: Private, text-based messaging for doctor-patient communication.
@@ -16,18 +23,23 @@ You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed
 ## Screeshots
 
 ### Landing Page
+
 ![Home](https://github.com/user-attachments/assets/748f9eda-68bf-43ff-99e3-8b7367871bc8)
 
 ### Doctor Dashboard
+
 ![DoctorDashboard](https://github.com/user-attachments/assets/54626b4f-a8f6-42ca-9235-43862c80c9f6)
 
 ### Patient Home Page
+
 ![PatientHome](https://github.com/user-attachments/assets/da5046de-94d1-4002-bb79-e438fcb982b7)
 
 ### Book a Consultation
+
 ![BookConsultation](https://github.com/user-attachments/assets/f6129d08-d9e7-4181-a6f3-8413a33d8b71)
 
 ### Real-time Consultation
+
 ![Chat](https://github.com/user-attachments/assets/64464b19-a41d-4eb4-8ecb-5473e3bd5201)
 
 ## Roadmap
