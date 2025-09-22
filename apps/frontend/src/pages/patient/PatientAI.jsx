@@ -11,8 +11,10 @@ import {
   InputRightElement,
   Heading,
   IconButton,
+  Spinner,
 } from "@chakra-ui/react";
 import { ArrowUpIcon } from "@chakra-ui/icons";
+import ReactMarkdown from "react-markdown";
 
 const ai = new GoogleGenAI({
   apiKey: import.meta.env.VITE_GEMINI_API_KEY,
@@ -35,7 +37,14 @@ const PatientAI = () => {
     setUserInput("");
 
     try {
-      const context = "";
+      const context = `
+        You are a helpful AI medical assistant. 
+        Your task is to provide general medical guidance and help users prepare for a consultation with a real doctor. 
+        - Always include a disclaimer that you are not a medical professional. 
+        - Provide structured and easy-to-read answers. 
+        - Use headings, numbered lists, or bullet points when giving advice or questions. 
+        - Keep your tone professional, empathetic, and clear.
+      `;
 
       const response = await chat.sendMessage({
         message: `Context:\n${context}\n\nQuestion: ${userInput}`,
@@ -70,9 +79,9 @@ const PatientAI = () => {
           <HStack key={idx} alignItems="flex-start" mb={4}>
             {msg.role === "ai" ? (
               <>
-                <Text fontWeight="medium" color="blue.700" maxW="70%" p={3}>
-                  {msg.text}
-                </Text>
+                <Box whiteSpace="pre-wrap">
+                  <ReactMarkdown>{msg.text}</ReactMarkdown>
+                </Box>
                 <Spacer />
               </>
             ) : (
@@ -87,6 +96,8 @@ const PatientAI = () => {
             )}
           </HStack>
         ))}
+        {loading && <Spinner m={4} color="primary.500" />}
+
         <InputGroup position="sticky" bottom={0} pb={8}>
           <Input
             bg="#fff"
@@ -121,9 +132,7 @@ const PatientAI = () => {
               borderRadius="full"
               top="10px"
               right="8px"
-            >
-              {loading ? "Thinking..." : "Send"}
-            </IconButton>
+            />
           </InputRightElement>
         </InputGroup>
       </Flex>
