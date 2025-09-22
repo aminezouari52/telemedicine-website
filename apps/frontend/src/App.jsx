@@ -24,11 +24,11 @@ import DoctorConsultations from "@/pages/doctor/DoctorConsultations";
 import PatientHome from "@/pages/patient/PatientHome";
 import PatientConsultations from "@/pages/patient/PatientConsultations";
 import PatientDoctors from "@/pages/patient/PatientDoctors";
+import PatientAI from "@/pages/patient/PatientAI";
 import DoctorDetails from "@/pages/patient/DoctorDetails";
 import BookConsultation from "@/pages/consultation/BookConsultation";
 import Chat from "@/pages/consultation/Chat";
 import NotFound from "@/components/NotFound";
-import PatientAI from "@/pages/PatientAI";
 
 const demoAccounts = ["freddie24@yahoo.com", "christop_hagenes21@gmail.com"];
 
