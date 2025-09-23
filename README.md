@@ -7,14 +7,10 @@ You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed
 
 ## New
 
-### AI feature
-
-- Consultation with AI
-  - Conversation aware
-
 ## Features
 
-- Real-time Secure Chat: Private, text-based messaging for doctor-patient communication.
+- Real-time Secure Video Calls: Private, text-based messaging + video calls for doctor-patient communication.
+- AI Doctor assistant for patients that is conversation aware and supports PDF files.
 - Appointment Scheduling: Patients can book consultations with doctors, ensuring a smooth experience.
 - User Profiles: Both doctors and patients have personalized profiles for storing essential information.
 - Real-time Notifications: Receive notifications when your consultation is about to begin, or when a doctor is available.
