@@ -52,6 +52,7 @@ You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed
 
 - Frontend: React, [ChakraUI](https://chakra-ui.com/)
 - Backend: Node.js, Express.js, MongoDB Atlas
+- AI: Gemini API
 - Authentication: Firebase
 - Real-time chat: Socket.io
 - Real-time notifications: [Node Cron](https://www.npmjs.com/package/node-cron)
