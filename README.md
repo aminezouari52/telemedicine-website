@@ -36,7 +36,7 @@ You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed
 
 ### Real-time Consultation
 
-![Chat](https://github.com/user-attachments/assets/64464b19-a41d-4eb4-8ecb-5473e3bd5201)
+<img width="1876" height="875" alt="consultation" src="https://github.com/user-attachments/assets/2c214b61-46fa-4331-a556-8af02b368645" />
 
 ### AI Consultation
 
