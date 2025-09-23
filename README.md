@@ -42,6 +42,10 @@ You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed
 
 ![Chat](https://github.com/user-attachments/assets/64464b19-a41d-4eb4-8ecb-5473e3bd5201)
 
+### AI Consultation
+
+![AIConsultation](https://github.com/user-attachments/assets/366483b6-e428-4523-b7a4-9059c2740ead)
+
 ## Roadmap
 
 - Implement video consultation functionality (coming soon).
