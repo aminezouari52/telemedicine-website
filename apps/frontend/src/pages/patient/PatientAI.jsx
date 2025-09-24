@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { GoogleGenAI } from "@google/genai";
 import {
   Box,
@@ -18,9 +18,11 @@ import {
   Tag,
   TagLabel,
   TagCloseButton,
+  Image,
 } from "@chakra-ui/react";
 import { ArrowUpIcon, AttachmentIcon } from "@chakra-ui/icons";
 import ReactMarkdown from "react-markdown";
+import pdfSvg from "@/assets/pdf.svg";
 
 const ai = new GoogleGenAI({
   apiKey: import.meta.env.VITE_GEMINI_API_KEY,
@@ -31,50 +33,23 @@ const chat = ai.chats.create({
 });
 
 const CONTEXT =
-  "You are a helpful AI medical assistant. Your task is to provide general medical guidance and help users prepare for a consultation with a real doctor. - Always include a disclaimer that you are not a medical professional. - Provide structured and easy-to-read answers. - Use headings, numbered lists, or bullet points when giving advice or questions. - Keep your tone professional, empathetic, and clear.";
+  "You are a helpful AI medical assistant. Your task is to provide general medical guidance and help users prepare for a consultation with a real doctor. - Provide structured and easy-to-read answers. - Use headings, numbered lists, or bullet points when giving advice or questions. - Keep your tone professional, empathetic, and clear. - You can read PDF files, extract relevant information from them, and use that information to assist the user.";
 
 const PatientAI = () => {
   const [userInput, setUserInput] = useState("");
-  const [messages, setMessages] = useState([
-    {
-      role: "patient",
-      text: "Hello doctor, I uploaded my medical report as a PDF. Can you review it and tell me if everything looks fine?",
-    },
-    {
-      role: "ai",
-      text: "Of course. I’ll analyze the PDF you provided. Please give me a moment to extract the key details such as lab results, diagnosis, and doctor’s notes.",
-    },
-
-    {
-      role: "patient",
-      text: "I’m particularly worried about my cholesterol levels. Can you check those?",
-    },
-    {
-      role: "ai",
-      text: "Yes, your report shows your LDL cholesterol is slightly elevated at 145 mg/dL, while the recommended level is below 130 mg/dL. HDL and triglycerides are within normal range.",
-    },
-
-    { role: "patient", text: "What does that mean for my health?" },
-    {
-      role: "ai",
-      text: "It suggests a higher risk for cardiovascular disease over time. I recommend improving your diet, exercising regularly, and following up with your physician for tailored advice.",
-    },
-
-    { role: "patient", text: "Should I take medication right away?" },
-    {
-      role: "ai",
-      text: "That decision should be made by your doctor after a full evaluation of your risk factors. For now, lifestyle changes may be the first step unless your doctor recommends otherwise.",
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pdfBase64, setPdfBase64] = useState(null);
+  const [pdfInfo, setPdfInfo] = useState({ name: "", size: 0 });
+  const inputElement = useRef();
 
   const handleSend = async () => {
     if (!userInput.trim()) return;
-    const userMsg = { role: "user", text: userInput };
+    const userMsg = { role: "user", text: userInput, hasPdf: !!pdfBase64 };
     setMessages((prev) => [...prev, userMsg]);
     setLoading(true);
     setUserInput("");
+    setPdfBase64(null);
 
     const pdfPrompt = pdfBase64
       ? `\n\nPDF content (base64):\n${pdfBase64}`
@@ -99,6 +74,12 @@ const PatientAI = () => {
   const handleFileChange = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    setPdfInfo({
+      name: file.name,
+      size: file.size,
+    });
+
     const reader = new FileReader();
     reader.onload = () => {
       const base64 = reader.result.split(",")[1];
@@ -106,6 +87,7 @@ const PatientAI = () => {
       console.log("PDF loaded as base64");
     };
     reader.readAsDataURL(file);
+    inputElement.current.focus();
   };
 
   return (
@@ -140,11 +122,37 @@ const PatientAI = () => {
             ) : (
               <>
                 <Spacer />
-                <Box bg="primary.100" p={3} borderRadius="md" maxW="70%">
-                  <Text fontWeight="medium" color="primary.700">
-                    {msg.text}
-                  </Text>
-                </Box>
+                <Flex
+                  direction="column"
+                  gap={4}
+                  alignItems={msg.hasPdf ? "end" : "start"}
+                >
+                  {msg.hasPdf && (
+                    <Tag
+                      size="lg"
+                      borderRadius="xl"
+                      variant="outline"
+                      colorScheme="primary"
+                      height="60px"
+                      mt={6}
+                    >
+                      <Image src={pdfSvg} alt="logo" h="25px" />
+                      <Box ms={2}>
+                        <TagLabel fontSize="md" color="primary.800">
+                          {pdfInfo.name}
+                        </TagLabel>
+                        <Text color="gray" fontSize="sm">
+                          {(pdfInfo.size / 1024 / 1024).toFixed(2)} MB
+                        </Text>
+                      </Box>
+                    </Tag>
+                  )}
+                  <Box bg="primary.100" p={3} borderRadius="md">
+                    <Text fontWeight="medium" color="primary.700">
+                      {msg.text}
+                    </Text>
+                  </Box>
+                </Flex>
               </>
             )}
           </HStack>
@@ -186,28 +194,45 @@ const PatientAI = () => {
                 <Flex ms={2}>
                   <Tag
                     size="lg"
-                    borderRadius="full"
-                    variant="solid"
-                    colorScheme="secondary"
+                    borderRadius="xl"
+                    variant="outline"
+                    colorScheme="primary"
+                    height="60px"
+                    mt={6}
                   >
-                    <TagLabel>PDF file</TagLabel>
-                    <TagCloseButton onClick={() => setPdfBase64(null)} />
+                    <Image src={pdfSvg} alt="logo" h="25px" />
+                    <Box ms={2}>
+                      <TagLabel fontSize="md" color="primary.800">
+                        {pdfInfo.name}
+                      </TagLabel>
+                      <Text color="gray" fontSize="sm">
+                        {(pdfInfo.size / 1024 / 1024).toFixed(2)} MB
+                      </Text>
+                    </Box>
+                    <TagCloseButton
+                      fontSize="xl"
+                      color="#000"
+                      fontWeight="bold"
+                      onClick={() => setPdfBase64(null)}
+                    />
                   </Tag>
                 </Flex>
               )}
             </InputLeftElement>
 
             <Input
+              ref={inputElement}
               bg="#fff"
               type="text"
               value={userInput}
               placeholder="Ask anything..."
               width="100%"
               size="lg"
-              height="60px"
-              paddingLeft={pdfBase64 ? "140px" : "60px"}
+              paddingLeft={pdfBase64 ? "25px" : "60px"}
+              height={pdfBase64 ? "140px" : "60px"}
+              paddingTop={pdfBase64 ? "60px" : "0"}
               shadow="md"
-              borderRadius="full"
+              borderRadius="3xl"
               colorScheme="primary"
               onChange={(e) => setUserInput(e.target.value)}
               onFocus={(e) => (e.target.style.borderColor = "#805ad5")}
@@ -228,7 +253,7 @@ const PatientAI = () => {
                   disabled={loading || !userInput.trim()}
                   colorScheme="primary"
                   borderRadius="full"
-                  top="10px"
+                  top={pdfBase64 ? "200%" : "10px"}
                   right="8px"
                 />
               </Tooltip>
