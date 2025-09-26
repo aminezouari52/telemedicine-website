@@ -1,9 +1,10 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 
 import { GoogleGenAI } from "@google/genai";
 import {
   Box,
+  VStack,
   Text,
   HStack,
   Spacer,
@@ -26,7 +27,7 @@ import ReactMarkdown from "react-markdown";
 import pdfSvg from "@/assets/pdf.svg";
 
 import pdfToText from "react-pdftotext";
-import AiThinking from "./AiThinking";
+import { keyframes } from "@emotion/react";
 
 const ai = new GoogleGenAI({
   apiKey: import.meta.env.VITE_GEMINI_API_KEY,
@@ -48,6 +49,12 @@ You are a helpful AI medical assistant.
 - Tone: professional, empathetic, and supportive.
 - If asked to explain something, give a summary first, then optional details.
 - If a PDF is provided, summarize key findings instead of pasting the full text.
+`;
+
+const pulse = keyframes`
+  0%, 100% { 
+  transform: scale(1); color: #7967f0ff; }
+  50% {  color: #352763ff; }
 `;
 
 const PatientAI = () => {
@@ -161,7 +168,7 @@ const PatientAI = () => {
             )}
           </HStack>
         ))}
-        {isPending && <AiThinking />}
+        {isPending && <AiThinkingLoader />}
 
         <InputGroup
           position="sticky"
@@ -266,6 +273,43 @@ const PatientAI = () => {
           </Flex>
         </InputGroup>
       </Flex>
+    </Flex>
+  );
+};
+
+const AiThinkingLoader = () => {
+  const aiMessages = [
+    "AI is thinking...",
+    "Analyzing data...",
+    "Formulating response...",
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    let count = 0;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % aiMessages.length);
+      count++;
+
+      if (count >= 2) {
+        clearInterval(interval);
+      }
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [aiMessages.length]);
+
+  return (
+    <Flex>
+      <VStack spacing={2} m={4}>
+        <Box height="24px">
+          <Text fontSize="md" animation={`${pulse} 1.2s ease-in-out infinite`}>
+            {aiMessages[currentIndex]}
+          </Text>
+        </Box>
+      </VStack>
     </Flex>
   );
 };
