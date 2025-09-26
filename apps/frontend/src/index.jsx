@@ -7,8 +7,8 @@ import { store } from "@/store";
 import { Provider } from "react-redux";
 
 // REACT QUERY
-import {QueryClient, QueryClientProvider, } from '@tanstack/react-query'
-import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // CHAKRA PROVIDER
 import { ChakraProvider } from "@chakra-ui/react";
@@ -28,12 +28,12 @@ const router = createBrowserRouter([
 ]);
 
 export const queryClient = new QueryClient({
-  defaultOptions : {
-    queries : {
+  defaultOptions: {
+    queries: {
       staleTime: 1000 * 60 * 5,
-    }
-  }
-})
+    },
+  },
+});
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -41,9 +41,9 @@ root.render(
   <ChakraProvider theme={themes}>
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <ReactQueryDevtools initialIsOpen = {false}/>
+        <RouterProvider router={router} />
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </Provider>
-  </ChakraProvider>
+  </ChakraProvider>,
 );

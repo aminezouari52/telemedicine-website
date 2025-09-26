@@ -1,4 +1,6 @@
 import { useRef, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+
 import { GoogleGenAI } from "@google/genai";
 import {
   Box,
@@ -11,7 +13,6 @@ import {
   InputRightElement,
   Heading,
   IconButton,
-  Spinner,
   InputLeftElement,
   Tooltip,
   Button,
@@ -24,6 +25,9 @@ import { ArrowUpIcon, AttachmentIcon } from "@chakra-ui/icons";
 import ReactMarkdown from "react-markdown";
 import pdfSvg from "@/assets/pdf.svg";
 
+import pdfToText from "react-pdftotext";
+import AiThinking from "./AiThinking";
+
 const ai = new GoogleGenAI({
   apiKey: import.meta.env.VITE_GEMINI_API_KEY,
 });
@@ -32,61 +36,61 @@ const chat = ai.chats.create({
   model: "gemini-2.5-flash",
 });
 
-const CONTEXT =
-  "You are a helpful AI medical assistant. Your task is to provide general medical guidance and help users prepare for a consultation with a real doctor. - Provide structured and easy-to-read answers. - Use headings, numbered lists, or bullet points when giving advice or questions. - Keep your tone professional, empathetic, and clear. - You can read PDF files, extract relevant information from them, and use that information to assist the user.";
+const CONTEXT = `
+You are a helpful AI medical assistant. 
+- Always provide concise, structured, and easy-to-read answers. 
+- Use markdown formatting properly:
+  - Headings: ## Heading
+  - Numbered lists: 1. 2. 3. (each on a new line)
+  - Bullet points: - item (each on a new line)
+- Limit answers to a maximum of 5 bullet points or 5 numbered items.
+- Keep sentences short and clear.
+- Tone: professional, empathetic, and supportive.
+- If asked to explain something, give a summary first, then optional details.
+- If a PDF is provided, summarize key findings instead of pasting the full text.
+`;
 
 const PatientAI = () => {
   const [userInput, setUserInput] = useState("");
   const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [pdfBase64, setPdfBase64] = useState(null);
   const [pdfInfo, setPdfInfo] = useState({ name: "", size: 0 });
   const inputElement = useRef();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async ({ input, pdfBase64 }) => {
+      const pdfPrompt = pdfBase64 ? `\n\nPDF content:\n${pdfBase64}` : "";
+
+      const response = await chat.sendMessage({
+        message: `Context:\n${CONTEXT}\n\nQuestion: ${input}${pdfPrompt}`,
+      });
+
+      return response.text || "No response";
+    },
+    onSuccess: (aiResponse) => {
+      setMessages((prev) => [...prev, { role: "ai", text: aiResponse }]);
+    },
+  });
 
   const handleSend = async () => {
     if (!userInput.trim()) return;
     const userMsg = { role: "user", text: userInput, hasPdf: !!pdfBase64 };
     setMessages((prev) => [...prev, userMsg]);
-    setLoading(true);
+
+    mutate({ input: userInput, pdfBase64 });
+
     setUserInput("");
     setPdfBase64(null);
-
-    const pdfPrompt = pdfBase64
-      ? `\n\nPDF content (base64):\n${pdfBase64}`
-      : "";
-
-    try {
-      const response = await chat.sendMessage({
-        message: `Context:\n${CONTEXT}\n\nQuestion: ${userInput}` + pdfPrompt,
-      });
-
-      setMessages((prev) => [
-        ...prev,
-        { role: "ai", text: response.text || "No response" },
-      ]);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    setPdfInfo({
-      name: file.name,
-      size: file.size,
-    });
+    setPdfInfo({ name: file.name, size: file.size });
+    const pdfText = await pdfToText(file);
+    setPdfBase64(pdfText);
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result.split(",")[1];
-      setPdfBase64(base64);
-      console.log("PDF loaded as base64");
-    };
-    reader.readAsDataURL(file);
     inputElement.current.focus();
   };
 
@@ -105,7 +109,7 @@ const PatientAI = () => {
       )}
       <Flex
         direction="column"
-        maxW={{ sm: "600px", lg: "900px" }}
+        maxW={{ sm: "720px", lg: "900px" }}
         w="100%"
         px={10}
         pt={6}
@@ -157,7 +161,7 @@ const PatientAI = () => {
             )}
           </HStack>
         ))}
-        {loading && <Spinner m={4} color="primary.500" />}
+        {isPending && <AiThinking />}
 
         <InputGroup
           position="sticky"
@@ -183,6 +187,7 @@ const PatientAI = () => {
                     <input
                       id="file-input"
                       type="file"
+                      accept="application/pdf"
                       style={{ display: "none" }}
                       onChange={handleFileChange}
                     />
@@ -238,7 +243,7 @@ const PatientAI = () => {
               onFocus={(e) => (e.target.style.borderColor = "#805ad5")}
               onBlur={(e) => (e.target.style.borderColor = "#d1d5db")}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !loading && userInput.trim()) {
+                if (e.key === "Enter" && !isPending && userInput.trim()) {
                   handleSend();
                 }
               }}
@@ -250,7 +255,7 @@ const PatientAI = () => {
                   aria-label="Send message"
                   icon={<ArrowUpIcon />}
                   onClick={handleSend}
-                  disabled={loading || !userInput.trim()}
+                  disabled={isPending || !userInput.trim()}
                   colorScheme="primary"
                   borderRadius="full"
                   top={pdfBase64 ? "200%" : "10px"}
