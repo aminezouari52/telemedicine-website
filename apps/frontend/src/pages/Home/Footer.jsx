@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import {
   Flex,
   Box,
@@ -12,14 +12,22 @@ import {
 } from "@chakra-ui/react";
 import { FaFacebook, FaInstagram, FaGithub, FaLinkedin } from "react-icons/fa";
 import logoDark from "@/assets/logo-dark.png";
+import { footerEmailInputValidations } from "@/utils/formValidations";
 
 const Footer = () => {
-  const [newsletter, setNewsletter] = useState("");
   const navigate = useNavigate();
+  // react-use-form
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm();
 
-  const newsLetterEmailHandler = (event) => {
-    event.preventDefault();
-    console.log(newsletter);
+  const onSubmit = (data) => {
+    const { email } = data;
+
+    // TODO: Implement the email service
+    console.info(email);
   };
 
   return (
@@ -40,20 +48,25 @@ const Footer = () => {
             innovations in telemedicine, health tips, and much more to take care
             of yourself and your loved ones.
           </Text>
-          <form>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <Input
               fontSize="sm"
               type="email"
               variant="flushed"
               placeholder="E-Mail address"
               borderColor="gray.200"
-              onChange={(event) => setNewsletter(event.target.value)}
               _placeholder={{
                 color: "gray.200",
               }}
               focusBorderColor="white"
+              {...register("email", footerEmailInputValidations)}
             />
-            <button type="submit" onClick={newsLetterEmailHandler} />
+            {errors && (
+              <Text fontSize="sm" color="red.300">
+                {errors.email?.message}
+              </Text>
+            )}
+            <button type="submit" />
           </form>
         </Flex>
 
