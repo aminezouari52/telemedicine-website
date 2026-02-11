@@ -1,14 +1,8 @@
-import { Field } from "formik";
+import { useController } from "react-hook-form";
 import { FormControl, FormLabel, Input, Text } from "@chakra-ui/react";
 
-const TextFormControl = ({
-  onChange,
-  name,
-  label,
-  value,
-  autoComplete,
-  error,
-}) => {
+const TextFormControl = ({ control, name, label, autoComplete, error }) => {
+  const { field } = useController({ control, name });
   return (
     <FormControl>
       <FormLabel
@@ -20,10 +14,8 @@ const TextFormControl = ({
       >
         {label}
       </FormLabel>
-      <Field
-        as={Input}
+      <Input
         type="text"
-        name={name}
         id={name}
         autoComplete={autoComplete}
         borderColor={error ? "red.300" : "inherit"}
@@ -32,8 +24,7 @@ const TextFormControl = ({
         size="sm"
         w="full"
         rounded="md"
-        value={value}
-        onChange={onChange}
+        {...field}
         _hover={{
           borderColor: error ? "red.400" : "gray.300",
         }}

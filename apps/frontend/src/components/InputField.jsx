@@ -1,6 +1,6 @@
 import { Box, FormLabel, FormControl } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/react";
-import { useField } from "formik";
+import { useController } from "react-hook-form";
 
 const InputField = ({
   label,
@@ -9,9 +9,11 @@ const InputField = ({
   labelWeight = "normal",
   ...props
 }) => {
-  const [field, meta] = useField(props);
-  const errorMessageColor =
-    meta.touched && meta.error ? "deepRed.500" : props.secondarycolor;
+  const {
+    field,
+    fieldState: { error },
+  } = useController(props);
+  const errorMessageColor = error ? "deepRed.500" : props.secondarycolor;
 
   return (
     <FormControl w="100%" flexDirection="column" isRequired={isRequired}>
@@ -28,9 +30,9 @@ const InputField = ({
         {...field}
         {...props}
       />
-      {meta.touched && meta.error ? (
+      {error ? (
         <Box mt={1} color="deepRed.500" fontSize="sm">
-          {meta.error}
+          {error.message}
         </Box>
       ) : null}
     </FormControl>
