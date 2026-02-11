@@ -1,5 +1,5 @@
 // HOOKS
-import { useFormikContext } from "formik";
+import { useFormContext } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -30,9 +30,10 @@ import {
 import DatePicker from "react-datepicker";
 
 const DateStep = ({ goToNext, goToPrevious }) => {
-  const { values, setFieldValue } = useFormikContext();
+  const { watch, setValue } = useFormContext();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const dateValue = watch("date");
 
   const datePickerOnChangeHandler = (date) => {
     setSelectedDate(date);
@@ -40,7 +41,7 @@ const DateStep = ({ goToNext, goToPrevious }) => {
   };
 
   const onSaveTime = (date) => {
-    setFieldValue("date", date);
+    setValue("date", date);
     onClose();
   };
 
@@ -69,8 +70,8 @@ const DateStep = ({ goToNext, goToPrevious }) => {
         <Stack spacing={7} maxWidth="600px">
           <Text mr={2}>
             <strong>Selected date: </strong>
-            {values?.date
-              ? DateTime.fromJSDate(new Date(values.date)).toFormat(
+            {dateValue
+              ? DateTime.fromJSDate(new Date(dateValue)).toFormat(
                   "dd-MM-yyyy 'à' HH:00",
                 )
               : null}
@@ -89,7 +90,7 @@ const DateStep = ({ goToNext, goToPrevious }) => {
             </Button>
             <Button
               size="sm"
-              onClick={() => goToNext(values)}
+              onClick={() => goToNext()}
               colorScheme="secondary"
               _hover={{
                 opacity: 0.8,

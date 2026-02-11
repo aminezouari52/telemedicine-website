@@ -16,14 +16,15 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { useFormikContext } from "formik";
+import { useFormContext } from "react-hook-form";
 import { DateTime } from "luxon";
 
 const VerifyData = ({ isOpen, onClose }) => {
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const navigate = useNavigate();
 
-  const { values, submitForm } = useFormikContext();
+  const { getValues, handleSubmit } = useFormContext();
+  const values = getValues();
 
   return (
     <>
@@ -91,7 +92,7 @@ const VerifyData = ({ isOpen, onClose }) => {
                   opacity: 0.8,
                 }}
                 onClick={() => {
-                  submitForm();
+                  handleSubmit();
                   setHasSubmitted(true);
                 }}
               >

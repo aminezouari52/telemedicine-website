@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 
 const Card = (props) => {
-  const { icon, children, ...radioProps } = props;
+  const { children, ...radioProps } = props;
   const { state, getInputProps, getRadioProps, htmlProps } =
     useRadio(radioProps);
 

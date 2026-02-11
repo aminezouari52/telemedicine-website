@@ -3,6 +3,8 @@ import { useDisclosure, useSteps } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useForm, FormProvider } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 // FUNCTIONS
 import { createConsultation } from "@/services/consultationService";
@@ -15,7 +17,6 @@ import * as Yup from "yup";
 import VerifyData from "./VerifyData";
 import DateStep from "./forms/DateStep";
 import ProfileInfo from "./forms/ProfileInfo";
-import { Formik, Form } from "formik";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 // STYLE
@@ -65,6 +66,62 @@ const Consultation = () => {
     count: steps.length,
   });
 
+  const methods = useForm({
+    defaultValues: {
+      date: new Date(),
+      firstName: user?.firstName ?? "",
+      lastName: user?.lastName ?? "",
+      address: user?.address ?? "",
+      phone: user?.phone ?? "",
+      age: user?.age ?? 0,
+      city: user?.city ?? "",
+      zip: user?.zip ?? "",
+      weight: user?.weight ?? "",
+      patient: user?._id,
+      doctor: params?.id,
+      isProfileCompleted: true,
+    },
+    resolver: yupResolver(
+      Yup.object({
+        date: Yup.string().required("Date is required"),
+        firstName: Yup.string().required("Firstname is required").trim(),
+        lastName: Yup.string().required("Lastname is required").trim(),
+        age: Yup.number()
+          .required("Age is required")
+          .min(18, "You must be at least 18 years old")
+          .max(100, "Age cannot exceed 100 years"),
+        phone: Yup.string()
+          .required("Phone number is required")
+          .trim()
+          .matches(/^[0-9]*$/, "The phone number is not valid"),
+        address: Yup.string()
+          .required("Address is required")
+          .max(50, "The address cannot exceed 50 characters."),
+        city: Yup.string()
+          .required("City is required")
+          .max(50, "City cannot exceed 50 characters"),
+        zip: Yup.string()
+          .required("ZIP is required")
+          .matches(/^[0-9]+$/, "ZIP must be a number")
+          .min(4, "ZIP must be at least 4 digits long")
+          .max(5, "ZIP cannot exceed 5 digits"),
+      }),
+    ),
+  });
+
+  const onSubmit = async (values) => {
+    console.log("Form submitted with values:", values);
+    const { date, patient, doctor, ...resValues } = values;
+    await updatePatient({ id: user._id, token: user.token }, resValues);
+    await createConsultation({ date, patient, doctor });
+    dispatch(
+      setUser({
+        ...user,
+        ...resValues,
+      }),
+    );
+  };
+
   const resetHandler = () => {
     onClose();
     goToPrevious();
@@ -91,61 +148,10 @@ const Consultation = () => {
       </Flex>
     );
   }
-
   return (
     <Flex direction="column" bg="#fff" p={10} w="100%">
-      <Formik
-        initialValues={{
-          date: new Date(),
-          firstName: user?.firstName ?? "",
-          lastName: user?.lastName ?? "",
-          address: user?.address ?? "",
-          phone: user?.phone ?? "",
-          age: user?.age ?? 0,
-          city: user?.city ?? "",
-          zip: user?.zip ?? "",
-          weight: user?.weight ?? "",
-          patient: user?._id,
-          doctor: params?.id,
-          isProfileCompleted: true,
-        }}
-        validationSchema={Yup.object({
-          date: Yup.string().required("Date is required"),
-          firstName: Yup.string().required("Firstname is required").trim(),
-          lastName: Yup.string().required("Lastname is required").trim(),
-          age: Yup.number()
-            .required("Age is required")
-            .min(18, "You must be at least 18 years old")
-            .max(100, "Age cannot exceed 100 years"),
-          phone: Yup.string()
-            .required("Phone number is required")
-            .trim()
-            .matches(/^[0-9]*$/, "The phone number is not valid"),
-          address: Yup.string()
-            .required("Address is required")
-            .max(50, "The address cannot exceed 50 characters."),
-          city: Yup.string()
-            .required("City is required")
-            .max(50, "City cannot exceed 50 characters"),
-          zip: Yup.string()
-            .required("ZIP is required")
-            .matches(/^[0-9]+$/, "ZIP must be a number")
-            .min(4, "ZIP must be at least 4 digits long")
-            .max(5, "ZIP cannot exceed 5 digits"),
-        })}
-        onSubmit={async (values) => {
-          const { date, patient, doctor, ...resValues } = values;
-          await updatePatient({ id: user._id, token: user.token }, resValues);
-          await createConsultation({ date, patient, doctor });
-          dispatch(
-            setUser({
-              ...user,
-              ...resValues,
-            }),
-          );
-        }}
-      >
-        <Form>
+      <FormProvider {...methods}>
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
           <Stepper pb={10} size="lg" colorScheme="primary" index={activeStep}>
             {steps.map((step, index) => (
               <Step key={index}>
@@ -198,8 +204,8 @@ const Consultation = () => {
             isOpen={activeStep === steps.length}
             onClose={resetHandler}
           />
-        </Form>
-      </Formik>
+        </form>
+      </FormProvider>
     </Flex>
   );
 };

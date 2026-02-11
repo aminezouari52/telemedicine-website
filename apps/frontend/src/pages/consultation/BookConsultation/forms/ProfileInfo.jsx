@@ -1,6 +1,6 @@
 // HOOKS
 import { useState, useEffect } from "react";
-import { useFormikContext } from "formik";
+import { useFormContext } from "react-hook-form";
 
 // COMPONENTS
 import InputField from "@/components/InputField";
@@ -11,22 +11,28 @@ import { Flex, Button } from "@chakra-ui/react";
 const ProfileInfo = ({ goToNext }) => {
   const [disableButton, setDisableButton] = useState(false);
 
-  const { values, errors, validateForm } = useFormikContext();
+  const {
+    formState: { errors },
+    trigger,
+    getValues,
+  } = useFormContext();
 
   const nextFormHandler = async () => {
-    const asyncErrors = await validateForm();
-    if (
-      asyncErrors.firstName ||
-      asyncErrors.lastName ||
-      asyncErrors.phone ||
-      asyncErrors.address ||
-      asyncErrors.city ||
-      asyncErrors.zip ||
-      asyncErrors.age
-    ) {
+    const isValid = await trigger([
+      "firstName",
+      "lastName",
+      "phone",
+      "address",
+      "city",
+      "zip",
+      "age",
+    ]);
+
+    if (!isValid) {
       setDisableButton(true);
     } else {
       setDisableButton(false);
+      const values = getValues();
       goToNext(values);
     }
   };
