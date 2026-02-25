@@ -1,100 +1,85 @@
+"use client";
+
 // HOOKS
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 
 // COMPONENTS
 import Spinner from "@/components/Spinner";
-import { Outlet } from "react-router-dom";
 
 // STYLE
+import { Button } from "@/components/ui/button";
 import {
-  Flex,
-  IconButton,
-  Image,
   Popover,
-  PopoverTrigger,
   PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
-  Text,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  Box,
-} from "@chakra-ui/react";
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 // ASSETS
-import loginImg from "@/assets/login.webp";
+import Image from "next/image";
 import { FaInfoCircle } from "react-icons/fa";
 
-export const AuthLayout = () => {
-  const navigate = useNavigate();
+export const AuthLayout = ({ children }) => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const user = useSelector((state) => state.userReducer.user);
 
   useEffect(() => {
     if (user?.token) {
-      if (user.role === "doctor") navigate("/doctor");
-      else if (user.role === "patient") navigate("/patient");
+      if (user.role === "doctor") router.push("/doctor/home");
+      else if (user.role === "patient") router.push("/patient/home");
     }
     setIsLoading(false);
-  }, [user]);
+  }, [user, router]);
 
   return isLoading ? (
     <Spinner />
   ) : (
-    <Flex
-      justifyContent="space-between"
-      alignItems="center"
-      h="100vh"
-      bg="white"
-    >
+    <div className="flex justify-between items-center h-screen bg-white">
       <Popover>
-        <PopoverTrigger>
-          <IconButton
-            m={4}
-            size="sm"
-            color="primary.700"
-            icon={<FaInfoCircle />}
-            pos="absolute"
-            top="0"
-            right="58%"
-          ></IconButton>
+        <PopoverTrigger asChild>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="absolute top-4 right-[58%] text-primary-700"
+          >
+            <FaInfoCircle />
+          </Button>
         </PopoverTrigger>
-        <PopoverContent w="367px">
-          <PopoverArrow />
-          <PopoverCloseButton />
-          <PopoverHeader>
-            For testing purposes you can login with these credentials
-          </PopoverHeader>
-          <PopoverBody>
-            <Box>
-              <Flex gap={1}>
-                <Text fontWeight="bold">doctor: </Text>
-                <Text>freddie24@yahoo.com</Text>
-              </Flex>
-              <Flex gap={1}>
-                <Text fontWeight="bold">patient: </Text>
-                <Text>christop_hagenes21@gmail.com</Text>
-              </Flex>
-            </Box>
-          </PopoverBody>
-          <PopoverFooter>
-            <Flex gap={1}>
-              <Text fontWeight="bold">Password: </Text>
-              <Text>testtest</Text>
-            </Flex>
-          </PopoverFooter>
+        <PopoverContent className="w-[367px]">
+          <div className="space-y-2">
+            <h4 className="font-semibold mb-2">
+              For testing purposes you can login with these credentials
+            </h4>
+            <div className="space-y-1">
+              <div className="flex gap-1">
+                <span className="font-bold">doctor: </span>
+                <span>freddie24@yahoo.com</span>
+              </div>
+              <div className="flex gap-1">
+                <span className="font-bold">patient: </span>
+                <span>christop_hagenes21@gmail.com</span>
+              </div>
+            </div>
+            <div className="flex gap-1 pt-2 border-t">
+              <span className="font-bold">Password: </span>
+              <span>testtest</span>
+            </div>
+          </div>
         </PopoverContent>
       </Popover>
 
-      <Flex justifyContent="center" alignItems="center" w="50%">
-        <Outlet />
-      </Flex>
-      <Flex h="100vh" w="70%">
-        <Image objectFit="cover" src={loginImg} alt="product image" />
-      </Flex>
-    </Flex>
+      <div className="flex justify-center items-center w-1/2">{children}</div>
+      <div className="h-screen w-[70%] relative">
+        <Image
+          src="/assets/login.webp"
+          alt="product image"
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
+    </div>
   );
 };

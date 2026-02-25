@@ -1,25 +1,10 @@
-import { Box, Spinner as ChakraSpinner } from "@chakra-ui/react";
+import { Spinner as ShadcnSpinner } from "@/components/ui/spinner";
 
 const Spinner = () => {
   return (
-    <Box
-      backgroundColor="loading"
-      pos="absolute"
-      inset="0"
-      width="100vw"
-      height="100vh"
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      zIndex="5"
-    >
-      <ChakraSpinner
-        thickness="4px"
-        emptyColor="gray.200"
-        color="primary.500"
-        size="xl"
-      />
-    </Box>
+    <div className="bg-[#b0afff] absolute inset-0 w-screen h-screen flex items-center justify-center z-[5]">
+      <ShadcnSpinner size="lg" className="text-primary-500" />
+    </div>
   );
 };
 

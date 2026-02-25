@@ -1,24 +1,22 @@
-import { Button } from "@chakra-ui/react";
+"use client";
 
-const activeStyle = {
-  bg: "primary.500",
-  color: "#fff",
-};
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-const PaginationButton = (props) => {
+const PaginationButton = ({ active, disabled, onClick, children }) => {
   return (
     <Button
-      size="xs"
-      bg={!props.active ? "#fff" : "primary.500"}
-      color={!props.active ? "#gray.700" : "#fff"}
-      borderRadius={4}
-      isDisabled={props.disabled}
-      opacity={props.disabled && 0.6}
-      _hover={!props.disabled && activeStyle}
-      cursor={props.disabled && "not-allowed"}
-      onClick={props.onClick}
+      size="sm"
+      variant={active ? "default" : "outline"}
+      className={cn(
+        "rounded",
+        active && "bg-primary-500 text-white hover:bg-primary-600",
+        disabled && "opacity-60 cursor-not-allowed",
+      )}
+      disabled={disabled}
+      onClick={onClick}
     >
-      {props.children}
+      {children}
     </Button>
   );
 };

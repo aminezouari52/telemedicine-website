@@ -1,0 +1,151 @@
+"use client";
+
+// firebase
+import { auth } from "@/firebase";
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+
+// hooks
+import { useState } from "react";
+import { useToast } from "@/hooks";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import Link from "next/link";
+
+// functions
+import { loginUser } from "@/services/authService";
+import { setUser } from "@/reducers/userReducer";
+import { authErrorMessage } from "@/utils/auth";
+
+// components
+import Logo from "@/components/Logo";
+
+// style
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+
+// assets
+import { AiOutlineMail } from "react-icons/ai";
+
+const demoAccounts = ["freddie24@yahoo.com", "christop_hagenes21@gmail.com"];
+
+export default function LoginPage() {
+  const toast = useToast();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const roleBasedRedirect = (role) => {
+    if (role === "doctor") {
+      router.push("/doctor/home");
+      return;
+    }
+    if (role === "patient") {
+      router.push("/patient/home");
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const { user } = result;
+
+      if (!demoAccounts.includes(email) && !user.emailVerified) {
+        await signOut(auth);
+        throw new Error("Email not verified. Please verify your email.");
+      }
+
+      const idTokenResult = await user.getIdTokenResult();
+      const response = await loginUser({ token: idTokenResult.token });
+
+      dispatch(
+        setUser({
+          ...response.data,
+          token: idTokenResult.token,
+        }),
+      );
+
+      roleBasedRedirect(response.data.role);
+    } catch (error) {
+      toast(authErrorMessage(error), "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form
+      className="w-[325px] flex flex-col items-center justify-center gap-12"
+      onSubmit={handleSubmit}
+    >
+      <div className="cursor-pointer" onClick={() => router.push("/")}>
+        <Logo className="w-[280px]" />
+      </div>
+
+      <div className="flex flex-col justify-center items-center gap-2">
+        <h1 className="text-2xl font-semibold text-center">Welcome Back!</h1>
+        <p className="text-gray-500 text-center">
+          Login to access the platform
+        </p>
+      </div>
+
+      <div className="w-full flex flex-col items-end gap-2">
+        <Input
+          className="focus-visible:ring-primary-500 mt-2"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="your email"
+          autoFocus
+        />
+
+        <Input
+          className="focus-visible:ring-primary-500"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="your password"
+        />
+        <Link
+          href="/auth/forgot-password"
+          className="text-primary-500 hover:underline text-sm"
+        >
+          Forgot your password?
+        </Link>
+
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={!email || password.length < 6 || loading}
+        >
+          {loading ? (
+            <>
+              <Spinner className="mr-2 h-4 w-4" />
+              Logging in...
+            </>
+          ) : (
+            <>
+              <AiOutlineMail className="mr-2" />
+              Login
+            </>
+          )}
+        </Button>
+      </div>
+
+      <div className="text-sm w-full flex justify-center">
+        <span className="text-gray-500 mr-1">Don&apos;t have an account?</span>
+        <Link
+          href="/auth/register"
+          className="text-primary-500 font-semibold hover:underline"
+        >
+          Register
+        </Link>
+      </div>
+    </form>
+  );
+}

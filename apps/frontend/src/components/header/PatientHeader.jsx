@@ -1,5 +1,7 @@
+"use client";
+
 // HOOKS
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "@/hooks";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -15,7 +17,7 @@ import HeaderButton from "./HeaderButton";
 import Logo from "@/components/Logo";
 
 // STYLE
-import { Flex, Text, IconButton, SimpleGrid, Button } from "@chakra-ui/react";
+import { Button } from "@/components/ui/button";
 
 // ASSETS
 import { IoChatboxSharp } from "react-icons/io5";
@@ -23,7 +25,7 @@ import { TbLogout } from "react-icons/tb";
 import { MdAutoAwesome } from "react-icons/md";
 
 export const PatientHeader = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
   const toast = useToast();
@@ -43,7 +45,7 @@ export const PatientHeader = () => {
       await signOut(auth);
       dispatch(logout(null));
       queryClient.removeQueries();
-      navigate("/auth/login");
+      router.push("/auth/login");
     } catch (err) {
       console.log(err);
       toast("Logout failed!", "error");
@@ -51,89 +53,55 @@ export const PatientHeader = () => {
   };
 
   return (
-    <SimpleGrid
-      as="header"
-      columns={3}
-      pos="sticky"
-      top="0"
-      background="#fff"
-      alignItems="center"
-      h="62px"
-      w="100%"
-      px="56px"
-      shadow="md"
-      zIndex="5"
-    >
+    <header className="sticky top-0 bg-white items-center h-[62px] w-full px-14 shadow-md z-[5] grid grid-cols-3">
       <Logo />
-      <Flex alignItems="center" gap="20px" height="100%">
+      <div className="flex items-center gap-5 h-full">
         <HeaderButton pathname="/patient/home">
-          <Text fontSize="sm">Home</Text>
+          <span className="text-sm">Home</span>
         </HeaderButton>
         <HeaderButton pathname="/patient/consultations">
-          <Text fontSize="sm">Consultations</Text>
+          <span className="text-sm">Consultations</span>
         </HeaderButton>
         <HeaderButton pathname="/patient/doctors">
-          <Text fontSize="sm">Doctors</Text>
+          <span className="text-sm">Doctors</span>
         </HeaderButton>
-      </Flex>
-      <Flex gap={1} alignItems="center" justifyContent="flex-end" height="100%">
+      </div>
+      <div className="flex gap-1 items-center justify-end h-full">
         {user && !!consultation && (
-          <>
-            <Button
-              size="sm"
-              colorScheme="primary"
-              rightIcon={<IoChatboxSharp />}
-              _hover={{
-                opacity: 0.8,
-              }}
-              onClick={() => {
-                navigate(`/${user?.consultationId}`);
-              }}
-            >
-              Join
-            </Button>
-          </>
+          <Button
+            size="sm"
+            className="hover:opacity-80"
+            onClick={() => {
+              router.push(`/${user?.consultationId}`);
+            }}
+          >
+            Join
+            <IoChatboxSharp className="ml-2" />
+          </Button>
         )}
         <Button
           size="sm"
-          leftIcon={<MdAutoAwesome className="animated-icon" size="20px" />}
           variant="outline"
-          colorScheme="primary"
-          ml={2}
-          _hover={{
-            bg: "#f3f4f6",
-            opacity: 0.9,
-          }}
+          className="ml-2 hover:bg-gray-100 hover:opacity-90"
           onClick={() => {
-            navigate("/patient/ai");
+            router.push("/patient/AI");
           }}
         >
+          <MdAutoAwesome className="animated-icon mr-2" size="20px" />
           AI Consultation
         </Button>
 
-        <IconButton
-          size="md"
+        <Button
+          size="icon"
+          variant="ghost"
           aria-label="logout"
-          isRound
-          bg="transparent"
-          _hover={{
-            opacity: 0.8,
-          }}
-          _active={{
-            opacity: 0.8,
-          }}
+          className="rounded-full bg-transparent hover:opacity-80"
           onClick={logoutHandler}
-          icon={
-            <TbLogout
-              style={{
-                height: "20px",
-                width: "20px",
-              }}
-            />
-          }
-        />
-      </Flex>
-    </SimpleGrid>
+        >
+          <TbLogout className="h-5 w-5" />
+        </Button>
+      </div>
+    </header>
   );
 };
 

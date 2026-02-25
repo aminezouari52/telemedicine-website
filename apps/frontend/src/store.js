@@ -7,5 +7,5 @@ export const store = configureStore({
     userReducer,
     searchReducer,
   },
-  devTools: import.meta.env.VITE_NODE_ENV !== "production",
+  devTools: process.env.NODE_ENV !== "production",
 });

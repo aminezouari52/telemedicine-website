@@ -1,4 +1,4 @@
-import { Input } from "@chakra-ui/react";
+import { Input } from "@/components/ui/input";
 import Resizer from "react-image-file-resizer";
 
 const ImageUpload = ({ onChange }) => {
@@ -16,14 +16,14 @@ const ImageUpload = ({ onChange }) => {
       async (uri) => {
         onChange(uri);
       },
-      "base64"
+      "base64",
     );
   };
 
   return (
     <Input
       type="file"
-      display="none"
+      className="hidden"
       accept="images/*"
       onChange={uploadImageHandler}
     />

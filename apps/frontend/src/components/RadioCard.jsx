@@ -1,91 +1,60 @@
-import {
-  Box,
-  Flex,
-  Text,
-  useRadio,
-  Icon,
-  useRadioGroup,
-  Stack,
-  chakra,
-} from "@chakra-ui/react";
+"use client";
 
-const Card = (props) => {
-  const { icon, children, ...radioProps } = props;
-  const { state, getInputProps, getRadioProps, htmlProps } =
-    useRadio(radioProps);
-
-  return (
-    <chakra.label {...htmlProps} cursor="pointer">
-      <input {...getInputProps({})} hidden />
-      <Box
-        {...getRadioProps()}
-        borderWidth="3px"
-        borderRadius="md"
-        borderColor="gray.100"
-        _checked={{
-          borderColor: "primary.500",
-        }}
-        _hover={{
-          transition: "all 0.2s ease-in-out",
-          borderColor: !state.isChecked && "gray.200",
-        }}
-        px={6}
-        py={4}
-      >
-        <Flex gap={4} alignItems="center">
-          <Box
-            h="20px"
-            w="20px"
-            borderColor={state.isChecked ? "#000" : "#3423"}
-            borderWidth={state.isChecked ? "6px" : "2px"}
-            borderRadius="50%"
-          ></Box>
-          <Flex
-            w="100%"
-            justifyContent="space-between"
-            alignItems="center"
-            fontSize="xl"
-          >
-            <Text
-              fontWeight="semibold"
-              color={state.isChecked ? "#000" : "gray.500"}
-            >
-              {children}
-            </Text>
-            <Icon
-              color={state.isChecked ? "deepRed.500" : "gray.300"}
-              as={state.icon}
-            />
-          </Flex>
-        </Flex>
-      </Box>
-    </chakra.label>
-  );
-};
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 const RadioCard = ({ name, defaultValue, handleChange, options }) => {
-  const { getRootProps, getRadioProps } = useRadioGroup({
-    name,
-    defaultValue,
-    onChange: handleChange,
-  });
+  const [value, setValue] = useState(defaultValue || "");
+
+  const handleValueChange = (newValue) => {
+    setValue(newValue);
+    if (handleChange) {
+      handleChange(newValue);
+    }
+  };
 
   return (
-    <Stack {...getRootProps}>
-      {options.map((option) => {
-        return (
-          <Card
-            key={option.value}
-            icon={option.icon}
-            {...getRadioProps({
-              value: option.value,
-            })}
-          >
-            {option.title}
-          </Card>
-        );
-      })}
-    </Stack>
+    <RadioGroup value={value} onValueChange={handleValueChange} name={name}>
+      <div className="space-y-2">
+        {options.map((option) => {
+          const isChecked = value === option.value;
+          return (
+            <label
+              key={option.value}
+              htmlFor={option.value}
+              className={cn(
+                "flex items-center gap-4 px-6 py-4 border-3 rounded-md cursor-pointer transition-all",
+                isChecked
+                  ? "border-primary-500"
+                  : "border-gray-100 hover:border-gray-200",
+              )}
+            >
+              <RadioGroupItem value={option.value} id={option.value} />
+              <div className="flex items-center gap-4 w-full justify-between text-xl">
+                <span
+                  className={cn(
+                    "font-semibold",
+                    isChecked ? "text-black" : "text-gray-500",
+                  )}
+                >
+                  {option.title}
+                </span>
+                {option.icon && (
+                  <div
+                    className={cn(isChecked ? "text-red-500" : "text-gray-300")}
+                  >
+                    {typeof option.icon === "function"
+                      ? option.icon({ className: "h-5 w-5" })
+                      : option.icon}
+                  </div>
+                )}
+              </div>
+            </label>
+          );
+        })}
+      </div>
+    </RadioGroup>
   );
 };
 

@@ -1,4 +1,5 @@
-// HOOKS
+"use client";
+
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
@@ -6,10 +7,11 @@ import { useDispatch } from "react-redux";
 import { setSearchText } from "@/reducers/searchReducer";
 
 // STYLE
-import { Input, IconButton, Flex } from "@chakra-ui/react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 // ICONS
-import { Search2Icon } from "@chakra-ui/icons";
+import { Search as SearchIcon } from "lucide-react";
 
 const Search = () => {
   const dispatch = useDispatch();
@@ -30,28 +32,21 @@ const Search = () => {
   }, []);
 
   return (
-    <Flex>
-      <IconButton
+    <div className="flex">
+      <Button
         aria-label="search"
-        borderTopRightRadius="0"
-        borderBottomRightRadius="0"
-        colorScheme="primary"
-        color="white"
-        icon={<Search2Icon />}
+        className="rounded-r-none bg-primary-500 text-white hover:bg-primary-600"
         size="sm"
-      />
+      >
+        <SearchIcon className="h-4 w-4" />
+      </Button>
       <Input
-        size="sm"
+        className="rounded-l-none focus-visible:ring-primary-500 px-4 text-black"
         type="text"
-        focusBorderColor="primary.500"
         placeholder="Search..."
         onChange={handleChange}
-        color="#000"
-        borderTopLeftRadius="0"
-        borderBottomLeftRadius="0"
-        px="4"
       />
-    </Flex>
+    </div>
   );
 };
 

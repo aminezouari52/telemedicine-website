@@ -1,11 +1,11 @@
 import axios from "axios";
 
 export const createConsultation = async (body) =>
-  await axios.post(`${import.meta.env.VITE_API_V1_URL}/consultation`, body);
+  await axios.post(`${process.env.NEXT_PUBLIC_API_V1_URL}/consultation`, body);
 
 export const updateConsultation = async (id, token, body) =>
   await axios.patch(
-    `${import.meta.env.VITE_API_V1_URL}/consultation/${id}`,
+    `${process.env.NEXT_PUBLIC_API_V1_URL}/consultation/${id}`,
     body,
     {
       headers: {
@@ -15,14 +15,14 @@ export const updateConsultation = async (id, token, body) =>
   );
 
 export const getConsultation = async (id) =>
-  await axios.get(`${import.meta.env.VITE_API_V1_URL}/consultation/${id}`);
+  await axios.get(`${process.env.NEXT_PUBLIC_API_V1_URL}/consultation/${id}`);
 
 export const getDoctorConsultations = async (id) =>
   await axios.get(
-    `${import.meta.env.VITE_API_V1_URL}/consultation/doctor/${id}`,
+    `${process.env.NEXT_PUBLIC_API_V1_URL}/consultation/doctor/${id}`,
   );
 
 export const getPatientConsultations = async (id) =>
   await axios.get(
-    `${import.meta.env.VITE_API_V1_URL}/consultation/patient/${id}`,
+    `${process.env.NEXT_PUBLIC_API_V1_URL}/consultation/patient/${id}`,
   );

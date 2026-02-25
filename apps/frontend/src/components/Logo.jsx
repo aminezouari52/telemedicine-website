@@ -1,21 +1,18 @@
-import logo from "@/assets/logo.png";
-import { useNavigate } from "react-router-dom";
-import { Image } from "@chakra-ui/react";
+"use client";
+
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const Logo = (props) => {
-  const navigate = useNavigate();
+  const router = useRouter();
   return (
     <Image
-      objectFit="cover"
-      src={logo}
+      src="/assets/logo.png"
       alt="logo"
-      h="auto"
-      w="180px"
-      cursor="pointer"
-      _hover={{
-        opacity: 0.8,
-      }}
-      onClick={() => navigate("/")}
+      width={180}
+      height={60}
+      className="h-auto w-[180px] cursor-pointer hover:opacity-80 object-cover"
+      onClick={() => router.push("/")}
       {...props}
     />
   );

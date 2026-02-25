@@ -1,33 +1,31 @@
-import { useNavigate } from "react-router-dom";
-import { Flex, Image, Heading, Button } from "@chakra-ui/react";
-import NotFoundImg from "@/assets/not-found.svg";
+"use client";
+
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 const NotFound = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   return (
-    <Flex
-      bg="#fff"
-      h="100vh"
-      direction="column"
-      alignItems="center"
-      justifyContent="center"
-      gap={10}
-    >
-      <Image boxSize="400px" src={NotFoundImg} alt="Dan Abramov" />
-      <Heading size="md" textAlign="center">
+    <div className="bg-white h-screen flex flex-col items-center justify-center gap-10">
+      <Image
+        src="/assets/not-found.svg"
+        alt="Not found"
+        width={400}
+        height={400}
+        className="w-[400px] h-[400px]"
+      />
+      <h1 className="text-xl font-semibold text-center">
         Sorry! The page you are looking for could not be found.
-      </Heading>
+      </h1>
       <Button
         size="sm"
-        colorScheme="primary"
-        _hover={{
-          opacity: 0.8,
-        }}
-        onClick={() => navigate("/")}
+        className="hover:opacity-80"
+        onClick={() => router.push("/")}
       >
         Return to the home page
       </Button>
-    </Flex>
+    </div>
   );
 };
 

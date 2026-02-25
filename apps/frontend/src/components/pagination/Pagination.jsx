@@ -1,5 +1,6 @@
-import { Flex, Box } from "@chakra-ui/react";
-import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
+"use client";
+
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import PaginationButton from "./PaginationButton";
 
 export const paginate = (items) => {
@@ -24,13 +25,13 @@ export const Pagination = ({
   updatePage,
 }) => {
   return items && items.length > 0 ? (
-    <Flex w="full" alignItems="center" justifyContent="center">
-      <Flex gap={2}>
+    <div className="w-full flex items-center justify-center">
+      <div className="flex gap-2">
         <PaginationButton onClick={prevPage} disabled={currentPage === 0}>
-          <ArrowBackIcon h={3} w={3} />
+          <ChevronLeft className="h-3 w-3" />
         </PaginationButton>
         {items.length > 0 && (
-          <Flex gap={1}>
+          <div className="flex gap-1">
             {Array.from({ length: items.length })
               .map((_, index) => {
                 if (
@@ -54,24 +55,24 @@ export const Pagination = ({
                   (index === currentPage + 3 && currentPage < items.length - 4)
                 ) {
                   return (
-                    <Box display="inline-block" key={index}>
+                    <span key={index} className="inline-block px-2">
                       ...
-                    </Box>
+                    </span>
                   );
                 }
 
                 return null;
               })
               .filter(Boolean)}
-          </Flex>
+          </div>
         )}
         <PaginationButton
           onClick={nextPage}
           disabled={currentPage === items.length - 1}
         >
-          <ArrowForwardIcon h={3} w={3} />
+          <ChevronRight className="h-3 w-3" />
         </PaginationButton>
-      </Flex>
-    </Flex>
+      </div>
+    </div>
   ) : undefined;
 };

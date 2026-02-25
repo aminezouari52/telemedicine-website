@@ -1,7 +1,9 @@
+"use client";
+
 // HOOKS
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useRouter, usePathname } from "next/navigation";
 import { useToast } from "@/hooks";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 
@@ -16,30 +18,25 @@ import HeaderButton from "./HeaderButton";
 import Logo from "@/components/Logo";
 
 // STYLE
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
-  chakra,
-  Avatar,
-  Button,
-  Flex,
-  Text,
-  IconButton,
-  SimpleGrid,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-} from "@chakra-ui/react";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
 
 // ASSETS
 import { FaRegBell } from "react-icons/fa";
 import { IoChatboxSharp } from "react-icons/io5";
 import { TbLogout } from "react-icons/tb";
-import DoctorAvatar from "@/assets/avatar-doctor.jpg";
 
 export const DoctorHeader = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const dispatch = useDispatch();
-  const location = useLocation();
+  const pathname = usePathname();
   const queryClient = useQueryClient();
   const user = useSelector((state) => state.userReducer.user);
   const [isProfileCompleted, setIsProfileCompleted] = useState();
@@ -81,7 +78,7 @@ export const DoctorHeader = () => {
       await signOut(auth);
       dispatch(logout(null));
       queryClient.removeQueries();
-      navigate("/auth/login");
+      router.push("/auth/login");
     } catch (err) {
       console.log(err);
       toast("Logout failed!", "error");
@@ -127,130 +124,84 @@ export const DoctorHeader = () => {
   }, [user, isProfileCompleted, newConsultationsValue, consultation]);
 
   return (
-    <SimpleGrid
-      as="header"
-      columns={3}
-      pos="sticky"
-      top="0"
-      background="#fff"
-      alignItems="center"
-      h="62px"
-      w="100%"
-      px="56px"
-      shadow="md"
-      zIndex="5"
-    >
+    <header className="sticky top-0 bg-white items-center h-[62px] w-full px-14 shadow-md z-[5] grid grid-cols-3">
       <Logo />
 
-      <Flex alignItems="center" gap="20px" height="100%">
+      <div className="flex items-center gap-5 h-full">
         <HeaderButton pathname="/doctor/home">
-          <Text fontSize="sm">Home</Text>
+          <span className="text-sm">Home</span>
         </HeaderButton>
         <HeaderButton pathname="/doctor/consultations">
-          <Text fontSize="sm">Consultations</Text>
+          <span className="text-sm">Consultations</span>
         </HeaderButton>
         <HeaderButton pathname="/doctor/patients">
-          <Text fontSize="sm">Patiens</Text>
+          <span className="text-sm">Patiens</span>
         </HeaderButton>
-      </Flex>
-      <Flex alignItems="center" justifyContent="flex-end" height="100%" gap={2}>
+      </div>
+      <div className="flex items-center justify-end h-full gap-2">
         {consultation && (
           <Button
             size="sm"
-            colorScheme="primary"
-            rightIcon={<IoChatboxSharp />}
-            _hover={{
-              opacity: 0.8,
-            }}
+            className="hover:opacity-80"
             onClick={() => {
-              navigate(`/${consultation?._id}`);
+              router.push(`/${consultation?._id}`);
             }}
           >
             Join
+            <IoChatboxSharp className="ml-2" />
           </Button>
         )}
-        <Menu>
-          <MenuButton
-            size="md"
-            as={IconButton}
-            aria-label="notification"
-            isRound
-            bg="transparent"
-            _hover={{
-              opacity: 0.8,
-            }}
-            _active={{
-              opacity: 0.8,
-            }}
-            icon={
-              <>
-                <FaRegBell />
-                {isNotification?.length > 0 && (
-                  <chakra.span
-                    pos="absolute"
-                    top="10px"
-                    right="10px"
-                    p="4px"
-                    fontSize="xs"
-                    fontWeight="bold"
-                    lineHeight="none"
-                    color="red.100"
-                    transform="translate(50%,-50%)"
-                    bg="red.600"
-                    rounded="full"
-                  />
-                )}
-              </>
-            }
-          ></MenuButton>
-          <MenuList>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="notification"
+              className="rounded-full bg-transparent hover:opacity-80 relative"
+            >
+              <FaRegBell />
+              {isNotification?.length > 0 && (
+                <Badge className="absolute top-2.5 right-2.5 h-2 w-2 p-1 bg-red-600 text-red-100 rounded-full text-xs font-bold" />
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
             {isNotification?.map((notif, key) => (
-              <MenuItem key={key} onClick={() => navigate(notif.route)}>
+              <DropdownMenuItem
+                key={key}
+                onClick={() => router.push(notif.route)}
+              >
                 {notif.msg}
-              </MenuItem>
+              </DropdownMenuItem>
             ))}
 
             {!isNotification?.length > 0 && (
-              <Text px={2}>you don't have any notifications</Text>
+              <div className="px-2 py-1.5 text-sm">
+                you don't have any notifications
+              </div>
             )}
-          </MenuList>
-        </Menu>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <Avatar
-          size="sm"
-          h="20px"
-          w="20px"
-          cursor="pointer"
-          showBorder={location.pathname === "/doctor/profile"}
-          borderColor="primary.500"
-          src={DoctorAvatar}
-          onClick={() => navigate("/doctor/profile")}
-          _hover={{
-            opacity: 0.8,
-          }}
-        />
-        <IconButton
-          size="md"
-          icon={
-            <TbLogout
-              style={{
-                height: "20px",
-                width: "20px",
-              }}
-            />
-          }
-          isRound
+          className={`h-5 w-5 cursor-pointer hover:opacity-80 ${
+            pathname === "/doctor/profile" ? "ring-2 ring-primary-500" : ""
+          }`}
+          onClick={() => router.push("/doctor/profile")}
+        >
+          <AvatarImage src="/assets/avatar-doctor.jpg" />
+          <AvatarFallback>DR</AvatarFallback>
+        </Avatar>
+        <Button
+          size="icon"
+          variant="ghost"
           aria-label="logout"
-          bg="transparent"
-          _active={{
-            bg: "transparent",
-          }}
-          _hover={{
-            opacity: 0.8,
-          }}
+          className="rounded-full bg-transparent hover:opacity-80"
           onClick={logoutHandler}
-        />
-      </Flex>
-    </SimpleGrid>
+        >
+          <TbLogout className="h-5 w-5" />
+        </Button>
+      </div>
+    </header>
   );
 };

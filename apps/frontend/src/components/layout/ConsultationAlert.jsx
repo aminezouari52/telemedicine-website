@@ -1,7 +1,8 @@
+"use client";
+
 // HOOKS
-import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDisclosure } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "@/reducers/userReducer";
 
@@ -15,22 +16,21 @@ import {
 // STYLE
 import {
   AlertDialog,
-  AlertDialogOverlay,
+  AlertDialogAction,
+  AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogCloseButton,
-  AlertDialogBody,
+  AlertDialogDescription,
   AlertDialogFooter,
-  Button,
-} from "@chakra-ui/react";
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const ConsultationAlert = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   const dispatch = useDispatch();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.userReducer.user);
   const userRef = useRef(user);
-  const cancelRef = useRef();
 
   useEffect(() => {
     userRef.current = user;
@@ -43,7 +43,7 @@ const ConsultationAlert = () => {
           userRef.current?._id,
         )
       ) {
-        onOpen();
+        setIsOpen(true);
         dispatch(
           setUser({
             ...userRef.current,
@@ -94,39 +94,29 @@ const ConsultationAlert = () => {
   }, []);
 
   const handleConfirm = () => {
-    onClose();
-    navigate(`/${user?.consultationId}`);
+    setIsOpen(false);
+    router.push(`/${user?.consultationId}`);
   };
 
   return (
-    <AlertDialog
-      motionPreset="slideInBottom"
-      leastDestructiveRef={cancelRef}
-      isOpen={isOpen}
-      onClose={onClose}
-      isCentered
-    >
-      <AlertDialogOverlay />
-
+    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogContent>
-        <AlertDialogHeader>You have a consultation!</AlertDialogHeader>
-        <AlertDialogCloseButton />
-        <AlertDialogBody>You have a consultation, join now!</AlertDialogBody>
+        <AlertDialogHeader>
+          <AlertDialogTitle>You have a consultation!</AlertDialogTitle>
+          <AlertDialogDescription>
+            You have a consultation, join now!
+          </AlertDialogDescription>
+        </AlertDialogHeader>
         <AlertDialogFooter>
-          <Button size="sm" ref={cancelRef} onClick={onClose}>
+          <AlertDialogCancel onClick={() => setIsOpen(false)}>
             Maybe later
-          </Button>
-          <Button
-            colorScheme="primary"
-            size="sm"
-            ml={3}
+          </AlertDialogCancel>
+          <AlertDialogAction
             onClick={handleConfirm}
-            _hover={{
-              opacity: 0.8,
-            }}
+            className="hover:opacity-80"
           >
             Join
-          </Button>
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
