@@ -42,7 +42,7 @@ export const AuthLayout = ({ children }) => {
           <Button
             size="icon"
             variant="ghost"
-            className="absolute top-4 right-[58%] text-primary-700"
+            className="absolute top-4 right-[58%] text-primary-700 mr-4"
           >
             <FaInfoCircle />
           </Button>

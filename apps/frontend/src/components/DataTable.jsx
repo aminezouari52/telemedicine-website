@@ -20,35 +20,40 @@ const DataTable = ({ data, renderRow, headers }) => {
   }, [data]);
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="border border-gray-300 min-h-[350px] bg-white rounded-md overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-primary-100">
-            <tr>
-              {headers?.map((header, index) => (
-                <th key={index} className="px-4 py-2 text-left font-semibold">
-                  {header}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedData?.length > 0 &&
-              paginatedData[currentPage]?.map((item, index) =>
-                renderRow(item, index),
-              )}
-            {!paginatedData?.length && (
-              <tr>
-                <td
-                  colSpan={headers?.length}
-                  className="px-4 py-4 text-center text-gray-500"
-                >
-                  This table is empty
-                </td>
+    <div className="flex flex-col gap-4">
+      <div className="min-h-[320px] overflow-hidden rounded-lg border bg-card shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-muted/50 transition-colors">
+                {headers?.map((header, index) => (
+                  <th
+                    key={index}
+                    className="h-11 px-4 text-left align-middle font-medium text-muted-foreground"
+                  >
+                    {header}
+                  </th>
+                ))}
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {paginatedData?.length > 0 &&
+                paginatedData[currentPage]?.map((item, index) =>
+                  renderRow(item, index),
+                )}
+              {!paginatedData?.length && (
+                <tr>
+                  <td
+                    colSpan={headers?.length}
+                    className="h-32 px-4 text-center text-sm text-muted-foreground"
+                  >
+                    No data to display
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <Pagination

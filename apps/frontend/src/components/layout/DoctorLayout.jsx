@@ -35,7 +35,7 @@ export const DoctorLayout = ({ children }) => {
   return isLoading ? (
     <Spinner />
   ) : (
-    <div className="h-screen overflow-x-hidden">
+    <div className="h-screen max-w-[1440px] mx-auto">
       <ConsultationAlert />
       <DoctorHeader />
       {children}

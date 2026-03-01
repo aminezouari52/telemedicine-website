@@ -124,7 +124,7 @@ export const DoctorHeader = () => {
   }, [user, isProfileCompleted, newConsultationsValue, consultation]);
 
   return (
-    <header className="sticky top-0 bg-white items-center h-[62px] w-full px-14 shadow-md z-[5] grid grid-cols-3">
+    <header className="sticky top-0 bg-white items-center h-[62px] w-full px-14  z-[5] grid grid-cols-3">
       <Logo />
 
       <div className="flex items-center gap-5 h-full">
