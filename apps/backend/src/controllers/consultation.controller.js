@@ -1,4 +1,3 @@
-const Consultation = require("../models/consultation.model");
 const catchAsync = require("../utils/catchAsync");
 const { consultationService } = require("../services");
 const httpStatus = require("http-status");

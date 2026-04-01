@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema(
     address: String,
     city: String,
     zip: {
-      type: Number,
+      type: String,
       match: [
         /^[0-9]+$/,
         "Please enter a valid zip code which contains only numbers",

@@ -8,8 +8,7 @@ import { useSelector } from "react-redux";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { X, Calendar, Info, Phone } from "lucide-react";
+import { Calendar, Phone } from "lucide-react";
 
 // functions
 import { getPatientConsultations } from "@/services/consultationService";
@@ -73,15 +72,22 @@ const ConsultationCard = ({ consultation }) => {
 };
 
 function AllConsultationsModal({ consultations, onClose, isOpen }) {
+  const sorted = [...consultations].sort(
+    (a, b) => new Date(b.date) - new Date(a.date),
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>All consultations</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col p-4 gap-4">
-          {consultations.map((consultation, index) => (
-            <ConsultationCard key={index} consultation={consultation} />
+        <div className="flex flex-col p-4 gap-4 overflow-y-auto">
+          {sorted.map((consultation) => (
+            <ConsultationCard
+              key={consultation._id}
+              consultation={consultation}
+            />
           ))}
         </div>
       </DialogContent>
@@ -91,7 +97,6 @@ function AllConsultationsModal({ consultations, onClose, isOpen }) {
 
 export default function PatientConsultationsPage() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isOpenAlert, setIsOpenAlert] = useState(true);
   const user = useSelector((state) => state.userReducer.user);
 
   const getPatientConsultationsQuery = async () => {
@@ -110,7 +115,7 @@ export default function PatientConsultationsPage() {
   });
 
   const sortedUpcomingConsultations = () =>
-    consultations?.sort((a, b) => new Date(a.date) - new Date(b.date));
+    consultations?.sort((a, b) => new Date(b.date) - new Date(a.date));
 
   if (isPending) {
     return (
@@ -136,28 +141,6 @@ export default function PatientConsultationsPage() {
         onClose={() => setIsOpen(false)}
       />
       <div className="flex flex-col">
-        {isOpenAlert && (
-          <div className="flex justify-end">
-            <Alert
-              variant="info"
-              className="w-[489px] justify-between rounded-md shadow-md m-2"
-            >
-              <Info className="h-4 w-4 text-primary-500" />
-              <AlertDescription>
-                we check every two minutes for new consultations
-              </AlertDescription>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6"
-                onClick={() => setIsOpenAlert(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </Alert>
-          </div>
-        )}
-
         <div className="flex justify-around py-6 px-12">
           <div className="w-[40%] flex flex-col gap-6">
             <div className="flex items-center justify-between">

@@ -14,8 +14,7 @@ import { DateTime } from "luxon";
 // style
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { X, Calendar, Info, Phone, Weight } from "lucide-react";
+import { Calendar, Phone, Weight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
@@ -91,7 +90,6 @@ function AllConsultationsModal({ consultations, onClose, isOpen }) {
 }
 
 export default function DoctorConsultationsPage() {
-  const [isOpenAlert, setIsOpenAlert] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.userReducer.user);
 
@@ -137,28 +135,6 @@ export default function DoctorConsultationsPage() {
         onClose={() => setIsOpen(false)}
       />
       <div className="flex flex-col">
-        {isOpenAlert && (
-          <div className="flex justify-end">
-            <Alert
-              variant="info"
-              className="w-[489px] justify-between rounded-md shadow-md m-2"
-            >
-              <Info className="h-4 w-4 text-primary-500" />
-              <AlertDescription>
-                we check every two minutes for new consultations
-              </AlertDescription>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6"
-                onClick={() => setIsOpenAlert(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </Alert>
-          </div>
-        )}
-
         <div className="flex justify-around py-6 px-12">
           <div className="w-[40%]">
             <div className="flex items-center justify-between py-5">

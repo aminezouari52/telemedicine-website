@@ -11,6 +11,7 @@ import { auth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { logout } from "@/reducers/userReducer";
 import { getPatientConsultations } from "@/services/consultationService";
+import { findJoinableConsultation } from "@/utils/consultationJoinable";
 
 // COMPONENTS
 import HeaderButton from "./HeaderButton";
@@ -32,12 +33,13 @@ export const PatientHeader = () => {
   const user = useSelector((state) => state.userReducer.user);
 
   const { data: consultation } = useQuery({
-    queryKey: ["consultation", user?._id],
+    queryKey: ["consultation", "joinable", user?._id],
     queryFn: async () => {
       const consultationsData = (await getPatientConsultations(user?._id)).data;
-      return consultationsData.find((c) => c.status === "in-progress") || null;
+      return findJoinableConsultation(consultationsData) || null;
     },
     enabled: !!user?._id,
+    refetchInterval: !!user?._id ? 30_000 : false,
   });
 
   const logoutHandler = async () => {
@@ -72,7 +74,9 @@ export const PatientHeader = () => {
             size="sm"
             className="hover:opacity-80"
             onClick={() => {
-              router.push(`/${user?.consultationId}`);
+              const id = consultation?._id;
+              if (!id) return;
+              router.push(`/${String(id)}`);
             }}
           >
             Join

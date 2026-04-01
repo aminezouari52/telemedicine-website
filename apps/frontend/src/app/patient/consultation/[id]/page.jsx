@@ -2,7 +2,7 @@
 
 // hooks
 import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,6 +27,20 @@ import { useQuery } from "@tanstack/react-query";
 
 const steps = [{ title: "Profile information" }, { title: "Date and Time" }];
 
+function formString(value) {
+  if (value == null) return "";
+  return String(value);
+}
+
+function formAge(value) {
+  if (typeof value === "number" && !Number.isNaN(value)) return value;
+  if (typeof value === "string" && value !== "") {
+    const n = Number(value);
+    if (!Number.isNaN(n)) return n;
+  }
+  return 0;
+}
+
 const consultationSchema = z.object({
   date: z.date({ required_error: "Date is required" }),
   firstName: z.string().min(1, "Firstname is required").trim(),
@@ -35,7 +49,7 @@ const consultationSchema = z.object({
     .number()
     .min(18, "You must be at least 18 years old")
     .max(100, "Age cannot exceed 100 years"),
-  phone: z
+  phone: z.coerce
     .string()
     .min(1, "Phone number is required")
     .trim()
@@ -48,23 +62,30 @@ const consultationSchema = z.object({
     .string()
     .min(1, "City is required")
     .max(50, "City cannot exceed 50 characters"),
-  zip: z
+  zip: z.coerce
     .string()
     .min(1, "ZIP is required")
-    .regex(/^[0-9]+$/, "ZIP must be a number")
-    .min(4, "ZIP must be at least 4 digits long")
-    .max(5, "ZIP cannot exceed 5 digits"),
-  weight: z.string().optional(),
-  patient: z.string(),
-  doctor: z.string(),
+    .regex(/^[0-9]+$/, "ZIP must contain only numbers")
+    .min(4, "ZIP must contain at least 4 digits")
+    .max(5, "ZIP must contain at most 5 digits"),
+  weight: z.preprocess(
+    (v) => (v === "" || v == null ? undefined : String(v)),
+    z.string().optional(),
+  ),
+  patient: z.coerce.string().min(1, "Patient is required"),
+  doctor: z.coerce.string().min(1, "Doctor is required"),
   isProfileCompleted: z.boolean(),
 });
+
+const profileStepSchema = consultationSchema.omit({ date: true });
+const dateStepSchema = consultationSchema.pick({ date: true });
 
 export default function BookConsultationPage() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer.user);
   const [activeStep, setActiveStep] = useState(0);
   const params = useParams();
+  const router = useRouter();
 
   const form = useForm({
     resolver: zodResolver(consultationSchema),
@@ -73,13 +94,16 @@ export default function BookConsultationPage() {
       firstName: user?.firstName ?? "",
       lastName: user?.lastName ?? "",
       address: user?.address ?? "",
-      phone: user?.phone ?? "",
-      age: user?.age ?? 0,
+      phone: formString(user?.phone),
+      age: formAge(user?.age),
       city: user?.city ?? "",
-      zip: user?.zip ?? "",
-      weight: user?.weight ?? "",
-      patient: user?._id,
-      doctor: params?.id,
+      zip: formString(user?.zip),
+      weight:
+        user?.weight === "" || user?.weight == null
+          ? ""
+          : formString(user?.weight),
+      patient: formString(user?._id),
+      doctor: formString(params?.id),
       isProfileCompleted: true,
     },
   });
@@ -116,6 +140,10 @@ export default function BookConsultationPage() {
     form.reset();
   };
 
+  const handleBookingCancel = () => {
+    router.back();
+  };
+
   useEffect(() => {
     if (user?.isProfileCompleted) {
       setActiveStep(1);
@@ -128,13 +156,16 @@ export default function BookConsultationPage() {
       firstName: user?.firstName ?? "",
       lastName: user?.lastName ?? "",
       address: user?.address ?? "",
-      phone: user?.phone ?? "",
-      age: user?.age ?? 0,
+      phone: formString(user?.phone),
+      age: formAge(user?.age),
       city: user?.city ?? "",
-      zip: user?.zip ?? "",
-      weight: user?.weight ?? "",
-      patient: user?._id,
-      doctor: params?.id,
+      zip: formString(user?.zip),
+      weight:
+        user?.weight === "" || user?.weight == null
+          ? ""
+          : formString(user?.weight),
+      patient: formString(user?._id),
+      doctor: formString(params?.id),
       isProfileCompleted: true,
     });
   }, [user, params.id]);
@@ -149,6 +180,7 @@ export default function BookConsultationPage() {
         ...resValues,
       }),
     );
+    router.push("/patient/consultations");
   };
 
   if (isPending) {
@@ -194,8 +226,9 @@ export default function BookConsultationPage() {
               {activeStep === 0 ? (
                 <ProfileInfo
                   goToNext={goToNext}
-                  goToPrevious={goToPrevious}
+                  onCancel={handleBookingCancel}
                   form={form}
+                  stepSchema={profileStepSchema}
                 />
               ) : (
                 activeStep === 1 && (
@@ -203,6 +236,7 @@ export default function BookConsultationPage() {
                     goToNext={goToNext}
                     goToPrevious={goToPrevious}
                     form={form}
+                    stepSchema={dateStepSchema}
                   />
                 )
               )}
@@ -211,6 +245,7 @@ export default function BookConsultationPage() {
           <VerifyData
             isOpen={activeStep === steps.length}
             onClose={resetHandler}
+            onConfirm={form.handleSubmit(onSubmit)}
           />
         </form>
       </Form>

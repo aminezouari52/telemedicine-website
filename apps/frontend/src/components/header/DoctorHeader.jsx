@@ -12,6 +12,7 @@ import { signOut } from "firebase/auth";
 import { logout } from "@/reducers/userReducer";
 import { auth } from "@/firebase";
 import { getDoctorConsultations } from "@/services/consultationService";
+import { findJoinableConsultation } from "@/utils/consultationJoinable";
 
 // COMPONENTS
 import HeaderButton from "./HeaderButton";
@@ -44,12 +45,13 @@ export const DoctorHeader = () => {
   const [isNotification, setIsNotification] = useState([]);
 
   const { data: consultation } = useQuery({
-    queryKey: ["consultation", user?._id],
+    queryKey: ["consultation", "joinable", user?._id],
     queryFn: async () => {
       const consultationsData = (await getDoctorConsultations(user?._id)).data;
-      return consultationsData.find((c) => c.status === "in-progress") || null;
+      return findJoinableConsultation(consultationsData) || null;
     },
     enabled: !!user?._id,
+    refetchInterval: !!user?._id ? 30_000 : false,
   });
 
   const { data: newConsultationsValue } = useQuery({

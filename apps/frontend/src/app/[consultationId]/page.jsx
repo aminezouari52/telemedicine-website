@@ -14,6 +14,7 @@ import {
   getPatientConsultations,
   getDoctorConsultations,
 } from "@/services/consultationService";
+import { isConsultationJoinable } from "@/utils/consultationJoinable";
 import { generateToken } from "@/services/livekitService";
 
 import CompleteDialog from "@/features/consultation/Chat/CompleteDialog";
@@ -47,27 +48,31 @@ export default function ChatPage() {
   const onCloseComplete = () => setIsOpenComplete(false);
 
   const sendMessage = () => {
-    if (message.current.value.trim()) {
-      const hours = String(new Date().getHours()).padStart(2, "0");
-      const minutes = String(new Date().getMinutes()).padStart(2, "0");
-      const time = `${hours}:${minutes}`;
-      socket.emit("sendMessage", {
-        roomId: consultationId,
-        message: message.current.value.trim(),
-        name: user?.firstName,
-        time,
-      });
-    }
+    const text = message.current?.value?.trim();
+    if (!text) return;
+    const hours = String(new Date().getHours()).padStart(2, "0");
+    const minutes = String(new Date().getMinutes()).padStart(2, "0");
+    const time = `${hours}:${minutes}`;
+    socket.emit("sendMessage", {
+      roomId: consultationId,
+      message: text,
+      name: user?.firstName,
+      time,
+    });
+    setMessages((prev) => [
+      ...prev,
+      { name: user?.firstName, message: text, time },
+    ]);
     message.current.value = "";
   };
 
   const leaveConsultation = async () => {
     userCheck(async (tokenValue) => {
       onCloseLeave();
-      const { consultationId: currentConsultationId, ...restUser } = user;
-      socket.emit("leave", currentConsultationId);
+      socket.emit("leave", consultationId);
+      const { consultationId: _, ...restUser } = user;
       dispatch(setUser(restUser));
-      await updateConsultation(currentConsultationId, tokenValue, {
+      await updateConsultation(consultationId, tokenValue, {
         status: "completed",
       });
       router.push("/");
@@ -89,11 +94,14 @@ export default function ChatPage() {
     if (user?.role === "patient") {
       consultationData = (await getPatientConsultations(user?._id)).data;
     }
-    const consultation = consultationData.filter(
-      (c) => c.status === "in-progress",
-    )[0];
+    const roomId = Array.isArray(consultationId)
+      ? consultationId[0]
+      : consultationId;
+    const consultation = consultationData.find(
+      (c) => String(c._id) === String(roomId),
+    );
 
-    if (!consultation || consultation?._id !== consultationId) {
+    if (!consultation || !isConsultationJoinable(consultation)) {
       router.push("/");
     }
   };
@@ -210,7 +218,7 @@ export default function ChatPage() {
             <Button
               size="sm"
               variant="destructive"
-              className="px-4"
+              className="px-4 text-white"
               onClick={onOpenLeave}
             >
               Leave
@@ -241,8 +249,8 @@ export default function ChatPage() {
           )}
           <div
             className={`${
-              chatVisible ? "flex" : "hidden md:flex"
-            } p-4 gap-4 bg-primary-100 w-[500px] flex-col rounded-md justify-between h-full`}
+              chatVisible ? "flex" : "hidden"
+            } p-4 gap-4 bg-primary-100 w-[500px] flex-col rounded-md h-full`}
           >
             <button
               type="button"
@@ -251,8 +259,8 @@ export default function ChatPage() {
             >
               <ChevronRight className="w-5 h-5" />
             </button>
-            <div className="flex flex-col justify-end gap-8 h-full overflow-y-auto">
-              <div className="flex flex-col-reverse overflow-y-auto p-2">
+            <div className="flex flex-col gap-4 h-full min-h-0">
+              <div className="flex flex-col-reverse overflow-y-auto flex-1 p-2">
                 <div className="flex flex-col gap-4">
                   {messages.map(({ name, message: msg, time }, index) => (
                     <div className="flex gap-1" key={index}>
@@ -304,10 +312,10 @@ export default function ChatPage() {
                 <Button
                   type="button"
                   size="icon"
-                  className="bg-primary-500 text-white hover:opacity-80 h-[25px] w-[25px]"
+                  className="bg-primary-500 text-white hover:opacity-80  focus-visible:ring-primary-500"
                   onClick={sendMessage}
                 >
-                  <IoSend className="w-4 h-4" />
+                  <IoSend />
                 </Button>
               </div>
             </div>
