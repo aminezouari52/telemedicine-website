@@ -20,17 +20,21 @@ export const DoctorLayout = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    onAuthStateChanged(auth, async (authUser) => {
-      if (!authUser) router.push("/auth/login");
+    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+      if (!authUser) {
+        router.replace("/auth/login");
+      }
       setIsLoading(false);
     });
+
+    return () => unsubscribe();
   }, [router]);
 
   useEffect(() => {
-    if (user?.role !== "doctor") {
-      router.push("/auth/login");
+    if (!isLoading && user?.role && user.role !== "doctor") {
+      router.replace("/auth/login");
     }
-  }, [user, router]);
+  }, [isLoading, user, router]);
 
   return isLoading ? (
     <Spinner />

@@ -83,9 +83,9 @@ export default function LoginPage() {
       className="w-[325px] flex flex-col items-center justify-center gap-12"
       onSubmit={handleSubmit}
     >
-      <div className="cursor-pointer" onClick={() => router.push("/")}>
+      <Link href="/" className="cursor-pointer">
         <Logo className="w-[280px]" />
-      </div>
+      </Link>
 
       <div className="flex flex-col justify-center items-center gap-2">
         <h1 className="text-2xl font-semibold text-center">Welcome Back!</h1>

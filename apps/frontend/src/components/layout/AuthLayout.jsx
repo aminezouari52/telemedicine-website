@@ -22,13 +22,19 @@ import { FaInfoCircle } from "react-icons/fa";
 
 export const AuthLayout = ({ children }) => {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
   const user = useSelector((state) => state.userReducer.user);
+  const [isLoading, setIsLoading] = useState(!!user?.token);
 
   useEffect(() => {
     if (user?.token) {
-      if (user.role === "doctor") router.push("/doctor/home");
-      else if (user.role === "patient") router.push("/patient/home");
+      if (user.role === "doctor") {
+        router.replace("/doctor/home");
+        return;
+      }
+      if (user.role === "patient") {
+        router.replace("/patient/home");
+        return;
+      }
     }
     setIsLoading(false);
   }, [user, router]);
@@ -76,6 +82,7 @@ export const AuthLayout = ({ children }) => {
           src="/assets/login.webp"
           alt="product image"
           fill
+          sizes="70%"
           className="object-cover"
           priority
         />

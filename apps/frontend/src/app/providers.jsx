@@ -61,7 +61,6 @@ export function Providers({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       if (authUser) {
-        await authUser.reload();
         const t = (await authUser.getIdTokenResult()).token;
         setToken(t);
       } else {

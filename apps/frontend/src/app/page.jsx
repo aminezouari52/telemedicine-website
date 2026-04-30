@@ -19,14 +19,17 @@ import AnimatedGridBackground from "@/components/home/AnimatedGridBackground";
 export default function HomePage() {
   const user = useSelector((state) => state.userReducer.user);
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!!user?.token);
 
   useEffect(() => {
     if (user?.token) {
       if (user.role === "doctor") {
-        router.push("/doctor/home");
-      } else if (user.role === "patient") {
-        router.push("/patient/home");
+        router.replace("/doctor/home");
+        return;
+      }
+      if (user.role === "patient") {
+        router.replace("/patient/home");
+        return;
       }
     }
     setIsLoading(false);

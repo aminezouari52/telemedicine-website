@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "turbo dev",
+    "start": "turbo start",
     "build": "turbo build",
     "lint": "run-s --print-label \"lint:*\"",
     "lint:format": "prettier --color --write '**/*.{js,jsx}'",
