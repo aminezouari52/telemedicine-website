@@ -55,9 +55,11 @@ export const PatientHeader = () => {
   };
 
   return (
-    <header className="sticky top-0 bg-white items-center h-[62px] w-full px-14 z-[5] grid grid-cols-3">
-      <Logo />
-      <div className="flex items-center gap-5 h-full">
+    <header className="sticky top-0 z-[5] grid w-full grid-cols-2 gap-3 bg-white px-4 py-2 md:h-[62px] md:grid-cols-3 md:items-center md:px-14 md:py-0">
+      <div className="order-1">
+        <Logo />
+      </div>
+      <div className="order-3 col-span-2 flex h-7 flex-grow items-center gap-2 md:order-2 md:col-span-1 md:gap-5">
         <HeaderButton pathname="/patient/home">
           <span className="text-sm">Home</span>
         </HeaderButton>
@@ -68,35 +70,35 @@ export const PatientHeader = () => {
           <span className="text-sm">Doctors</span>
         </HeaderButton>
       </div>
-      <div className="flex gap-1 items-center justify-end h-full">
+      <div className="order-2 flex h-full items-center justify-end gap-1 md:order-3">
         {user && !!consultation && (
           <Button
             size="sm"
-            className="hover:opacity-80"
+            className="px-2 hover:opacity-80 md:px-3"
             onClick={() => {
               const id = consultation?._id;
               if (!id) return;
               router.push(`/${String(id)}`);
             }}
           >
-            Join
-            <IoChatboxSharp className="ml-2" />
+            <span className="hidden md:inline">Join</span>
+            <IoChatboxSharp className="md:ml-2" />
           </Button>
         )}
         <Button
           size="sm"
           variant="outline"
-          className="ml-2 hover:bg-gray-100 hover:opacity-90"
+          className="ml-1 px-2 hover:bg-gray-100 hover:opacity-90 md:ml-2 md:px-3"
           onClick={() => {
             router.push("/patient/AI");
           }}
         >
           <MdAutoAwesome
-            className="animated-icon mr-2"
+            className="animated-icon md:mr-2"
             size="20px"
             color="#615EFC"
           />
-          AI Consultation
+          <span className="hidden md:inline">AI Consultation</span>
         </Button>
 
         <Button

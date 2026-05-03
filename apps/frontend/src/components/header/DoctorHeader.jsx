@@ -126,10 +126,12 @@ export const DoctorHeader = () => {
   }, [user, isProfileCompleted, newConsultationsValue, consultation]);
 
   return (
-    <header className="sticky top-0 bg-white items-center h-[62px] w-full px-14  z-[5] grid grid-cols-3">
-      <Logo />
+    <header className="sticky top-0 z-[5] grid w-full grid-cols-2 gap-3 bg-white px-4 py-2 md:h-[62px] md:grid-cols-3 md:items-center md:px-14 md:py-0">
+      <div className="order-1">
+        <Logo />
+      </div>
 
-      <div className="flex items-center gap-5 h-full">
+      <div className="order-3 col-span-2 flex h-full items-center gap-2 overflow-x-auto md:order-2 md:col-span-1 md:gap-5">
         <HeaderButton pathname="/doctor/home">
           <span className="text-sm">Home</span>
         </HeaderButton>
@@ -137,20 +139,20 @@ export const DoctorHeader = () => {
           <span className="text-sm">Consultations</span>
         </HeaderButton>
         <HeaderButton pathname="/doctor/patients">
-          <span className="text-sm">Patiens</span>
+          <span className="text-sm">Patients</span>
         </HeaderButton>
       </div>
-      <div className="flex items-center justify-end h-full gap-2">
+      <div className="order-2 flex h-full items-center justify-end gap-1 md:order-3 md:gap-2">
         {consultation && (
           <Button
             size="sm"
-            className="hover:opacity-80"
+            className="px-2 hover:opacity-80 md:px-3"
             onClick={() => {
               router.push(`/${consultation?._id}`);
             }}
           >
-            Join
-            <IoChatboxSharp className="ml-2" />
+            <span className="hidden md:inline">Join</span>
+            <IoChatboxSharp className="md:ml-2" />
           </Button>
         )}
         <DropdownMenu>
@@ -186,7 +188,7 @@ export const DoctorHeader = () => {
         </DropdownMenu>
 
         <Avatar
-          className={`h-5 w-5 cursor-pointer hover:opacity-80 ${
+          className={`h-8 w-8 cursor-pointer hover:opacity-80 md:h-9 md:w-9 ${
             pathname === "/doctor/profile" ? "ring-2 ring-primary-500" : ""
           }`}
           onClick={() => router.push("/doctor/profile")}
