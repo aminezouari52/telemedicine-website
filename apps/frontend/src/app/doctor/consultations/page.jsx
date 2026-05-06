@@ -23,7 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { FaMapPin } from "react-icons/fa";
+import { MapPin } from "lucide-react";
 
 function ConsultationCard({ consultation }) {
   return (
@@ -178,7 +178,7 @@ export default function DoctorConsultationsPage() {
                           {sortedUpcomingConsultations()[0]?.patient?.lastName}
                         </p>
                         <div className="flex items-center gap-2">
-                          <FaMapPin className="text-red-500" />
+                          <MapPin className="text-red-500" />
                           <span>
                             {sortedUpcomingConsultations()[0]?.patient?.address}
                           </span>

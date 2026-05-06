@@ -30,9 +30,9 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 // ASSETS
-import { FaRegBell } from "react-icons/fa";
-import { IoChatboxSharp } from "react-icons/io5";
-import { TbLogout } from "react-icons/tb";
+import { Bell } from "lucide-react";
+import { MessageSquareMore } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 export const DoctorHeader = () => {
   const router = useRouter();
@@ -152,7 +152,7 @@ export const DoctorHeader = () => {
             }}
           >
             <span className="hidden md:inline">Join</span>
-            <IoChatboxSharp className="md:ml-2" />
+            <MessageSquareMore className="md:ml-2" />
           </Button>
         )}
         <DropdownMenu>
@@ -163,7 +163,7 @@ export const DoctorHeader = () => {
               aria-label="notification"
               className="rounded-full bg-transparent hover:opacity-80 relative"
             >
-              <FaRegBell />
+              <Bell />
               {isNotification?.length > 0 && (
                 <Badge className="absolute top-2.5 right-2.5 h-2 w-2 p-1 bg-red-600 text-red-100 rounded-full text-xs font-bold" />
               )}
@@ -203,7 +203,7 @@ export const DoctorHeader = () => {
           className="rounded-full bg-transparent hover:opacity-80"
           onClick={logoutHandler}
         >
-          <TbLogout className="h-5 w-5" />
+          <LogOut className="h-5 w-5" />
         </Button>
       </div>
     </header>

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
-import { FaFacebook, FaInstagram, FaGithub, FaLinkedin } from "react-icons/fa";
+import { Facebook, Instagram, Github, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { footerEmailInputValidations } from "@/utils/formValidations";
@@ -24,15 +24,15 @@ function Footer() {
   };
 
   const socialLinks = [
-    { icon: FaFacebook, href: "#", label: "Facebook" },
+    { icon: Facebook, href: "#", label: "Facebook" },
     {
-      icon: FaGithub,
+      icon: Github,
       href: "https://github.com/aminezouari52/telemedecine-app/",
       label: "GitHub",
     },
-    { icon: FaInstagram, href: "#", label: "Instagram" },
+    { icon: Instagram, href: "#", label: "Instagram" },
     {
-      icon: FaLinkedin,
+      icon: Linkedin,
       href: "https://www.linkedin.com/in/amine-zouari52/",
       label: "LinkedIn",
     },

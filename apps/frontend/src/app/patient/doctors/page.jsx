@@ -30,8 +30,7 @@ import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { FaRegHospital } from "react-icons/fa";
-import { IoPeopleOutline } from "react-icons/io5";
+import { Hospital, Users } from "lucide-react";
 
 const ALL_VALUE = "__all__";
 
@@ -84,11 +83,11 @@ function DoctorCard({ doctor }) {
           {firstName} {lastName}
         </h2>
         <div className="flex justify-center items-center gap-2">
-          <FaRegHospital className="text-gray-500" />
+          <Hospital className="text-gray-500" />
           <span className="text-gray-500">{hospital}</span>
         </div>
         <div className="flex justify-center items-center gap-2">
-          <IoPeopleOutline className="text-gray-500" />
+          <Users className="text-gray-500" />
 
           {isPending ? (
             <LoadingSpinner />

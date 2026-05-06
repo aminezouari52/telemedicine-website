@@ -6,10 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 // assets
-import { RxArrowTopRight } from "react-icons/rx";
-import { FaRegHospital } from "react-icons/fa";
-import { GiMedicalPackAlt } from "react-icons/gi";
-import { FaHandHoldingMedical } from "react-icons/fa";
+import {
+  ArrowUpRight,
+  HandHeart,
+  Hospital,
+  BriefcaseMedical,
+} from "lucide-react";
+
 import { useRouter } from "next/navigation";
 
 export default function PatientHomePage() {
@@ -37,7 +40,7 @@ export default function PatientHomePage() {
                 onClick={() => router.push("/patient/doctors")}
               >
                 Book a consultation!
-                <RxArrowTopRight className="ml-2 text-2xl" />
+                <ArrowUpRight className="ml-2 h-6 w-6" />
               </Button>
             </div>
           </div>
@@ -54,7 +57,7 @@ export default function PatientHomePage() {
           <Card className="w-[30%] border border-gray-400 p-4 bg-white">
             <CardContent className="p-0">
               <div className="flex justify-center">
-                <FaRegHospital className="w-[70px] h-[50px] text-primary-500 px-2.5" />
+                <Hospital className="w-[70px] h-[50px] text-primary-500 px-2.5" />
               </div>
 
               <div>
@@ -76,7 +79,7 @@ export default function PatientHomePage() {
           <Card className="w-[30%] border border-gray-400 p-4 bg-white">
             <CardContent className="p-0">
               <div className="flex justify-center">
-                <FaHandHoldingMedical className="w-[65px] h-[50px] text-primary-500 px-2.5" />
+                <HandHeart className="w-[65px] h-[50px] text-primary-500 px-2.5" />
               </div>
 
               <div>
@@ -98,7 +101,7 @@ export default function PatientHomePage() {
           <Card className="w-[30%] border border-gray-400 p-4 bg-white">
             <CardContent className="p-0">
               <div className="flex justify-center">
-                <GiMedicalPackAlt className="w-[70px] h-[50px] text-primary-500 px-2.5" />
+                <BriefcaseMedical className="w-[70px] h-[50px] text-primary-500 px-2.5" />
               </div>
 
               <div>

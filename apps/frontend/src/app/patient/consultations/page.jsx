@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog";
 
 // assets
-import { FaMapPin } from "react-icons/fa";
+import { MapPin } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 
 const ConsultationCard = ({ consultation }) => {
@@ -46,7 +46,7 @@ const ConsultationCard = ({ consultation }) => {
             <span className="text-gray-500">{consultation?.doctor?.phone}</span>
           </div>
           <div className="flex gap-2 items-center">
-            <FaMapPin className="text-red-500" />
+            <MapPin className="text-red-500" />
             <span>{consultation?.doctor?.hospital}</span>
           </div>
         </div>
@@ -184,7 +184,7 @@ export default function PatientConsultationsPage() {
                           {consultation?.doctor?.specialty}
                         </p>
                         <div className="flex gap-2 items-center">
-                          <FaMapPin className="text-red-500" />
+                          <MapPin className="text-red-500" />
                           <span>{consultation?.doctor?.hospital}</span>
                         </div>
                       </div>
@@ -234,7 +234,7 @@ export default function PatientConsultationsPage() {
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <FaMapPin className="text-red-500" />
+                        <MapPin className="text-red-500" />
                         <span>
                           {sortedUpcomingConsultations()[0]?.patient?.address}
                         </span>

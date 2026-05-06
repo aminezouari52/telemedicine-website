@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaArrowUp } from "react-icons/fa";
+import { ArrowUp } from "lucide-react";
 
 function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
@@ -40,7 +40,7 @@ function ScrollToTop() {
           whileHover={{ scale: 1.1, y: -4 }}
           whileTap={{ scale: 0.9 }}
         >
-          <FaArrowUp className="h-6 w-6" />
+          <ArrowUp className="h-6 w-6" />
         </motion.button>
       )}
     </AnimatePresence>

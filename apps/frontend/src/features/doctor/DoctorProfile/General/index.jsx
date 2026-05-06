@@ -39,7 +39,7 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, X } from "lucide-react";
-import { FaUser } from "react-icons/fa";
+import { User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const doctorProfileSchema = z.object({
@@ -257,7 +257,7 @@ const General = ({ setIsLoading }) => {
               <Avatar className="h-12 w-12 bg-gray-100">
                 <AvatarImage src={imageSrc} />
                 <AvatarFallback>
-                  <FaUser className="h-9 w-9 mt-3 rounded-full text-gray-300" />
+                  <User className="h-9 w-9 mt-3 rounded-full text-gray-300" />
                 </AvatarFallback>
               </Avatar>
               <label className="cursor-pointer">

@@ -18,7 +18,7 @@ import {
 
 // ASSETS
 import Image from "next/image";
-import { FaInfoCircle } from "react-icons/fa";
+import { CircleAlert } from "lucide-react";
 
 const ROLE_REDIRECTS = {
   doctor: "/doctor/home",
@@ -57,7 +57,7 @@ export const AuthLayout = ({ children }) => {
             variant="ghost"
             className="absolute top-4 right-[58%] text-primary-700 mr-4"
           >
-            <FaInfoCircle />
+            <CircleAlert />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[367px]">

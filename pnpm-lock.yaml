@@ -238,9 +238,6 @@ importers:
       react-hook-form:
         specifier: 7.66.1
         version: 7.66.1(react@18.3.1)
-      react-icons:
-        specifier: ^4.12.0
-        version: 4.12.0(react@18.3.1)
       react-image-file-resizer:
         specifier: ^0.4.8
         version: 0.4.8
@@ -11302,14 +11299,6 @@ packages:
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
-    dependencies:
-      react: 18.3.1
-    dev: false
-
-  /react-icons@4.12.0(react@18.3.1):
-    resolution: {integrity: sha512-IBaDuHiShdZqmfc/TwHu6+d6k2ltNCf3AszxNmjJc1KUfXdEeRJOKyNvLmAHaarhzGmTSVygNdyu8/opXv2gaw==}
-    peerDependencies:
-      react: '*'
     dependencies:
       react: 18.3.1
     dev: false

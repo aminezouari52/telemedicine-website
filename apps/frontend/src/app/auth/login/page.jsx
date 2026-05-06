@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
 // assets
-import { AiOutlineMail } from "react-icons/ai";
+import { Mail } from "lucide-react";
 
 const demoAccounts = ["freddie24@yahoo.com", "christop_hagenes21@gmail.com"];
 
@@ -130,7 +130,7 @@ export default function LoginPage() {
             </>
           ) : (
             <>
-              <AiOutlineMail className="mr-2" />
+              <Mail className="mr-2" />
               Login
             </>
           )}

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { TbMessageOff, TbMessage } from "react-icons/tb";
+import { MessageCircle, MessageCircleOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import AudioDevice from "./AudioDevice";
 import VideoDevice from "./VideoDevice";
@@ -26,7 +26,7 @@ const ControlsBar = ({ show, chatVisible, setChatVisible }) => {
         size="sm"
         className="px-4 border-gray-800"
       >
-        {chatVisible ? <TbMessage /> : <TbMessageOff />}
+        {chatVisible ? <MessageCircle /> : <MessageCircleOff />}
       </Button>
     </div>
   );

@@ -21,9 +21,8 @@ import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/button";
 
 // ASSETS
-import { IoChatboxSharp } from "react-icons/io5";
-import { TbLogout } from "react-icons/tb";
-import { MdAutoAwesome } from "react-icons/md";
+import { MessageSquareMore } from "lucide-react";
+import { LogOut, Sparkles } from "lucide-react";
 
 export const PatientHeader = () => {
   const router = useRouter();
@@ -82,7 +81,7 @@ export const PatientHeader = () => {
             }}
           >
             <span className="hidden md:inline">Join</span>
-            <IoChatboxSharp className="md:ml-2" />
+            <MessageSquareMore className="md:ml-2" />
           </Button>
         )}
         <Button
@@ -93,11 +92,7 @@ export const PatientHeader = () => {
             router.push("/patient/AI");
           }}
         >
-          <MdAutoAwesome
-            className="animated-icon md:mr-2"
-            size="20px"
-            color="#615EFC"
-          />
+          <Sparkles className="animated-icon md:mr-2 h-5 w-5 text-[#615EFC]" />
           <span className="hidden md:inline">AI Consultation</span>
         </Button>
 
@@ -108,7 +103,7 @@ export const PatientHeader = () => {
           className="rounded-full bg-transparent hover:opacity-80"
           onClick={logoutHandler}
         >
-          <TbLogout className="h-5 w-5" />
+          <LogOut className="h-5 w-5" />
         </Button>
       </div>
     </header>

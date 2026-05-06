@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-import { IoSend } from "react-icons/io5";
+import { Send } from "lucide-react";
 import { ChevronRight } from "lucide-react";
 
 export default function ChatPage() {
@@ -315,7 +315,7 @@ export default function ChatPage() {
                   className="bg-primary-500 text-white hover:opacity-80  focus-visible:ring-primary-500"
                   onClick={sendMessage}
                 >
-                  <IoSend />
+                  <Send />
                 </Button>
               </div>
             </div>
