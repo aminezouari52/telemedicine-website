@@ -2,21 +2,13 @@
 
 import { useRef, useState, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { GoogleGenAI } from "@google/genai";
 import ReactMarkdown from "react-markdown";
 import { ArrowUp, Paperclip, X } from "lucide-react";
 import Image from "next/image";
 import pdfToText from "react-pdftotext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-const ai = new GoogleGenAI({
-  apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
-});
-
-const chat = ai.chats.create({
-  model: "gemini-2.5-flash",
-});
+import { askPatientAi } from "@/services/aiService";
 
 const CONTEXT = `
 You are a helpful AI medical assistant. 
@@ -77,17 +69,30 @@ export default function PatientAIPage() {
   const inputElement = useRef();
 
   const { mutate, isPending } = useMutation({
-    mutationFn: async ({ input, pdfBase64: pdfContent }) => {
-      const pdfPrompt = pdfContent ? `\n\nPDF content:\n${pdfContent}` : "";
-
-      const response = await chat.sendMessage({
-        message: `Context:\n${CONTEXT}\n\nQuestion: ${input}${pdfPrompt}`,
+    mutationFn: async ({
+      input,
+      pdfBase64: pdfContent,
+      conversationHistory,
+    }) => {
+      const response = await askPatientAi({
+        input,
+        pdfContent,
+        context: CONTEXT,
+        conversationHistory,
       });
-
-      return response.text || "No response";
+      return response?.data?.text || "No response";
     },
     onSuccess: (aiResponse) => {
       setMessages((prev) => [...prev, { role: "ai", text: aiResponse }]);
+    },
+    onError: () => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "ai",
+          text: "I am unable to answer right now. Please try again.",
+        },
+      ]);
     },
   });
 
@@ -96,7 +101,7 @@ export default function PatientAIPage() {
     const userMsg = { role: "user", text: userInput, hasPdf: !!pdfBase64 };
     setMessages((prev) => [...prev, userMsg]);
 
-    mutate({ input: userInput, pdfBase64 });
+    mutate({ input: userInput, pdfBase64, conversationHistory: messages });
 
     setUserInput("");
     setPdfBase64(null);

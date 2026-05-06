@@ -20,26 +20,33 @@ import {
 import Image from "next/image";
 import { FaInfoCircle } from "react-icons/fa";
 
+const ROLE_REDIRECTS = {
+  doctor: "/doctor/home",
+  patient: "/patient/home",
+};
+
 export const AuthLayout = ({ children }) => {
   const router = useRouter();
   const user = useSelector((state) => state.userReducer.user);
-  const [isLoading, setIsLoading] = useState(!!user?.token);
+  const [isSessionChecking, setIsSessionChecking] = useState(true);
 
   useEffect(() => {
-    if (user?.token) {
-      if (user.role === "doctor") {
-        router.replace("/doctor/home");
-        return;
-      }
-      if (user.role === "patient") {
-        router.replace("/patient/home");
-        return;
-      }
+    if (!user?.token) {
+      setIsSessionChecking(false);
+      return;
     }
-    setIsLoading(false);
-  }, [user, router]);
 
-  return isLoading ? (
+    const redirectPath = ROLE_REDIRECTS[user?.role];
+
+    if (!redirectPath) {
+      setIsSessionChecking(false);
+      return;
+    }
+
+    router.replace(redirectPath);
+  }, [router, user?.role, user?.token]);
+
+  return isSessionChecking ? (
     <Spinner />
   ) : (
     <div className="flex justify-between items-center h-screen bg-white">
@@ -80,7 +87,7 @@ export const AuthLayout = ({ children }) => {
       <div className="h-screen w-[70%] relative">
         <Image
           src="/assets/login.webp"
-          alt="product image"
+          alt="Login illustration"
           fill
           sizes="70%"
           className="object-cover"

@@ -3,3 +3,4 @@ module.exports.authService = require("./auth.service");
 module.exports.consultationService = require("./consultation.service");
 module.exports.patientService = require("./patient.service");
 module.exports.livekitService = require("./livekit.service");
+module.exports.aiService = require("./ai.service");
