@@ -75,11 +75,11 @@ function ConsultationCard({ consultation }) {
 function AllConsultationsModal({ consultations, onClose, isOpen }) {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>All consultations</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col p-4 gap-4">
+        <div className="flex flex-col p-4 gap-4 overflow-y-auto">
           {consultations.map((consultation, index) => (
             <ConsultationCard key={index} consultation={consultation} />
           ))}
