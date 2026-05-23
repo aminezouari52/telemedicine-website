@@ -12,7 +12,6 @@ import { auth } from "@/firebase";
 // COMPONENTS
 import { PatientHeader } from "@/components/header";
 import Spinner from "@/components/Spinner";
-import ConsultationAlert from "./ConsultationAlert";
 
 export const PatientLayout = ({ children }) => {
   const router = useRouter();
@@ -39,10 +38,9 @@ export const PatientLayout = ({ children }) => {
   return isLoading ? (
     <Spinner />
   ) : (
-    <div className="h-screen max-w-[1440px] mx-auto">
-      <ConsultationAlert />
+    <div className="flex h-screen max-w-[1440px] mx-auto">
       <PatientHeader />
-      {children}
+      <main className="flex-1 md:pl-64">{children}</main>
     </div>
   );
 };

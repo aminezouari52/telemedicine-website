@@ -4,6 +4,7 @@ const doctorRoute = require("./doctor.route");
 const patientRoute = require("./patient.route");
 const consultationRoute = require("./consultation.route");
 const livekitRoute = require("./livekit.route");
+const paymentRoute = require("./payment.route");
 
 const router = express.Router();
 
@@ -27,6 +28,10 @@ const defaultRoutes = [
   {
     path: "/livekit",
     route: livekitRoute,
+  },
+  {
+    path: "/payment",
+    route: paymentRoute,
   },
 ];
 

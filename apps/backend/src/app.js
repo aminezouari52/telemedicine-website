@@ -12,6 +12,7 @@ const { errorConverter, errorHandler } = require("./middlewares/error");
 const ApiError = require("./utils/ApiError");
 const os = require("os");
 const formData = require("express-form-data");
+const { paymentController } = require("./controllers");
 
 const app = express();
 
@@ -21,6 +22,14 @@ if (config.env !== "test") {
 }
 
 app.use(helmet());
+
+// Stripe webhook needs raw body — must be before express.json()
+app.post(
+  "/v1/payment/webhook",
+  express.raw({ type: "application/json" }),
+  paymentController.handleWebhook,
+);
+
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(mongoSanitize());

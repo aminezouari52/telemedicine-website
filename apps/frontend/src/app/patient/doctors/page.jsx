@@ -152,9 +152,9 @@ export default function PatientDoctorsPage() {
   });
 
   return (
-    <div className="flex flex-col gap-10 px-12 py-6">
+    <div className="flex flex-col gap-10 md:px-6 py-6">
       <h1 className="text-xl font-semibold">Find a doctor</h1>
-      <div className="bg-white flex flex-col gap-8 p-10 rounded">
+      <div className="bg-white flex flex-col gap-8 md:p-10 rounded">
         <div className="flex justify-between">
           <div className="flex gap-10">
             <div className="flex flex-col gap-4">

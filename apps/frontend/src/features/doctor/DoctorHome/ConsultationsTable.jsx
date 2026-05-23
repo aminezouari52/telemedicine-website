@@ -13,7 +13,15 @@ const transformStatus = (status) => {
   if (status === "in-progress") return "In progress";
 };
 
-const headers = ["Patient", "Date", "Status", "Created at", "Updated at"];
+const headers = [
+  "Patient",
+  "Date",
+  "Status",
+  "Price",
+  "Payment",
+  "Created at",
+  "Updated at",
+];
 
 const ConsultationsTable = ({ consultations }) => {
   const [activeTab, setActiveTab] = useState("pending");
@@ -29,6 +37,30 @@ const ConsultationsTable = ({ consultations }) => {
         )}
       </td>
       <td className="px-4 py-2">{transformStatus(consultation?.status)}</td>
+      <td className="px-4 py-2">
+        {consultation?.payment?.amount
+          ? `$${consultation.payment.amount.toFixed(2)}`
+          : "—"}
+      </td>
+      <td className="px-4 py-2">
+        {consultation?.payment?.status ? (
+          <span
+            className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+              consultation.payment.status === "paid"
+                ? "bg-green-100 text-green-700"
+                : consultation.payment.status === "pending"
+                  ? "bg-yellow-100 text-yellow-700"
+                  : consultation.payment.status === "refunded"
+                    ? "bg-gray-100 text-gray-600"
+                    : "bg-red-100 text-red-700"
+            }`}
+          >
+            {consultation.payment.status}
+          </span>
+        ) : (
+          "—"
+        )}
+      </td>
       <td className="px-4 py-2">
         {DateTime.fromJSDate(new Date(consultation?.createdAt)).toFormat(
           "dd-MM-yyyy 'à' HH:mm",

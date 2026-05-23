@@ -25,6 +25,10 @@ const envVarsSchema = Joi.object()
     LIVEKIT_API_SECRET: Joi.string()
       .required()
       .description("LiveKit Api Secret"),
+    STRIPE_SECRET_KEY: Joi.string().required().description("Stripe Secret Key"),
+    STRIPE_WEBHOOK_SECRET: Joi.string()
+      .required()
+      .description("Stripe Webhook Secret"),
   })
   .unknown();
 
@@ -59,5 +63,9 @@ module.exports = {
   livekit: {
     api_key: envVars.LIVEKIT_API_KEY,
     api_secret: envVars.LIVEKIT_API_SECRET,
+  },
+  stripe: {
+    secretKey: envVars.STRIPE_SECRET_KEY,
+    webhookSecret: envVars.STRIPE_WEBHOOK_SECRET,
   },
 };

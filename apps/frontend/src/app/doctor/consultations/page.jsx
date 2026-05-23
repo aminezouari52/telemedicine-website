@@ -12,9 +12,10 @@ import { getDoctorConsultations } from "@/services/consultationService";
 import { DateTime } from "luxon";
 
 // style
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, Phone, Weight } from "lucide-react";
+import { Calendar, CreditCard, Phone, Weight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
@@ -26,6 +27,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { MapPin } from "lucide-react";
 
 function ConsultationCard({ consultation }) {
+  const payment = consultation?.payment;
   return (
     <Card key={consultation?._id}>
       <CardContent className="p-0">
@@ -50,6 +52,28 @@ function ConsultationCard({ consultation }) {
             <Weight className="h-4 w-4 text-gray-500" />
             <span>{consultation?.patient?.weight}kg</span>
           </div>
+          {payment && (
+            <div className="flex items-center gap-2 mt-2">
+              <CreditCard className="h-3.5 w-3.5 text-gray-400" />
+              <span className="text-sm font-semibold">
+                ${payment.amount?.toFixed(2)}
+              </span>
+              <Badge
+                variant={
+                  payment.status === "paid"
+                    ? "default"
+                    : payment.status === "pending"
+                      ? "secondary"
+                      : payment.status === "refunded"
+                        ? "outline"
+                        : "destructive"
+                }
+                className="text-[10px] px-1.5 py-0"
+              >
+                {payment.status}
+              </Badge>
+            </div>
+          )}
         </div>
         <div className="border-t border-gray-300" />
         <div className="flex justify-between items-center p-4">
@@ -226,6 +250,16 @@ export default function DoctorConsultationsPage() {
                           <strong>Weight: </strong>
                           {sortedUpcomingConsultations()[0]?.patient?.weight}kg
                         </li>
+                        {sortedUpcomingConsultations()[0]?.payment && (
+                          <li>
+                            <strong>Payment: </strong>$
+                            {sortedUpcomingConsultations()[0]?.payment?.amount?.toFixed(
+                              2,
+                            )}{" "}
+                            ({sortedUpcomingConsultations()[0]?.payment?.status}
+                            )
+                          </li>
+                        )}
                       </ul>
                     </div>
                   </CardContent>

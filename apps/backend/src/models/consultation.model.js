@@ -14,6 +14,11 @@ const consultationSchema = new Schema(
     },
     doctor: { type: Schema.Types.ObjectId, ref: "doctor", required: true },
     patient: { type: Schema.Types.ObjectId, ref: "patient", required: true },
+    payment: {
+      type: Schema.Types.ObjectId,
+      ref: "Payment",
+      default: null,
+    },
   },
   {
     timestamps: true,

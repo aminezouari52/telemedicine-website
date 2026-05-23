@@ -63,6 +63,7 @@ export function useConsultationStatus(user) {
       return [];
     },
     enabled,
+
     refetchInterval: enabled ? 1000 * 30 : false,
   });
 

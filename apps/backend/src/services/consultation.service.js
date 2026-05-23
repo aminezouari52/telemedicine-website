@@ -28,14 +28,14 @@ const getConsultation = async (id) => {
 const getPatientConsultations = async (patientId) => {
   const consultations = await Consultation.find({
     patient: patientId,
-  }).populate(["doctor", "patient"]);
+  }).populate(["doctor", "patient", "payment"]);
   return consultations;
 };
 
 const getDoctorConsultations = async (doctorId) => {
   const consultations = await Consultation.find({
     doctor: doctorId,
-  }).populate(["doctor", "patient"]);
+  }).populate(["doctor", "patient", "payment"]);
   return consultations;
 };
 

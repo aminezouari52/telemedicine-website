@@ -7,6 +7,14 @@ You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed
 
 ## New
 
+### Stripe Guidelines
+
+- To test locally run:
+  `stripe listen --forward-to localhost:8000/v1/payment/webhook`
+
+- use a test card number:
+  `4242 4242 4242 4242`
+
 ## Features
 
 - Real-time Secure Video Calls: Private, text-based messaging + video calls for doctor-patient communication.

@@ -3,12 +3,12 @@
 // hooks
 import { useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { useQueryClient } from "@tanstack/react-query";
 import { useUserCheck } from "@/hooks";
 
 // functions
 import { socket } from "@/socket";
-import { setUser } from "@/reducers/userReducer";
 import {
   updateConsultation,
   getPatientConsultations,
@@ -33,7 +33,7 @@ export default function ChatPage() {
   const message = useRef();
   const userCheck = useUserCheck();
   const router = useRouter();
-  const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const [messages, setMessages] = useState([]);
   const [currentUsers, setCurrentUsers] = useState({});
   const [token, setToken] = useState();
@@ -70,10 +70,14 @@ export default function ChatPage() {
     userCheck(async (tokenValue) => {
       onCloseLeave();
       socket.emit("leave", consultationId);
-      const { consultationId: _, ...restUser } = user;
-      dispatch(setUser(restUser));
       await updateConsultation(consultationId, tokenValue, {
         status: "completed",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["consultation", "joinable", user?._id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["consultations", user?._id, user?.role],
       });
       router.push("/");
     });
@@ -81,8 +85,12 @@ export default function ChatPage() {
 
   const completeConsultation = () => {
     onCloseComplete();
-    const { consultationId: _consultationId, ...restUser } = user;
-    dispatch(setUser(restUser));
+    queryClient.invalidateQueries({
+      queryKey: ["consultation", "joinable", user?._id],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ["consultations", user?._id, user?.role],
+    });
     router.push("/");
   };
 

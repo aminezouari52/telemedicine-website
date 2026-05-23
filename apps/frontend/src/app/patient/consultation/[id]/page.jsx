@@ -11,6 +11,7 @@ import { z } from "zod";
 // functions
 import { createConsultation } from "@/services/consultationService";
 import { updatePatient } from "@/services/patientService";
+import { createCheckoutSession } from "@/services/paymentService";
 import { getDoctor } from "@/services/doctorService";
 import { setUser } from "@/reducers/userReducer";
 
@@ -23,7 +24,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { Stepper } from "@/components/ui/stepper";
 
 // style
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const steps = [{ title: "Profile information" }, { title: "Date and Time" }];
 
@@ -86,6 +87,7 @@ export default function BookConsultationPage() {
   const [activeStep, setActiveStep] = useState(0);
   const params = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm({
     resolver: zodResolver(consultationSchema),
@@ -170,17 +172,33 @@ export default function BookConsultationPage() {
     });
   }, [user, params.id]);
 
-  const onSubmit = async (values) => {
-    const { date, patient, doctor, ...resValues } = values;
+  const handlePayment = async (values) => {
+    const { date, patient, doctor: doctorId, ...resValues } = values;
+
     await updatePatient({ id: user._id, token: user.token }, resValues);
-    await createConsultation({ date, patient, doctor });
+
     dispatch(
       setUser({
         ...user,
         ...resValues,
       }),
     );
-    router.push("/patient/consultations");
+    queryClient.invalidateQueries({ queryKey: ["consultations"] });
+
+    const price = doctor?.price;
+    if (!price || price <= 0) {
+      await createConsultation({ date, patient, doctor: doctorId });
+      router.push("/patient/consultations");
+      return;
+    }
+
+    const res = await createCheckoutSession({
+      doctorId,
+      patientId: patient,
+      date,
+    });
+
+    window.location.href = res.data.sessionUrl;
   };
 
   if (isPending) {
@@ -202,7 +220,7 @@ export default function BookConsultationPage() {
   return (
     <div className="flex flex-col bg-white p-10 w-full">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(handlePayment)}>
           <Stepper activeStep={activeStep} steps={steps} />
           <div className="flex justify-between gap-10">
             <div className="flex flex-col w-[35%] gap-4">
@@ -245,7 +263,8 @@ export default function BookConsultationPage() {
           <VerifyData
             isOpen={activeStep === steps.length}
             onClose={resetHandler}
-            onConfirm={form.handleSubmit(onSubmit)}
+            onConfirm={form.handleSubmit(handlePayment)}
+            doctor={doctor}
           />
         </form>
       </Form>
