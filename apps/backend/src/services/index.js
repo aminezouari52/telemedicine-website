@@ -5,3 +5,4 @@ module.exports.patientService = require("./patient.service");
 module.exports.livekitService = require("./livekit.service");
 module.exports.aiService = require("./ai.service");
 module.exports.paymentService = require("./payment.service");
+module.exports.adminService = require("./admin.service");

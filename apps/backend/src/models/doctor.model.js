@@ -4,6 +4,11 @@ const User = require("./user.model.js");
 const doctorSchema = new mongoose.Schema({
   photo: String,
   description: String,
+  approvalStatus: {
+    type: String,
+    enum: ["pending", "approved", "rejected"],
+    default: "pending",
+  },
   hospital: {
     type: String,
     enum: [

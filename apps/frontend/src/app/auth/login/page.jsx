@@ -2,7 +2,11 @@
 
 // firebase
 import { auth } from "@/firebase";
-import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  signOut,
+  sendEmailVerification,
+} from "firebase/auth";
 
 // hooks
 import { useState } from "react";
@@ -27,7 +31,11 @@ import { Spinner } from "@/components/ui/spinner";
 // assets
 import { Mail } from "lucide-react";
 
-const demoAccounts = ["freddie24@yahoo.com", "christop_hagenes21@gmail.com"];
+const demoAccounts = [
+  "freddie24@yahoo.com",
+  "christop_hagenes21@gmail.com",
+  "admin@gmail.com",
+];
 
 export default function LoginPage() {
   const toast = useToast();
@@ -36,8 +44,14 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [unverifiedEmail, setUnverifiedEmail] = useState(null);
+  const [resending, setResending] = useState(false);
 
   const roleBasedRedirect = (role) => {
+    if (role === "admin") {
+      router.push("/admin");
+      return;
+    }
     if (role === "doctor") {
       router.push("/doctor/home");
       return;
@@ -56,6 +70,7 @@ export default function LoginPage() {
       const { user } = result;
 
       if (!demoAccounts.includes(email) && !user.emailVerified) {
+        setUnverifiedEmail(email);
         await signOut(auth);
         throw new Error("Email not verified. Please verify your email.");
       }
@@ -75,6 +90,26 @@ export default function LoginPage() {
       toast(authErrorMessage(error), "error");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!unverifiedEmail || !password) return;
+    setResending(true);
+    try {
+      const result = await signInWithEmailAndPassword(
+        auth,
+        unverifiedEmail,
+        password,
+      );
+      await sendEmailVerification(result.user);
+      await signOut(auth);
+      toast("Verification email sent! Check your inbox.", "success");
+      setUnverifiedEmail(null);
+    } catch (err) {
+      toast(authErrorMessage(err), "error");
+    } finally {
+      setResending(false);
     }
   };
 
@@ -99,7 +134,10 @@ export default function LoginPage() {
           className="focus-visible:ring-primary-500 mt-2"
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setUnverifiedEmail(null);
+          }}
           placeholder="your email"
           autoFocus
         />
@@ -108,7 +146,10 @@ export default function LoginPage() {
           className="focus-visible:ring-primary-500"
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => {
+            setPassword(e.target.value);
+            setUnverifiedEmail(null);
+          }}
           placeholder="your password"
         />
         <Link
@@ -135,6 +176,25 @@ export default function LoginPage() {
             </>
           )}
         </Button>
+
+        {unverifiedEmail && (
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full"
+            disabled={resending}
+            onClick={handleResendVerification}
+          >
+            {resending ? (
+              <>
+                <Spinner className="mr-2 h-4 w-4" />
+                Sending...
+              </>
+            ) : (
+              "Resend verification email"
+            )}
+          </Button>
+        )}
       </div>
 
       <div className="text-sm w-full flex justify-center">

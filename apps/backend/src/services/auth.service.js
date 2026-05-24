@@ -12,19 +12,23 @@ const loginUser = async (email) => {
 };
 
 const registerUser = async (email, role) => {
-  const user = await User.findOneAndUpdate(
-    { email },
-    { role },
-    { new: true }
-  ).exec();
+  const existingUser = await User.findOne({ email }).exec();
 
-  if (!user) {
-    return await User.create({
-      email,
-      role,
-    });
+  if (existingUser) {
+    if (existingUser.role === "admin") {
+      return existingUser;
+    }
+    return await User.findOneAndUpdate(
+      { email },
+      { role },
+      { new: true },
+    ).exec();
   }
-  return user;
+
+  return await User.create({
+    email,
+    role,
+  });
 };
 
 const getCurrentUser = async (email) => {

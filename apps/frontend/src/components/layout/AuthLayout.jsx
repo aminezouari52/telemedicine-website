@@ -21,6 +21,7 @@ import Image from "next/image";
 import { CircleAlert } from "lucide-react";
 
 const ROLE_REDIRECTS = {
+  admin: "/admin",
   doctor: "/doctor/home",
   patient: "/patient/home",
 };

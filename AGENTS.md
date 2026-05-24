@@ -28,6 +28,7 @@ pnpm -F=frontend lint            # eslint src/**/*.jsx -f pretty
 pnpm -F=backend seed:doctor      # seeders
 pnpm -F=backend seed:patient
 pnpm -F=backend seed:consultation
+pnpm -F=backend seed:admin       # creates admin@gmail.com in Firebase + MongoDB
 pnpm start                       # turbo start (production-like)
 ```
 
@@ -37,7 +38,7 @@ Backend production: `pm2 start ecosystem.config.json --no-daemon`
 
 Copy from `.env.example` in each app directory.
 
-- **backend**: `MONGODB_URL`, `CLOUDINARY_*`, `LIVEKIT_*`, `GEMINI_API_KEY`, `WEB_FRONTEND_URL`
+- **backend**: `MONGODB_URL`, `CLOUDINARY_*`, `LIVEKIT_*`, `GEMINI_API_KEY`, `WEB_FRONTEND_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`
 - **frontend**: `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_API_V1_URL`, `NEXT_PUBLIC_LIVEKIT_URL`
 
 ## Linting & formatting

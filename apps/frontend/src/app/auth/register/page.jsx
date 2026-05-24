@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
+import { Info } from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -111,6 +112,15 @@ export default function RegisterPage() {
             </SelectContent>
           </Select>
         </div>
+        {role === "doctor" && (
+          <div className="flex items-start gap-2 rounded-md bg-yellow-50 p-3 text-sm text-yellow-800">
+            <Info className="mt-0.5 h-4 w-4 shrink-0" />
+            <p>
+              Doctor accounts require admin approval before you can be visible
+              to patients.
+            </p>
+          </div>
+        )}
         <Button
           type="submit"
           className="w-full"

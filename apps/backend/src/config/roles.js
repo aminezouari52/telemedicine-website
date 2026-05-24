@@ -1,4 +1,5 @@
 const allRoles = {
+  admin: ["currentUser", "createOrUpdateUser", "updateDoctor"],
   doctor: ["currentUser", "createOrUpdateUser", "updateDoctor"],
   patient: ["currentUser", "createOrUpdateUser"],
 };

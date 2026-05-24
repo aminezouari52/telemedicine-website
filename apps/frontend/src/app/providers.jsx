@@ -16,7 +16,11 @@ import { onAuthStateChanged } from "firebase/auth";
 import { getLocalStorage } from "@/utils/localStorage";
 import { Toaster } from "@/components/ui/toaster";
 
-const demoAccounts = ["freddie24@yahoo.com", "christop_hagenes21@gmail.com"];
+const demoAccounts = [
+  "freddie24@yahoo.com",
+  "christop_hagenes21@gmail.com",
+  "admin@gmail.com",
+];
 
 export const queryClient = new QueryClient({
   defaultOptions: {

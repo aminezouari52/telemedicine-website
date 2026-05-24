@@ -21,6 +21,7 @@ const query = async function (Schema, filter, options) {
 
   let queryString = {
     isProfileCompleted: true,
+    approvalStatus: "approved",
   };
 
   // Add filters only if they are provided and not empty
