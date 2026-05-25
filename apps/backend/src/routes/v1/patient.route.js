@@ -5,7 +5,16 @@ const router = express.Router();
 
 const patientController = require("../../controllers/patient.controller");
 
-router.route("/ai").post(patientController.askAi);
+router
+  .route("/conversations")
+  .get(authCheck, patientController.listConversations)
+  .post(authCheck, patientController.createConversation);
+
+router
+  .route("/conversations/:convId")
+  .patch(authCheck, patientController.updateConversation)
+  .delete(authCheck, patientController.deleteConversation);
+
 router.route("/:id").patch(authCheck, patientController.updatePatient);
 
 module.exports = router;

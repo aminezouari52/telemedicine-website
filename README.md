@@ -5,16 +5,6 @@ This project is a Real-Time Doctor-Patient consultations website designed to fac
 **Live Website**
 You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed64.netlify.app)
 
-## New
-
-### Stripe Guidelines
-
-- To test locally run:
-  `stripe listen --forward-to localhost:8000/v1/payment/webhook`
-
-- use a test card number:
-  `4242 4242 4242 4242`
-
 ## Features
 
 - Real-time Secure Video Calls: Private, text-based messaging + video calls for doctor-patient communication.
@@ -23,6 +13,59 @@ You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed
 - User Profiles: Both doctors and patients have personalized profiles for storing essential information.
 - Real-time Notifications: Receive notifications when your consultation is about to begin, or when a doctor is available.
 - Responsive Design: Accessible on all devices, ensuring users can connect from anywhere.
+
+### What's next?
+
+- Add medical knowledge layer (RAG)
+  Use medical sources:
+
+  - WHO
+  - Mayo Clinic
+  - NHS
+
+- Safety layer (VERY important for medical AI)
+  filter out:
+  - emergency symptoms (chest pain, stroke signs, etc.)
+  - self-harm / dangerous behavior
+  - medication requests
+
+Then override behavior:
+
+Example rule:
+
+If “chest pain + shortness of breath” → always recommend emergency care first
+
+- tool use : extend it with:
+
+  - symptom checker flow (decision tree)
+  - drug database lookup
+  - lab value explanation tool
+
+- . AI evaluation system (this is VERY AI-engineering heavy)
+
+  Create a test suite:
+
+  Example test cases:
+
+  chest pain
+  headache
+  fever
+  anxiety symptoms
+
+  Evaluate:
+
+  did model suggest doctor visit?
+  did it hallucinate diagnosis?
+  response quality score
+
+  👉 This teaches:
+
+  LLM evaluation
+  prompt testing
+  regression testing for AI
+
+- ⚠️ Safety + Triage Classifier Layer (Pre-LLM logic)
+- 🧾 Structured Clinical Output Generator (Function-calling style)
 
 ## Screeshots
 

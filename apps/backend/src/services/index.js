@@ -6,3 +6,4 @@ module.exports.livekitService = require("./livekit.service");
 module.exports.aiService = require("./ai.service");
 module.exports.paymentService = require("./payment.service");
 module.exports.adminService = require("./admin.service");
+module.exports.aiConversationService = require("./aiConversation.service");
