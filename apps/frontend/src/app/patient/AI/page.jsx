@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
@@ -24,32 +24,9 @@ import {
   deleteConversation,
 } from "@/services/aiService";
 import { cn } from "@/lib/utils";
-
-const SYSTEM_CONTEXT = `
-You are a clinical AI assistant designed to help patients understand their health concerns. You are NOT a replacement for a real doctor — always include a disclaimer.
-
-## Clinical approach
-
-1. **Triage first** — if symptoms suggest an emergency (chest pain, severe bleeding, difficulty breathing, stroke signs, etc.), tell the patient to call emergency services immediately before anything else.
-2. **Ask clarifying questions** — act like a doctor taking a history: onset, duration, severity, location, aggravating/relieving factors, associated symptoms.
-3. **Provide differential possibilities** — list 2-3 possible causes ranked by likelihood, but clearly state you cannot diagnose.
-4. **Give practical advice** — home care, when to see a GP vs a specialist, what to tell the doctor.
-5. **End with a disclaimer** — "This information is for educational purposes only. Please consult a qualified healthcare professional for medical advice."
-
-## Response style
-
-- Use markdown: ## headings, numbered lists, **bold** for emphasis.
-- Keep each section concise (2-4 bullet points max).
-- Tone: professional, calm, and empathetic — like a doctor speaking to a patient.
-- If a PDF (lab report, referral, etc.) is provided, summarize the key findings in plain language and explain what they might mean.
-
-`.trim();
-
-const THINKING_MESSAGES = [
-  "AI is thinking...",
-  "Analyzing data...",
-  "Formulating response...",
-];
+import { getText, toChatMessages, toSaveMessages } from "@/lib/aiDataParts";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { SYSTEM_CONTEXT, TOOL_DISPLAY, AI_TOOLS } from "@/constants/patient";
 
 function formatTime(timestamp) {
   const date = new Date(timestamp);
@@ -63,27 +40,6 @@ function formatTime(timestamp) {
   if (diffHours < 24) return `${diffHours}h ago`;
   if (diffDays < 7) return `${diffDays}d ago`;
   return date.toLocaleDateString();
-}
-
-function AiThinkingLoader() {
-  const [index, setIndex] = useState(0);
-
-  useEffect(() => {
-    let count = 0;
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % THINKING_MESSAGES.length);
-      if (++count >= THINKING_MESSAGES.length - 1) clearInterval(interval);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div className="flex m-4">
-      <p className="text-md animate-pulse text-primary-600">
-        {THINKING_MESSAGES[index]}
-      </p>
-    </div>
-  );
 }
 
 function PdfPreviewCard({ name, size, onRemove }) {
@@ -130,21 +86,54 @@ function UserMessage({ message }) {
         />
       )}
       <div className="bg-primary-100 px-3 py-2 rounded-md max-w-prose">
-        <p className="font-medium text-primary-700">
-          {message.parts?.[0]?.text ?? ""}
-        </p>
+        <p className="font-medium text-primary-700">{getText(message)}</p>
       </div>
     </div>
   );
 }
 
-function AiMessage({ message }) {
+function AiMessage({ message, cachedToolParts, isStreaming }) {
+  const toolParts =
+    cachedToolParts ??
+    message.parts?.filter(
+      (p) =>
+        typeof p.type === "string" &&
+        p.type.startsWith("tool-") &&
+        p.type !== "tool-result",
+    ) ??
+    [];
+
   return (
     <>
+      {toolParts.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-2">
+          {toolParts.map((tc) => {
+            const toolName = tc.type.replace("tool-", "");
+            const display = TOOL_DISPLAY[toolName];
+            if (!display) return null;
+            return (
+              <span
+                key={tc.toolCallId ?? toolName}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium border border-blue-200"
+              >
+                <span className="text-sm">{display.emoji}</span>
+                {display.label}
+              </span>
+            );
+          })}
+          {isStreaming && (
+            <span className="relative inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-amber-50 text-amber-600 text-xs font-medium border border-amber-200">
+              <span className="flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-amber-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
+              </span>
+              Thinking...
+            </span>
+          )}
+        </div>
+      )}
       <div className="whitespace-pre-wrap">
-        <ReactMarkdown>
-          {message.parts?.find((p) => p.type === "text")?.text ?? ""}
-        </ReactMarkdown>
+        <ReactMarkdown>{getText(message)}</ReactMarkdown>
       </div>
       <div className="flex-1" />
     </>
@@ -160,7 +149,7 @@ function ConversationList({
   isLoading,
 }) {
   return (
-    <aside className="min-h-[100%] fixed right-0 hidden md:flex w-80 flex-col border-l border-gray-200 bg-white min-h-[80vh]">
+    <aside className="min-h-[100%] right-0 hidden md:flex w-80 flex-col border-l border-gray-200 bg-white min-h-[80vh]">
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         <h2 className="font-semibold text-primary-700">History</h2>
         <Button
@@ -182,10 +171,18 @@ function ConversationList({
           </p>
         ) : (
           conversations.map((conv) => (
-            <button
+            <div
               key={conv.id}
               onClick={() => onSelect(conv)}
-              className={`w-full text-left p-3 rounded-lg flex items-start gap-2 group hover:bg-primary-50 transition-colors ${
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onSelect(conv);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              className={`w-full text-left p-3 rounded-lg flex items-start gap-2 group hover:bg-primary-50 transition-colors cursor-pointer ${
                 conv.id === currentId ? "bg-primary-100" : ""
               }`}
             >
@@ -203,34 +200,12 @@ function ConversationList({
               >
                 <Trash2 className="w-3.5 h-3.5 text-gray-400 hover:text-red-500" />
               </button>
-            </button>
+            </div>
           ))
         )}
       </div>
     </aside>
   );
-}
-
-function toChatMessages(convMessages) {
-  return (convMessages || []).map((m) => ({
-    id: m.id,
-    role: m.role === "ai" ? "assistant" : "user",
-    parts: [{ type: "text", text: m.text || "" }],
-    metadata: m.pdfName
-      ? { pdfName: m.pdfName, pdfSize: m.pdfSize }
-      : undefined,
-  }));
-}
-
-function toSaveMessages(messages) {
-  return messages.map((m) => ({
-    id: m.id,
-    role: m.role === "assistant" ? "ai" : m.role,
-    text: m.parts?.find((p) => p.type === "text")?.text ?? "",
-    ...(m.metadata?.pdfName
-      ? { pdfName: m.metadata.pdfName, pdfSize: m.metadata.pdfSize }
-      : {}),
-  }));
 }
 
 export default function PatientAIPage() {
@@ -244,6 +219,8 @@ export default function PatientAIPage() {
   const bottomRef = useRef(null);
   const conversationIdRef = useRef(null);
   const isSavingRef = useRef(false);
+  const isLoadingMessages = useRef(false);
+  const toolCallCacheRef = useRef({});
 
   const { messages, sendMessage, status, setMessages } = useChat({
     transport: new DefaultChatTransport({
@@ -259,6 +236,22 @@ export default function PatientAIPage() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useMemo(() => {
+    const cache = toolCallCacheRef.current;
+    for (const message of messages) {
+      if (!message.parts || cache[message.id]) continue;
+      const toolParts = message.parts.filter(
+        (p) =>
+          typeof p.type === "string" &&
+          p.type.startsWith("tool-") &&
+          p.type !== "tool-result",
+      );
+      if (toolParts.length > 0) {
+        cache[message.id] = toolParts;
+      }
+    }
+  }, [messages]);
+
   const { data: conversationsData, isLoading: isLoadingConversations } =
     useQuery({
       queryKey: ["ai-conversations"],
@@ -270,7 +263,11 @@ export default function PatientAIPage() {
 
   useEffect(() => {
     if (conversationsData) {
-      setConversations(conversationsData);
+      setConversations(
+        [...conversationsData].sort(
+          (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt),
+        ),
+      );
     }
   }, [conversationsData]);
 
@@ -321,7 +318,7 @@ export default function PatientAIPage() {
     if (msgs.length === 0 || isSavingRef.current) return;
 
     const firstUserMsg = msgs.find((m) => m.role === "user");
-    const text = firstUserMsg?.parts?.[0]?.text ?? "";
+    const text = getText(firstUserMsg ?? {});
     const title = text
       ? text.slice(0, 60) + (text.length > 60 ? "..." : "")
       : "New conversation";
@@ -341,6 +338,11 @@ export default function PatientAIPage() {
 
   useEffect(() => {
     if (messages.length === 0) return;
+
+    if (isLoadingMessages.current) {
+      isLoadingMessages.current = false;
+      return;
+    }
 
     const lastMsg = messages[messages.length - 1];
     if (lastMsg?.role === "assistant" && status === "ready") {
@@ -397,6 +399,7 @@ export default function PatientAIPage() {
 
   const selectConversation = useCallback(
     (conv) => {
+      isLoadingMessages.current = true;
       conversationIdRef.current = conv.id;
       setCurrentId(conv.id);
       setMessages(toChatMessages(conv.messages));
@@ -420,7 +423,7 @@ export default function PatientAIPage() {
     <div className="flex bg-background">
       <div
         className={cn(
-          "overflow-y-auto h-[100vh] flex-1 flex flex-col items-center gap-24 md:mr-[325px]",
+          "overflow-y-auto h-[100vh] flex-1 flex flex-col items-center gap-24",
           messages.length === 0 ? "justify-center" : "",
         )}
       >
@@ -438,9 +441,18 @@ export default function PatientAIPage() {
         >
           <div className="flex flex-col  lg:max-w-5xl">
             {messages.map((message) => (
-              <div key={message.id} className="flex items-start mb-4 gap-4">
+              <div
+                key={message.id}
+                className="flex items-start mb-4 gap-4 flex-wrap"
+              >
                 {message.role === "assistant" ? (
-                  <AiMessage message={message} />
+                  <AiMessage
+                    message={message}
+                    cachedToolParts={
+                      toolCallCacheRef.current[message.id] ?? null
+                    }
+                    isStreaming={isSending}
+                  />
                 ) : (
                   <>
                     <div className="flex-1" />
@@ -450,12 +462,25 @@ export default function PatientAIPage() {
               </div>
             ))}
 
-            {isSending && <AiThinkingLoader />}
+            {isSending && <LoadingSpinner className="mb-2" />}
 
             <div ref={bottomRef} />
           </div>
 
           <div className="sticky bottom-0 flex flex-col pb-8 bg-background">
+            <div className="flex gap-2 mb-3 flex-wrap pb-1">
+              {AI_TOOLS.map((tool) => (
+                <button
+                  key={tool.id}
+                  type="button"
+                  onClick={() => setUserInput(tool.prompt)}
+                  className="flex items-center gap-1.5 shrink-0 px-3 py-1.5 rounded-full border border-primary-200 text-xs font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 transition-colors"
+                >
+                  <span className="text-sm">{tool.emoji}</span>
+                  {tool.label}
+                </button>
+              ))}
+            </div>
             <div className="w-full relative flex items-end">
               <div className="absolute left-3 top-1/2 -translate-y-1/2">
                 {pdfInfo ? (

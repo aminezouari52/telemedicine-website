@@ -19,7 +19,7 @@
     "lint-staged": "15.2.0",
     "npm-run-all2": "5.0.0",
     "prettier": "^3.3.2",
-    "shadcn": "^3.8.5",
+    "shadcn": "^4.8.2",
     "turbo": "^2.0.6"
   },
   "packageManager": "pnpm@8.15.6",

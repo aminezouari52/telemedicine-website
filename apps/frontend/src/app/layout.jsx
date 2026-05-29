@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
         />
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>
