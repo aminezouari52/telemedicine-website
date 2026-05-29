@@ -5,6 +5,17 @@ This project is a Real-Time Doctor-Patient consultations website designed to fac
 **Live Website**
 You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed64.netlify.app)
 
+## Table of Contents
+
+- [Features](#features)
+- [What's next?](#whats-next)
+- [Screenshots](#screenshots)
+- [Roadmap](#roadmap)
+- [Technologies Used](#technologies-used)
+- [Run the project](#run-the-project)
+- [Contributing](#contributing)
+- [License](#license)
+
 ## Features
 
 - Real-time Secure Video Calls: Private, text-based messaging + video calls for doctor-patient communication.
@@ -101,9 +112,9 @@ If “chest pain + shortness of breath” → always recommend emergency care fi
 
 ## Technologies Used
 
-- Frontend: React, [ChakraUI](https://chakra-ui.com/)
+- Frontend: NextJS, Shadcn
 - Backend: Node.js, Express.js, MongoDB Atlas
-- AI: Gemini API
+- AI: Gemini API, Vercel AI-SDK
 - Authentication: Firebase
 - Real-time chat: Socket.io
 - Real-time notifications: [Node Cron](https://www.npmjs.com/package/node-cron)

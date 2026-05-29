@@ -57,7 +57,7 @@ export default function LoginPage() {
       return;
     }
     if (role === "patient") {
-      router.push("/patient/home");
+      router.push("/patient/dashboard");
     }
   };
 

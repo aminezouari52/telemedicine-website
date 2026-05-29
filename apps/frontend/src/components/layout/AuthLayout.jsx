@@ -23,7 +23,7 @@ import { CircleAlert } from "lucide-react";
 const ROLE_REDIRECTS = {
   admin: "/admin",
   doctor: "/doctor/home",
-  patient: "/patient/home",
+  patient: "/patient/dashboard",
 };
 
 export const AuthLayout = ({ children }) => {

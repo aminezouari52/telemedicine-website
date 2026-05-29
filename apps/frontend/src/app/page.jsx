@@ -14,7 +14,6 @@ import TestimonialsSection from "@/components/home/TestimonialsSection";
 import FAQSection from "@/components/home/FAQSection";
 import Footer from "@/components/home/Footer";
 import ScrollToTop from "@/components/home/ScrollToTop";
-import AnimatedGridBackground from "@/components/home/AnimatedGridBackground";
 
 export default function HomePage() {
   const user = useSelector((state) => state.userReducer.user);
@@ -28,28 +27,29 @@ export default function HomePage() {
         return;
       }
       if (user.role === "patient") {
-        router.replace("/patient/home");
+        router.replace("/patient/dashboard");
         return;
       }
     }
     setIsLoading(false);
   }, [user, router]);
 
-  if (isLoading) {
-    return <Spinner />;
-  }
-
   return (
     <div className="overflow-x-hidden relative">
-      <AnimatedGridBackground />
-      <div className="relative z-[10]">
-        <HeroSection />
-        <StatisticsSection />
-        <FeaturesSection />
-        <TestimonialsSection />
-        <FAQSection />
-        <Footer />
-      </div>
+      {isLoading ? (
+        <Spinner />
+      ) : (
+        <>
+          <div className="relative z-[10]">
+            <HeroSection />
+            <StatisticsSection />
+            <FeaturesSection />
+            <TestimonialsSection />
+            <FAQSection />
+            <Footer />
+          </div>
+        </>
+      )}
       <ScrollToTop />
     </div>
   );

@@ -28,7 +28,6 @@ import {
   Sparkles,
   Menu,
   X,
-  Home,
   ClipboardList,
   Stethoscope,
   LayoutDashboard,
@@ -39,7 +38,6 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { href: "/patient/home", label: "Home", icon: Home },
   { href: "/patient/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/patient/calendar", label: "Calendar", icon: Calendar },
   {
@@ -125,10 +123,11 @@ export const PatientHeader = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "pt-2.5 z-40 flex w-64 flex-col bg-white transition-transform duration-300",
-          "fixed inset-y-0 left-0",
+          "pt-2.5 z-40 flex w-[0px] md:w-80 flex-col bg-white transition-transform duration-300",
           "shadow-[2px_0_8px_0_rgba(0,0,0,0.06)]",
-          mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0",
+          mobileOpen
+            ? "fixed inset-y-0 left-0 translate-x-0 w-auto"
+            : "-translate-x-full md:translate-x-0",
         )}
       >
         <div className="flex h-16 items-center border-b px-6">

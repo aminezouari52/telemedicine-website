@@ -105,11 +105,11 @@ export default function ResearchPage() {
                 <div className="flex justify-center py-8">
                   <ChartAnimation
                     data={[
-                      { x: 0, y: 60 },
-                      { x: 25, y: 50 },
+                      { x: 0, y: 35 },
+                      { x: 25, y: 40 },
                       { x: 50, y: 45 },
-                      { x: 75, y: 40 },
-                      { x: 100, y: 35 },
+                      { x: 75, y: 50 },
+                      { x: 100, y: 60 },
                     ]}
                     width={400}
                     height={200}

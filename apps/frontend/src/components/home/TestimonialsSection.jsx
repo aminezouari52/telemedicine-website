@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
 import FadeInOnScroll from "./FadeInOnScroll";
+import BlurText from "@/components/ui/BlurText";
 import { useRouter } from "next/navigation";
 
 function TestimonialsSection() {
@@ -33,12 +34,18 @@ function TestimonialsSection() {
   const router = useRouter();
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-gray-50 to-white">
+    <section className="py-16 md:py-24 bg-gradient-to-b from-gray-900 to-gray-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <FadeInOnScroll direction="up" className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-            Care that puts <span className="text-gray-500">you first.</span>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+            <BlurText
+              text="Care that puts you first."
+              delay={60}
+              direction="top"
+              className="justify-center"
+              animateBy="words"
+            />
           </h2>
         </FadeInOnScroll>
 
@@ -75,13 +82,13 @@ function TestimonialsSection() {
                       repeat: Infinity,
                       ease: "easeInOut",
                     }}
-                    className="bg-white rounded-full p-6 shadow-xl"
+                    className="bg-gray-800/80 backdrop-blur-sm rounded-full p-6 shadow-xl border border-gray-700"
                   >
                     <div className="text-center">
-                      <div className="text-4xl font-bold text-primary-500">
+                      <div className="text-4xl font-bold text-primary-400">
                         98%
                       </div>
-                      <div className="text-sm text-gray-600 mt-1">
+                      <div className="text-sm text-gray-400 mt-1">
                         satisfaction rate
                       </div>
                     </div>
@@ -92,10 +99,10 @@ function TestimonialsSection() {
           </FadeInOnScroll>
 
           {/* Testimonials */}
-          <div className="space-y-6">
+          <div className="space-y-6 flex flex-col h-full">
             {testimonials.map((testimonial, index) => (
               <FadeInOnScroll key={index} direction="left" delay={index * 0.2}>
-                <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white">
+                <Card className="border border-gray-800 shadow-lg hover:shadow-primary-500/5 transition-all duration-300 bg-gray-800/30 backdrop-blur-sm">
                   <CardContent className="p-6">
                     <div className="space-y-4">
                       {/* Stars */}
@@ -119,7 +126,7 @@ function TestimonialsSection() {
                       </div>
 
                       {/* Comment */}
-                      <p className="text-gray-700 text-base leading-relaxed">
+                      <p className="text-gray-300 text-base leading-relaxed">
                         "{testimonial.comment}"
                       </p>
 
@@ -139,10 +146,10 @@ function TestimonialsSection() {
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <div className="font-semibold text-gray-900">
+                            <div className="font-semibold text-white">
                               {testimonial.name}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-gray-400">
                               {testimonial.date}
                             </div>
                           </div>
@@ -158,19 +165,13 @@ function TestimonialsSection() {
 
         {/* CTA Bar */}
         <FadeInOnScroll direction="up" delay={0.6} className="mt-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="bg-primary-900 rounded-2xl p-8 md:p-12 text-white"
-          >
+          <div className="bg-gray-900 rounded-2xl p-8 md:p-12 text-white border border-gray-800">
             <div className="flex flex-col md:flex-row items-center justify-between gap-6">
               <div>
                 <h3 className="text-2xl md:text-3xl font-bold mb-2">
                   Ready to prioritize your health?
                 </h3>
-                <p className="text-white/80">
+                <p className="text-gray-400">
                   Join thousands of satisfied patients today.
                 </p>
               </div>
@@ -178,17 +179,17 @@ function TestimonialsSection() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <motion.button
-                  className="bg-white text-primary-900 px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-colors"
+                <button
+                  className="bg-primary-500 text-white px-8 py-4 rounded-full font-semibold hover:bg-primary-600 transition-colors"
                   onClick={() => {
                     router.push("/auth/register");
                   }}
                 >
                   Get Started
-                </motion.button>
+                </button>
               </motion.div>
             </div>
-          </motion.div>
+          </div>
         </FadeInOnScroll>
       </div>
     </section>
