@@ -2,7 +2,9 @@ import { stepCountIs, streamText } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { z } from "zod";
 
-const google = createGoogleGenerativeAI({ apiKey: process.env.GEMINI_API_KEY });
+const google = createGoogleGenerativeAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 const tools = {
   symptom_checker: {
@@ -631,26 +633,91 @@ export async function POST(req) {
 
   const recentMessages = messages.slice(-10);
 
-  const toCoreMessage = (m) => {
-    let text =
-      m.content ||
-      (m.parts
-        ? m.parts
-            .filter((p) => p.type === "text")
-            .map((p) => p.text)
-            .join("\n")
-        : "");
-    if (
-      pdfContent &&
-      m.role === "user" &&
-      m === recentMessages[recentMessages.length - 1]
-    ) {
-      text += "\n\nPDF content:\n" + pdfContent;
-    }
-    return { role: m.role, content: text };
-  };
+  function toCoreMessages(msgs, pdfContent) {
+    const result = [];
 
-  const processedMessages = recentMessages.map(toCoreMessage);
+    for (let i = 0; i < msgs.length; i++) {
+      const m = msgs[i];
+
+      if (m.role === "user") {
+        let text =
+          m.content ?? m.parts?.find((p) => p.type === "text")?.text ?? "";
+
+        if (pdfContent && i === msgs.length - 1) {
+          text += "\n\nPDF content:\n" + pdfContent;
+        }
+
+        result.push({ role: "user", content: text });
+      } else if (m.role === "assistant") {
+        let currentAssistant = [];
+        let currentTool = [];
+
+        for (const part of m.parts ?? []) {
+          if (part.type === "text") {
+            const text = part.text ?? "";
+            if (currentTool.length > 0) {
+              result.push({ role: "tool", content: currentTool });
+              currentTool = [];
+            }
+            if (text) {
+              const last = currentAssistant[currentAssistant.length - 1];
+              if (last?.type === "text") {
+                last.text += text;
+              } else {
+                currentAssistant.push({ type: "text", text });
+              }
+            }
+          } else if (part.type === "tool-call") {
+            if (currentTool.length > 0) {
+              result.push({ role: "tool", content: currentTool });
+              currentTool = [];
+            }
+            currentAssistant.push({
+              type: "tool-call",
+              toolCallId: part.toolCallId,
+              toolName: part.toolName,
+              args: part.args,
+            });
+          } else if (part.type === "tool-result") {
+            if (currentAssistant.length > 0) {
+              result.push({ role: "assistant", content: currentAssistant });
+              currentAssistant = [];
+            }
+            currentTool.push({
+              type: "tool-result",
+              toolCallId: part.toolCallId,
+              toolName: part.toolName,
+              result: part.result,
+              isError: part.isError,
+            });
+          }
+        }
+
+        if (currentAssistant.length > 0) {
+          result.push({ role: "assistant", content: currentAssistant });
+        }
+        if (currentTool.length > 0) {
+          result.push({ role: "tool", content: currentTool });
+        }
+      }
+    }
+
+    return result;
+  }
+
+  const processedMessages = toCoreMessages(recentMessages, pdfContent);
+
+  console.log(
+    "[AI Chat] sending to streamText:",
+    JSON.stringify({
+      messageCount: processedMessages.length,
+      lastUserMsg: processedMessages
+        .filter((m) => m.role === "user")
+        .pop()
+        ?.content?.substring(0, 100),
+      toolNames: Object.keys(tools),
+    }),
+  );
 
   try {
     const result = streamText({
@@ -658,12 +725,29 @@ export async function POST(req) {
       system: systemContext,
       messages: processedMessages,
       tools,
-      stopWhen: stepCountIs(2),
+      stopWhen: stepCountIs(5),
+      onStepFinish: ({ text, toolCalls, finishReason }) => {
+        console.log("[AI Chat] step finished:", {
+          hasText: !!text,
+          textLength: text?.length,
+          toolCalls: toolCalls?.map((t) => ({
+            name: t.toolName,
+            args: t.args,
+          })),
+          finishReason,
+        });
+      },
+      onFinish: ({ finishReason }) => {
+        console.log("[AI Chat] stream finished, reason:", finishReason);
+        if (finishReason === "error") {
+          console.error("[AI Chat] Stream finished with error");
+        }
+      },
     });
 
     return result.toUIMessageStreamResponse();
   } catch (error) {
-    console.error("AI streaming error:", error.message, error.stack);
+    console.error("[AI Chat] streamText error:", error);
     return Response.json({ error: "AI streaming failed" }, { status: 500 });
   }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
@@ -8,12 +8,10 @@ import ReactMarkdown from "react-markdown";
 import {
   ArrowUp,
   Paperclip,
-  X,
   Plus,
   MessageSquareText,
   Trash2,
 } from "lucide-react";
-import Image from "next/image";
 import pdfToText from "react-pdftotext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -27,54 +25,8 @@ import { cn } from "@/lib/utils";
 import { getText, toChatMessages, toSaveMessages } from "@/lib/aiDataParts";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { SYSTEM_CONTEXT, TOOL_DISPLAY, AI_TOOLS } from "@/constants/patient";
-
-function formatTime(timestamp) {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diffMs = now - date;
-  const diffMins = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffMs / 86400000);
-  if (diffMins < 1) return "Just now";
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays < 7) return `${diffDays}d ago`;
-  return date.toLocaleDateString();
-}
-
-function PdfPreviewCard({ name, size, onRemove }) {
-  return (
-    <div className="flex items-center gap-2 border border-primary-300 rounded-xl h-[60px] px-3 py-2 bg-primary-50">
-      <Image
-        src="/assets/pdf.svg"
-        alt="PDF icon"
-        width={25}
-        height={25}
-        className="h-[25px] shrink-0"
-      />
-      <div className="ms-2 min-w-0">
-        <p className="text-md text-primary-800 font-medium truncate max-w-[160px]">
-          {name}
-        </p>
-        <p className="text-gray-500 text-sm">
-          {(size / 1024 / 1024).toFixed(2)} MB
-        </p>
-      </div>
-      {onRemove && (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="ml-2 w-6 h-6 rounded-full text-black shrink-0"
-          onClick={onRemove}
-          title="Remove file"
-        >
-          <X className="w-4 h-4" />
-        </Button>
-      )}
-    </div>
-  );
-}
+import { formatTime } from "@/utils/patient/ai";
+import PdfPreviewCard from "./PdfPreviewCard";
 
 function UserMessage({ message }) {
   return (
@@ -92,16 +44,21 @@ function UserMessage({ message }) {
   );
 }
 
-function AiMessage({ message, cachedToolParts, isStreaming }) {
+function AiMessage({ message, isStreaming }) {
   const toolParts =
-    cachedToolParts ??
     message.parts?.filter(
       (p) =>
         typeof p.type === "string" &&
         p.type.startsWith("tool-") &&
         p.type !== "tool-result",
-    ) ??
-    [];
+    ) ?? [];
+
+  // const uniqueToolParts = toolParts.filter((tc) => {
+  //   const name = tc.type.replace("tool-", "");
+  //   if (seenToolNames?.has(name)) return false;
+  //   seenToolNames?.add(name);
+  //   return true;
+  // });
 
   return (
     <>
@@ -220,36 +177,22 @@ export default function PatientAIPage() {
   const conversationIdRef = useRef(null);
   const isSavingRef = useRef(false);
   const isLoadingMessages = useRef(false);
-  const toolCallCacheRef = useRef({});
 
   const { messages, sendMessage, status, setMessages } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/ai/chat",
       body: () => ({ systemContext: SYSTEM_CONTEXT, pdfContent: pdfText }),
     }),
-    onError: (err) => console.error("[AI Chat] useChat error:", err),
+    maxSteps: 5,
+    onError: (err) => {
+      console.error("[AI Chat] useChat error:", err);
+    },
   });
 
   const isSending = status === "submitted" || status === "streaming";
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
-  useMemo(() => {
-    const cache = toolCallCacheRef.current;
-    for (const message of messages) {
-      if (!message.parts || cache[message.id]) continue;
-      const toolParts = message.parts.filter(
-        (p) =>
-          typeof p.type === "string" &&
-          p.type.startsWith("tool-") &&
-          p.type !== "tool-result",
-      );
-      if (toolParts.length > 0) {
-        cache[message.id] = toolParts;
-      }
-    }
   }, [messages]);
 
   const { data: conversationsData, isLoading: isLoadingConversations } =
@@ -346,7 +289,10 @@ export default function PatientAIPage() {
 
     const lastMsg = messages[messages.length - 1];
     if (lastMsg?.role === "assistant" && status === "ready") {
-      saveConversation(messages);
+      const text = getText(lastMsg);
+      if (text.trim()) {
+        saveConversation(messages);
+      }
     }
   }, [messages, status, saveConversation]);
 
@@ -446,13 +392,7 @@ export default function PatientAIPage() {
                 className="flex items-start mb-4 gap-4 flex-wrap"
               >
                 {message.role === "assistant" ? (
-                  <AiMessage
-                    message={message}
-                    cachedToolParts={
-                      toolCallCacheRef.current[message.id] ?? null
-                    }
-                    isStreaming={isSending}
-                  />
+                  <AiMessage message={message} isStreaming={isSending} />
                 ) : (
                   <>
                     <div className="flex-1" />
