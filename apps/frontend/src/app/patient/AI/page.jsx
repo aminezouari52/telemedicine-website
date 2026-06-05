@@ -106,7 +106,7 @@ function ConversationList({
   isLoading,
 }) {
   return (
-    <aside className="min-h-[100%] right-0 hidden md:flex w-80 flex-col border-l border-gray-200 bg-white min-h-[80vh]">
+    <aside className="min-h-[100%] h-[100vh] right-0 hidden md:flex w-80 flex-col border-l border-gray-200 bg-white min-h-[80vh]">
       <div className="p-4 border-b border-gray-200 flex items-center justify-between">
         <h2 className="font-semibold text-primary-700">History</h2>
         <Button
