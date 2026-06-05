@@ -123,10 +123,10 @@ export const PatientHeader = () => {
       {/* Sidebar */}
       <aside
         className={cn(
-          "pt-2.5 z-40 flex w-[0px] md:w-80 flex-col bg-white transition-transform duration-300",
+          "pt-2.5 z-40 flex w-[0px] md:w-80 flex-col bg-white transition-transform duration-300 overflow-hidden md:overflow-visible",
           "shadow-[2px_0_8px_0_rgba(0,0,0,0.06)]",
           mobileOpen
-            ? "fixed inset-y-0 left-0 translate-x-0 w-auto"
+            ? "fixed inset-y-0 left-0 translate-x-0 w-auto "
             : "-translate-x-full md:translate-x-0",
         )}
       >
