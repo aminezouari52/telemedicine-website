@@ -34,8 +34,12 @@ export function filePart(data, mimeType) {
 }
 
 export function getText(message) {
-  const part = message.parts?.find((p) => p.type === PART_TYPES.TEXT);
-  return part?.text ?? "";
+  return (
+    message.parts
+      ?.filter((p) => p.type === PART_TYPES.TEXT)
+      .map((p) => p.text ?? "")
+      .join("") ?? ""
+  );
 }
 
 export function getSources(message) {
@@ -55,17 +59,56 @@ export function hasParts(message) {
   return Array.isArray(message.parts) && message.parts.length > 0;
 }
 
+function toolPart(toolName, toolCallId, input, output, state) {
+  const hasOutput = output !== undefined && output !== null;
+  return {
+    type: `tool-${toolName}`,
+    toolCallId,
+    // AI SDK v5 stores input + output on a single tool part. Only mark a part
+    // as "output-available" when we actually have the output, otherwise the
+    // server will reject it (or ignoreIncompleteToolCalls will drop it).
+    state: hasOutput ? "output-available" : state ?? "input-available",
+    input,
+    ...(hasOutput ? { output } : {}),
+  };
+}
+
 export function toChatMessage(msg) {
   const parts = [textPart(msg.text || "")];
-  if (msg.toolCalls) {
+  if (msg.reasoning) {
+    parts.push({
+      type: "reasoning",
+      text: msg.reasoning,
+      state: "done",
+    });
+  }
+
+  if (msg.toolInvocations) {
+    // Current unified format: input + output preserved together.
+    for (const ti of msg.toolInvocations) {
+      parts.push(
+        toolPart(ti.toolName, ti.toolCallId, ti.input, ti.output, ti.state),
+      );
+    }
+  } else if (msg.toolCalls) {
+    // Legacy format: merge separate toolCalls + toolResults back into
+    // single v5 tool parts so reloaded history converts cleanly.
+    const resultsById = {};
+    for (const tr of msg.toolResults ?? []) {
+      resultsById[tr.toolCallId] = tr.result;
+    }
     for (const tc of msg.toolCalls) {
-      parts.push({
-        type: `tool-${tc.toolName}`,
-        toolCallId: tc.toolCallId,
-        args: tc.args,
-      });
+      parts.push(
+        toolPart(
+          tc.toolName,
+          tc.toolCallId,
+          tc.args ?? tc.input,
+          resultsById[tc.toolCallId],
+        ),
+      );
     }
   }
+
   return {
     id: msg.id,
     role: msg.role === "ai" ? "assistant" : "user",
@@ -81,7 +124,10 @@ export function toChatMessages(messages) {
 }
 
 export function toSaveMessage(msg) {
-  const toolCalls = (msg.parts ?? [])
+  // AI SDK v5 represents each tool invocation as a single `tool-<name>` part
+  // carrying both `input` and `output`. Persist them together so the result
+  // survives the round-trip (a missing result breaks convertToModelMessages).
+  const toolInvocations = (msg.parts ?? [])
     .filter(
       (p) =>
         typeof p.type === "string" &&
@@ -91,16 +137,30 @@ export function toSaveMessage(msg) {
     .map((p) => ({
       toolCallId: p.toolCallId,
       toolName: p.type.replace("tool-", ""),
-      args: p.args,
+      state: p.state,
+      input: p.input ?? p.args,
+      output: p.output ?? p.result,
     }));
+  const reasoning = (msg.parts ?? [])
+    .filter((p) => p.type === "reasoning")
+    .map((p) => p.text ?? "")
+    .join("");
+
+  const filePart = (msg.parts ?? []).find(
+    (p) => p.type === "file" && p.mediaType?.startsWith("application/pdf"),
+  );
+
   return {
     id: msg.id,
     role: msg.role === "assistant" ? "ai" : msg.role,
     text: getText(msg),
-    ...(toolCalls.length > 0 ? { toolCalls } : {}),
+    ...(toolInvocations.length > 0 ? { toolInvocations } : {}),
+    ...(reasoning ? { reasoning } : {}),
     ...(msg.metadata?.pdfName
       ? { pdfName: msg.metadata.pdfName, pdfSize: msg.metadata.pdfSize }
-      : {}),
+      : filePart?.filename
+        ? { pdfName: filePart.filename, pdfSize: 0 }
+        : {}),
   };
 }
 

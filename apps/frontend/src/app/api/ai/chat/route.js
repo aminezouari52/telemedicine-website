@@ -1,4 +1,4 @@
-import { stepCountIs, streamText } from "ai";
+import { stepCountIs, streamText, convertToModelMessages } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { z } from "zod";
 
@@ -625,7 +625,7 @@ Compare values against standard ranges and flag abnormalities.`,
 };
 
 export async function POST(req) {
-  const { messages, systemContext, pdfContent } = await req.json();
+  const { messages, systemContext } = await req.json();
 
   if (!messages || !Array.isArray(messages) || messages.length === 0) {
     return Response.json({ error: "Messages are required." }, { status: 400 });
@@ -633,91 +633,12 @@ export async function POST(req) {
 
   const recentMessages = messages.slice(-10);
 
-  function toCoreMessages(msgs, pdfContent) {
-    const result = [];
-
-    for (let i = 0; i < msgs.length; i++) {
-      const m = msgs[i];
-
-      if (m.role === "user") {
-        let text =
-          m.content ?? m.parts?.find((p) => p.type === "text")?.text ?? "";
-
-        if (pdfContent && i === msgs.length - 1) {
-          text += "\n\nPDF content:\n" + pdfContent;
-        }
-
-        result.push({ role: "user", content: text });
-      } else if (m.role === "assistant") {
-        let currentAssistant = [];
-        let currentTool = [];
-
-        for (const part of m.parts ?? []) {
-          if (part.type === "text") {
-            const text = part.text ?? "";
-            if (currentTool.length > 0) {
-              result.push({ role: "tool", content: currentTool });
-              currentTool = [];
-            }
-            if (text) {
-              const last = currentAssistant[currentAssistant.length - 1];
-              if (last?.type === "text") {
-                last.text += text;
-              } else {
-                currentAssistant.push({ type: "text", text });
-              }
-            }
-          } else if (part.type === "tool-call") {
-            if (currentTool.length > 0) {
-              result.push({ role: "tool", content: currentTool });
-              currentTool = [];
-            }
-            currentAssistant.push({
-              type: "tool-call",
-              toolCallId: part.toolCallId,
-              toolName: part.toolName,
-              args: part.args,
-            });
-          } else if (part.type === "tool-result") {
-            if (currentAssistant.length > 0) {
-              result.push({ role: "assistant", content: currentAssistant });
-              currentAssistant = [];
-            }
-            currentTool.push({
-              type: "tool-result",
-              toolCallId: part.toolCallId,
-              toolName: part.toolName,
-              result: part.result,
-              isError: part.isError,
-            });
-          }
-        }
-
-        if (currentAssistant.length > 0) {
-          result.push({ role: "assistant", content: currentAssistant });
-        }
-        if (currentTool.length > 0) {
-          result.push({ role: "tool", content: currentTool });
-        }
-      }
-    }
-
-    return result;
-  }
-
-  const processedMessages = toCoreMessages(recentMessages, pdfContent);
-
-  console.log(
-    "[AI Chat] sending to streamText:",
-    JSON.stringify({
-      messageCount: processedMessages.length,
-      lastUserMsg: processedMessages
-        .filter((m) => m.role === "user")
-        .pop()
-        ?.content?.substring(0, 100),
-      toolNames: Object.keys(tools),
-    }),
-  );
+  // In AI SDK v5 a tool invocation is a single `tool-<name>` part holding both
+  // input and output. ignoreIncompleteToolCalls drops any tool call without an
+  // available output, avoiding AI_MissingToolResultsError on reloaded history.
+  const processedMessages = await convertToModelMessages(recentMessages, {
+    ignoreIncompleteToolCalls: true,
+  });
 
   try {
     const result = streamText({
@@ -726,28 +647,26 @@ export async function POST(req) {
       messages: processedMessages,
       tools,
       stopWhen: stepCountIs(5),
-      onStepFinish: ({ text, toolCalls, finishReason }) => {
-        console.log("[AI Chat] step finished:", {
-          hasText: !!text,
-          textLength: text?.length,
-          toolCalls: toolCalls?.map((t) => ({
-            name: t.toolName,
-            args: t.args,
-          })),
-          finishReason,
-        });
-      },
-      onFinish: ({ finishReason }) => {
-        console.log("[AI Chat] stream finished, reason:", finishReason);
-        if (finishReason === "error") {
-          console.error("[AI Chat] Stream finished with error");
-        }
+      providerOptions: {
+        google: {
+          thinkingConfig: { thinkingBudget: 8192, includeThoughts: true },
+        },
       },
     });
 
-    return result.toUIMessageStreamResponse();
+    return result.toUIMessageStreamResponse({ sendReasoning: true });
   } catch (error) {
     console.error("[AI Chat] streamText error:", error);
-    return Response.json({ error: "AI streaming failed" }, { status: 500 });
+    const message = error?.message || "AI streaming failed";
+    const isQuota =
+      message.toLowerCase().includes("quota") ||
+      message.toLowerCase().includes("rate limit") ||
+      message.toLowerCase().includes("429") ||
+      message.toLowerCase().includes("insufficient") ||
+      message.toLowerCase().includes("resource exhausted");
+    return Response.json(
+      { error: message, isQuota },
+      { status: isQuota ? 429 : 500 },
+    );
   }
 }

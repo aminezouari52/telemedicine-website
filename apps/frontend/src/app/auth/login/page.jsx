@@ -31,6 +31,7 @@ import { Spinner } from "@/components/ui/spinner";
 // assets
 import { Mail } from "lucide-react";
 
+// passowrd admin: "adminadmin"
 const demoAccounts = [
   "freddie24@yahoo.com",
   "christop_hagenes21@gmail.com",

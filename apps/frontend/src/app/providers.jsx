@@ -12,9 +12,12 @@ import { store } from "@/store";
 import { setUser } from "@/reducers/userReducer";
 import { getCurrentUser } from "@/services/authService";
 import { auth } from "@/firebase";
-import { onAuthStateChanged } from "firebase/auth";
+import { onIdTokenChanged } from "firebase/auth";
 import { getLocalStorage } from "@/utils/localStorage";
+import { registerAuthInterceptor } from "@/lib/axiosAuth";
 import { Toaster } from "@/components/ui/toaster";
+
+registerAuthInterceptor();
 
 const demoAccounts = [
   "freddie24@yahoo.com",
@@ -63,9 +66,11 @@ export function Providers({ children }) {
   const [token, setToken] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
+    // onIdTokenChanged (unlike onAuthStateChanged) also fires when Firebase
+    // silently refreshes the ID token (~hourly), keeping our copy fresh.
+    const unsubscribe = onIdTokenChanged(auth, async (authUser) => {
       if (authUser) {
-        const t = (await authUser.getIdTokenResult()).token;
+        const t = await authUser.getIdToken();
         setToken(t);
       } else {
         setToken(null);

@@ -18,7 +18,7 @@ import ScrollToTop from "@/components/home/ScrollToTop";
 export default function HomePage() {
   const user = useSelector((state) => state.userReducer.user);
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(!!user?.token);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (user?.token) {
