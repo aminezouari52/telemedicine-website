@@ -53,6 +53,11 @@ const messageSchema = new mongoose.Schema(
     reasoning: String,
     pdfName: String,
     pdfSize: Number,
+    // Message metadata: when the message was created, and (for AI replies)
+    // which model produced it and how many tokens it used.
+    createdAt: Number,
+    model: String,
+    totalTokens: Number,
   },
   { _id: false },
 );

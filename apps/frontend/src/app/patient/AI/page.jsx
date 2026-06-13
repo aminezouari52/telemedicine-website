@@ -4,15 +4,12 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import ReactMarkdown from "react-markdown";
 import {
   ArrowUp,
   Paperclip,
-  Plus,
-  MessageSquareText,
-  Trash2,
-  ChevronDown,
   Image,
+  MessageSquareText,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,269 +19,40 @@ import {
   deleteConversation,
 } from "@/services/aiService";
 import { getText, toChatMessages, toSaveMessages } from "@/lib/aiDataParts";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import { SYSTEM_CONTEXT, TOOL_DISPLAY, AI_TOOLS } from "@/constants/patient";
-import { formatTime } from "@/utils/patient/ai";
+import { SYSTEM_CONTEXT, AI_TOOLS } from "@/constants/patient";
+import UserMessage from "./UserMessage";
+import AiMessage from "./AiMessage";
+import ConversationList from "./ConversationList";
+import QuotaAlert from "./QuotaAlert";
+import PulseOrb from "@/components/PulseOrb";
 import PdfPreviewCard from "./PdfPreviewCard";
 import ImagePreviewCard from "./ImagePreviewCard";
 
-function UserMessage({ message }) {
-  const pdfParts =
-    message.parts?.filter(
-      (p) => p.type === "file" && p.mediaType?.startsWith("application/pdf"),
-    ) ?? [];
-  const imageParts =
-    message.parts?.filter(
-      (p) => p.type === "file" && p.mediaType?.startsWith("image/"),
-    ) ?? [];
-
-  return (
-    <div className="flex flex-col items-end gap-2">
-      {imageParts.map((part, i) => (
-        <img
-          className="rounded-md max-w-xs max-h-80 object-contain border"
-          key={`${message.id}-img-${i}`}
-          src={part.url}
-          alt={part.filename ?? `image-${i}`}
-        />
-      ))}
-      {pdfParts.map((part, i) => (
-        <iframe
-          className="pb-4"
-          key={`${message.id}-${i}`}
-          src={part.url}
-          width="500"
-          height="600"
-          title={part.filename ?? `attachment-${i}`}
-        />
-      ))}
-      <div className="bg-primary-100 px-3 py-2 rounded-md max-w-prose">
-        <p className="font-medium text-primary-700">{getText(message)}</p>
-      </div>
-    </div>
-  );
-}
-
-function AiMessage({ message, isStreaming }) {
-  const [showReasoning, setShowReasoning] = useState(true);
-  const toolParts =
-    message.parts
-      ?.filter(
-        (p) =>
-          typeof p.type === "string" &&
-          p.type.startsWith("tool-") &&
-          p.type !== "tool-result",
-      )
-      .filter(
-        (p, i, arr) =>
-          arr.findIndex(
-            (t) => t.type.replace("tool-", "") === p.type.replace("tool-", ""),
-          ) === i,
-      ) ?? [];
-
-  const reasoningParts =
-    message.parts?.filter((p) => p.type === "reasoning") ?? [];
-
-  const reasoningText = reasoningParts.map((p) => p.text ?? "").join("");
-  const isReasoningStreaming = reasoningParts.some(
-    (p) => p.state === "streaming",
-  );
-
-  useEffect(() => {
-    if (isReasoningStreaming) {
-      setShowReasoning(true);
-    }
-  }, [isReasoningStreaming]);
-
-  return (
-    <>
-      {toolParts.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-2">
-          {toolParts.map((tc) => {
-            const toolName = tc.type.replace("tool-", "");
-            const display = TOOL_DISPLAY[toolName];
-            if (!display) return null;
-            return (
-              <span
-                key={tc.toolCallId ?? toolName}
-                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-blue-50 text-blue-700 text-xs font-medium border border-blue-200"
-              >
-                <span className="text-sm">{display.emoji}</span>
-                {display.label}
-              </span>
-            );
-          })}
-          {isStreaming && (
-            <span className="relative inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-amber-50 text-amber-600 text-xs font-medium border border-amber-200">
-              <span className="flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-amber-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
-              </span>
-              Thinking...
-            </span>
-          )}
-        </div>
-      )}
-
-      {reasoningText && (
-        <div className="mb-3 w-full">
-          <button
-            type="button"
-            onClick={() => setShowReasoning(!showReasoning)}
-            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700 transition-colors mb-1"
-          >
-            <ChevronDown
-              className={`w-3.5 h-3.5 transition-transform ${
-                showReasoning ? "rotate-0" : "-rotate-90"
-              }`}
-            />
-            {showReasoning ? "Hide" : "Show"} reasoning
-            {isReasoningStreaming && (
-              <span className="inline-flex h-2 w-2 ml-1">
-                <span className="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-amber-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
-              </span>
-            )}
-          </button>
-          {showReasoning && (
-            <div className="p-3 rounded-md bg-amber-50 border-l-4 border-amber-400 text-xs text-amber-900 leading-relaxed whitespace-pre-wrap font-mono max-h-80 overflow-y-auto">
-              <div className="flex items-center gap-1.5 mb-2 text-amber-700 font-semibold not-italic">
-                <svg
-                  className="w-3.5 h-3.5"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M12 2a4 4 0 0 1 4 4c0 2-1.5 3.5-2.5 4.5A4 4 0 0 0 12 14" />
-                  <circle cx="12" cy="18" r="1" />
-                </svg>
-                Reasoning
-              </div>
-              <div className="italic">
-                {reasoningText}
-                {isReasoningStreaming && (
-                  <span className="inline-block w-1.5 h-4 ml-0.5 bg-amber-600 animate-pulse" />
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {message.parts?.map((part, index) => {
-        if (part.type === "file" && part.mediaType?.startsWith("image/")) {
-          return (
-            <img
-              className="rounded-md max-w-xs max-h-80 object-contain border my-2"
-              key={`${message.id}-img-${index}`}
-              src={part.url}
-              alt={part.filename ?? `image-${index}`}
-            />
-          );
-        }
-        if (
-          part.type === "file" &&
-          part.mediaType?.startsWith("application/pdf")
-        ) {
-          return (
-            <iframe
-              key={`${message.id}-${index}`}
-              src={part.url}
-              width="500"
-              height="600"
-              title={part.filename ?? `attachment-${index}`}
-            />
-          );
-        }
-        return null;
-      })}
-      <div className="whitespace-pre-wrap">
-        <ReactMarkdown>{getText(message)}</ReactMarkdown>
-      </div>
-      <div className="flex-1" />
-    </>
-  );
-}
-
-function ConversationList({
-  conversations,
-  currentId,
-  onSelect,
-  onNew,
-  onDelete,
-  isLoading,
-}) {
-  return (
-    <aside className="h-[100vh] hidden md:flex w-80 flex-col border-l border-gray-200 bg-white">
-      <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-        <h2 className="font-semibold text-primary-700">History</h2>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onNew}
-          className="gap-1 text-primary-600 hover:text-primary-800"
-        >
-          <Plus className="w-4 h-4" />
-          New
-        </Button>
-      </div>
-      <div className="flex-1 overflow-y-auto p-2 space-y-1">
-        {isLoading ? (
-          <p className="text-gray-400 text-sm text-center pt-8">Loading...</p>
-        ) : conversations.length === 0 ? (
-          <p className="text-gray-400 text-sm text-center pt-8">
-            No conversations yet
-          </p>
-        ) : (
-          conversations.map((conv) => (
-            <div
-              key={conv.id}
-              onClick={() => onSelect(conv)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  onSelect(conv);
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              className={`w-full text-left p-3 rounded-lg flex items-start gap-2 group hover:bg-primary-50 transition-colors cursor-pointer ${
-                conv.id === currentId ? "bg-primary-100" : ""
-              }`}
-            >
-              <MessageSquareText className="w-4 h-4 mt-0.5 shrink-0 text-gray-400" />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-gray-700 truncate">{conv.title}</p>
-                <p className="text-xs text-gray-400">
-                  {formatTime(conv.updatedAt)}
-                </p>
-              </div>
-              <button
-                onClick={(e) => onDelete(e, conv.id)}
-                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-red-50 rounded shrink-0"
-                title="Delete conversation"
-              >
-                <Trash2 className="w-3.5 h-3.5 text-gray-400 hover:text-red-500" />
-              </button>
-            </div>
-          ))
-        )}
-      </div>
-    </aside>
-  );
+/** Reads a File into a data-URL "file" message part for the chat API. */
+function fileToPart(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () =>
+      resolve({
+        type: "file",
+        mediaType: file.type,
+        filename: file.name,
+        url: reader.result,
+      });
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 export default function PatientAIPage() {
   const [userInput, setUserInput] = useState("");
-  const [filePart, setPdfText] = useState(null);
+  const [pdfFile, setPdfFile] = useState(null);
   const [pdfInfo, setPdfInfo] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [imageInfo, setImageInfo] = useState(null);
   const [conversations, setConversations] = useState([]);
   const [currentId, setCurrentId] = useState(null);
+  const [historyOpen, setHistoryOpen] = useState(true);
 
   const inputRef = useRef(null);
   const bottomRef = useRef(null);
@@ -303,8 +71,18 @@ export default function PatientAIPage() {
     },
   });
 
-  const isSending = status === "submitted" || status === "streaming";
+  // Chat loading states:
+  // - isSubmitting: request sent, waiting for the first token (show spinner)
+  // - isStreaming:  tokens are arriving and being rendered
+  // - isSending:    either of the above — the composer is locked
+  const isSubmitting = status === "submitted";
   const isStreaming = status === "streaming";
+  const isSending = isSubmitting || isStreaming;
+
+  // Show the "Thinking…" orb for the entire in-flight turn, pinned at the bottom
+  // of the list (just above the composer). It stays in view while the answer
+  // streams into the message above it, so the live activity never scrolls away.
+  const showThinking = isSending;
 
   const [quotaAlert, setQuotaAlert] = useState(null);
 
@@ -426,14 +204,12 @@ export default function PatientAIPage() {
       : "New conversation";
 
     const data = { title, messages: toSaveMessages(msgs) };
-
     const id = conversationIdRef.current;
 
+    isSavingRef.current = true;
     if (!id) {
-      isSavingRef.current = true;
       createMutateRef.current(data);
     } else {
-      isSavingRef.current = true;
       updateMutateRef.current({ convId: id, data });
     }
   }, []);
@@ -455,48 +231,28 @@ export default function PatientAIPage() {
     }
   }, [messages, status, saveConversation]);
 
+  const clearPdf = useCallback(() => {
+    setPdfFile(null);
+    setPdfInfo(null);
+  }, []);
+
+  const clearImage = useCallback(() => {
+    setImageFile(null);
+    setImageInfo(null);
+  }, []);
+
   const handleSend = useCallback(async () => {
     const trimmed = userInput.trim();
     if (!trimmed || isSending) return;
 
-    const metadata = pdfInfo
-      ? { pdfName: pdfInfo.name, pdfSize: pdfInfo.size }
-      : undefined;
+    const metadata = {
+      createdAt: Date.now(),
+      ...(pdfInfo ? { pdfName: pdfInfo.name, pdfSize: pdfInfo.size } : {}),
+    };
 
-    const promises = [];
-    if (filePart) {
-      promises.push(
-        new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () =>
-            resolve({
-              type: "file",
-              mediaType: filePart.type,
-              filename: filePart.name,
-              url: reader.result,
-            });
-          reader.onerror = reject;
-          reader.readAsDataURL(filePart);
-        }),
-      );
-    }
-    if (imageFile) {
-      promises.push(
-        new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () =>
-            resolve({
-              type: "file",
-              mediaType: imageFile.type,
-              filename: imageFile.name,
-              url: reader.result,
-            });
-          reader.onerror = reject;
-          reader.readAsDataURL(imageFile);
-        }),
-      );
-    }
-    const files = await Promise.all(promises);
+    const files = await Promise.all(
+      [pdfFile, imageFile].filter(Boolean).map(fileToPart),
+    );
 
     sendMessage({
       text: trimmed,
@@ -505,28 +261,33 @@ export default function PatientAIPage() {
     });
 
     setUserInput("");
-
     if (inputRef.current) {
       inputRef.current.style.height = "auto";
     }
+    clearPdf();
+    clearImage();
+  }, [
+    userInput,
+    isSending,
+    pdfInfo,
+    pdfFile,
+    imageFile,
+    sendMessage,
+    clearPdf,
+    clearImage,
+  ]);
 
-    setPdfText(null);
-    setPdfInfo(null);
-    setImageFile(null);
-    setImageInfo(null);
-  }, [userInput, isSending, pdfInfo, filePart, imageFile, sendMessage]);
-
-  const handleFileChange = useCallback(async (event) => {
+  const handleFileChange = useCallback((event) => {
     const file = event.target.files?.[0];
     if (!file) return;
     event.target.value = "";
 
-    setPdfText(file);
+    setPdfFile(file);
     setPdfInfo({ name: file.name, size: file.size });
     inputRef.current?.focus();
   }, []);
 
-  const handleImageChange = useCallback(async (event) => {
+  const handleImageChange = useCallback((event) => {
     const file = event.target.files?.[0];
     if (!file) return;
     event.target.value = "";
@@ -546,25 +307,13 @@ export default function PatientAIPage() {
     [handleSend],
   );
 
-  const clearPdf = useCallback(() => {
-    setPdfText(null);
-    setPdfInfo(null);
-  }, []);
-
-  const clearImage = useCallback(() => {
-    setImageFile(null);
-    setImageInfo(null);
-  }, []);
-
   const startNewConversation = useCallback(() => {
     conversationIdRef.current = null;
     setCurrentId(null);
     setMessages([]);
-    setPdfText(null);
-    setPdfInfo(null);
-    setImageFile(null);
-    setImageInfo(null);
-  }, [setMessages]);
+    clearPdf();
+    clearImage();
+  }, [setMessages, clearPdf, clearImage]);
 
   const selectConversation = useCallback(
     (conv) => {
@@ -572,12 +321,10 @@ export default function PatientAIPage() {
       conversationIdRef.current = conv.id;
       setCurrentId(conv.id);
       setMessages(toChatMessages(conv.messages));
-      setPdfText(null);
-      setPdfInfo(null);
-      setImageFile(null);
-      setImageInfo(null);
+      clearPdf();
+      clearImage();
     },
-    [setMessages],
+    [setMessages, clearPdf, clearImage],
   );
 
   const deleteConversationHandler = useCallback(
@@ -591,52 +338,33 @@ export default function PatientAIPage() {
   const canSend = !isSending && userInput.trim().length > 0;
 
   return (
-    <div className="flex bg-background">
-      <div className="h-[100vh] flex-1 flex flex-col">
-        {quotaAlert && (
-          <div className="w-full max-w-3xl mx-auto px-10 pt-4 shrink-0">
-            <div className="flex items-start gap-3 p-4 rounded-lg bg-red-50 border border-red-200 text-sm text-red-800">
-              <svg
-                className="w-5 h-5 shrink-0 mt-0.5 text-red-500"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-              <div className="flex-1">{quotaAlert}</div>
-              <button
-                type="button"
-                onClick={() => setQuotaAlert(null)}
-                className="shrink-0 text-red-400 hover:text-red-600"
-              >
-                <svg
-                  className="w-4 h-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        )}
+    <div className="flex h-full bg-background overflow-x-hidden">
+      <div className="h-full flex-1 flex flex-col min-w-0">
+        {/* Mobile history trigger — the sidebar is a drawer on small screens */}
+        <div className="md:hidden flex items-center justify-end px-4 py-2 border-b border-gray-100 shrink-0">
+          <button
+            type="button"
+            onClick={() => setHistoryOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 transition-colors"
+          >
+            <MessageSquareText className="w-4 h-4" />
+            History
+          </button>
+        </div>
+
+        <QuotaAlert message={quotaAlert} onClose={() => setQuotaAlert(null)} />
 
         {/* Scroll region — only the messages scroll; the composer below never moves */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin">
           <div className="w-full max-w-3xl mx-auto px-10 pt-6 min-h-full flex flex-col">
             {messages.length === 0 ? (
-              <div className="flex-1 flex items-center justify-center">
+              <div className="flex-1 flex flex-col items-center justify-center gap-10">
+                {/* TEMP: concept comparison — remove once a direction is chosen */}
+                <div className="flex items-end gap-12">
+                  <div className="flex flex-col items-center gap-4">
+                    <PulseOrb size="lg" />
+                  </div>
+                </div>
                 <h1 className="text-2xl font-semibold text-primary-500 text-center">
                   What&apos;s bothering you today?
                 </h1>
@@ -661,8 +389,13 @@ export default function PatientAIPage() {
                     )}
                   </div>
                 ))}
+              </div>
+            )}
 
-                {status === "submitted" && <LoadingSpinner className="mb-2" />}
+            {showThinking && (
+              <div className="flex items-center gap-2 mb-2 text-sm font-medium text-primary-500">
+                <PulseOrb size="sm" floating={false} />
+                Thinking…
               </div>
             )}
 
@@ -741,7 +474,7 @@ export default function PatientAIPage() {
                   value={userInput}
                   placeholder="Ask anything..."
                   rows={1}
-                  className="flex-1 resize-none outline-none bg-transparent text-sm p-2 leading-relaxed max-h-40"
+                  className="flex-1 resize-none outline-none bg-transparent text-sm p-2 leading-relaxed max-h-40 scrollbar-thin"
                   onChange={(e) => setUserInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   onInput={(e) => {
@@ -756,9 +489,13 @@ export default function PatientAIPage() {
                   className="rounded-full shrink-0"
                   onClick={handleSend}
                   disabled={!canSend}
-                  title="Send message"
+                  title={isSending ? "Generating response..." : "Send message"}
                 >
-                  <ArrowUp className="w-4 h-4" />
+                  {isSending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <ArrowUp className="w-4 h-4" />
+                  )}
                 </Button>
               </div>
             </div>
@@ -773,6 +510,8 @@ export default function PatientAIPage() {
         onNew={startNewConversation}
         onDelete={deleteConversationHandler}
         isLoading={isLoadingConversations}
+        mobileOpen={historyOpen}
+        onMobileClose={() => setHistoryOpen(false)}
       />
     </div>
   );

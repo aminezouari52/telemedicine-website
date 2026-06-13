@@ -42,6 +42,12 @@ export default function ChatPage() {
   const [isOpenLeave, setIsOpenLeave] = useState(false);
   const [isOpenComplete, setIsOpenComplete] = useState(false);
 
+  // `user` is hydrated from localStorage, so it's null during SSR but present on
+  // the first client render. Gate user-dependent UI on `mounted` to keep the
+  // first client render identical to the server and avoid hydration mismatch.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const onOpenLeave = () => setIsOpenLeave(true);
   const onCloseLeave = () => setIsOpenLeave(false);
   const onOpenComplete = () => setIsOpenComplete(true);
@@ -189,7 +195,7 @@ export default function ChatPage() {
       />
       <div className="flex flex-col justify-between h-screen p-8 gap-4 bg-white">
         <div className="flex items-center justify-between">
-          {user?.role === "patient" && (
+          {mounted && user?.role === "patient" && (
             <div className="flex items-center gap-2">
               <Avatar>
                 <AvatarImage src="/assets/avatar-doctor.jpg" alt="Doctor" />
@@ -206,7 +212,7 @@ export default function ChatPage() {
               </p>
             </div>
           )}
-          {user?.role === "doctor" && (
+          {mounted && user?.role === "doctor" && (
             <div className="flex items-center gap-2">
               <Avatar>
                 <AvatarImage src="/assets/avatar-patient.png" alt="Patient" />

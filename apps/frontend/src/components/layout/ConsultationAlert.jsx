@@ -26,7 +26,7 @@ const ConsultationAlert = () => {
 
   const isOnActiveConsultationRoute = useMemo(() => {
     if (!activeConsultation?._id) return false;
-    return pathname === `/${activeConsultation._id}`;
+    return pathname === `/consultation/${activeConsultation._id}`;
   }, [pathname, activeConsultation]);
 
   if (isLoading || isError) {
@@ -36,7 +36,7 @@ const ConsultationAlert = () => {
   const handleJoin = () => {
     if (!activeConsultation?._id) return;
     if (!isOnActiveConsultationRoute) {
-      router.push(`/${activeConsultation._id}`);
+      router.push(`/consultation/${activeConsultation._id}`);
     }
   };
 

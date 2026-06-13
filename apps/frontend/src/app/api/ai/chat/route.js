@@ -6,6 +6,8 @@ const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
+const MODEL_ID = "gemini-2.5-flash";
+
 const tools = {
   symptom_checker: {
     description: `Analyze patient symptoms and return a structured triage assessment.
@@ -642,7 +644,7 @@ export async function POST(req) {
 
   try {
     const result = streamText({
-      model: google("gemini-2.5-flash"),
+      model: google(MODEL_ID),
       system: systemContext,
       messages: processedMessages,
       tools,
@@ -654,7 +656,19 @@ export async function POST(req) {
       },
     });
 
-    return result.toUIMessageStreamResponse({ sendReasoning: true });
+    return result.toUIMessageStreamResponse({
+      sendReasoning: true,
+      // Attach per-message metadata that streams alongside the response: stamp
+      // the model + creation time up front, then the token usage once known.
+      messageMetadata: ({ part }) => {
+        if (part.type === "start") {
+          return { model: MODEL_ID, createdAt: Date.now() };
+        }
+        if (part.type === "finish") {
+          return { totalTokens: part.totalUsage?.totalTokens };
+        }
+      },
+    });
   } catch (error) {
     console.error("[AI Chat] streamText error:", error);
     const message = error?.message || "AI streaming failed";

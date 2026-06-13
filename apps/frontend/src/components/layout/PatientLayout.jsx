@@ -38,9 +38,11 @@ export const PatientLayout = ({ children }) => {
   return isLoading ? (
     <Spinner />
   ) : (
-    <div className="flex h-screen max-w-[1550px] mx-auto">
+    <div className="flex flex-col md:flex-row h-screen max-w-[1550px] mx-auto">
       <PatientHeader />
-      <main className="flex-1 overflow-auto">{children}</main>
+      <main className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden">
+        {children}
+      </main>
     </div>
   );
 };

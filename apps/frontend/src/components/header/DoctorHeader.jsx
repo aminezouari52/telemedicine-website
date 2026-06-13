@@ -119,7 +119,7 @@ export const DoctorHeader = () => {
       if (consultation) {
         addNotificationIfNotExist({
           msg: "You have a consultation now",
-          route: `/${consultation?._id}`,
+          route: `/consultation/${consultation?._id}`,
         });
       }
     }
@@ -148,7 +148,7 @@ export const DoctorHeader = () => {
             size="sm"
             className="px-2 hover:opacity-80 md:px-3"
             onClick={() => {
-              router.push(`/${consultation?._id}`);
+              router.push(`/consultation/${consultation?._id}`);
             }}
           >
             <span className="hidden md:inline">Join</span>

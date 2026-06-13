@@ -96,19 +96,15 @@ export const PatientHeader = () => {
   return (
     <>
       {/* Mobile top bar */}
-      <div className="sticky top-0 z-20 flex justify-between bg-white px-4 py-6 md:hidden">
-        <Logo className="md:block hidden" />
+      <div className="sticky top-0 z-20 flex items-center justify-between border-b bg-white px-4 py-3 md:hidden">
+        <Logo />
         <Button
           variant="ghost"
           size="icon"
-          aria-label="Toggle menu"
-          onClick={() => setMobileOpen((prev) => !prev)}
+          aria-label="Open menu"
+          onClick={() => setMobileOpen(true)}
         >
-          {mobileOpen ? (
-            <X className="h-5 w-5" />
-          ) : (
-            <Menu className="h-5 w-5" />
-          )}
+          <Menu className="h-5 w-5" />
         </Button>
       </div>
 
@@ -120,18 +116,25 @@ export const PatientHeader = () => {
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar — fixed drawer on mobile, static column on desktop */}
       <aside
         className={cn(
-          "pt-2.5 z-40 flex w-[0px] md:w-80 flex-col bg-white transition-transform duration-300 overflow-hidden md:overflow-visible",
-          "shadow-[2px_0_8px_0_rgba(0,0,0,0.06)]",
-          mobileOpen
-            ? "fixed inset-y-0 left-0 translate-x-0 w-auto "
-            : "-translate-x-full md:translate-x-0",
+          "fixed inset-y-0 left-0 z-40 flex w-72 max-w-[80vw] flex-col bg-white shadow-xl transition-transform duration-300",
+          "md:static md:z-auto md:w-64 md:max-w-none md:translate-x-0 md:border-r md:shadow-none",
+          mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
-        <div className="flex h-16 items-center border-b px-6">
+        <div className="flex h-16 items-center justify-between border-b px-6">
           <Logo />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            aria-label="Close menu"
+            onClick={closeMobile}
+          >
+            <X className="h-5 w-5" />
+          </Button>
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
@@ -162,7 +165,7 @@ export const PatientHeader = () => {
             <Button
               size="sm"
               className="w-full"
-              onClick={() => navigate(`/${consultation?._id}`)}
+              onClick={() => navigate(`/consultation/${consultation?._id}`)}
             >
               <MessageSquareMore className="mr-2 h-4 w-4" />
               Join

@@ -109,13 +109,18 @@ export function toChatMessage(msg) {
     }
   }
 
+  const metadata = {
+    ...(msg.pdfName ? { pdfName: msg.pdfName, pdfSize: msg.pdfSize } : {}),
+    ...(msg.createdAt != null ? { createdAt: msg.createdAt } : {}),
+    ...(msg.model ? { model: msg.model } : {}),
+    ...(msg.totalTokens != null ? { totalTokens: msg.totalTokens } : {}),
+  };
+
   return {
     id: msg.id,
     role: msg.role === "ai" ? "assistant" : "user",
     parts,
-    metadata: msg.pdfName
-      ? { pdfName: msg.pdfName, pdfSize: msg.pdfSize }
-      : undefined,
+    metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
   };
 }
 
@@ -150,17 +155,22 @@ export function toSaveMessage(msg) {
     (p) => p.type === "file" && p.mediaType?.startsWith("application/pdf"),
   );
 
+  const meta = msg.metadata ?? {};
+
   return {
     id: msg.id,
     role: msg.role === "assistant" ? "ai" : msg.role,
     text: getText(msg),
     ...(toolInvocations.length > 0 ? { toolInvocations } : {}),
     ...(reasoning ? { reasoning } : {}),
-    ...(msg.metadata?.pdfName
-      ? { pdfName: msg.metadata.pdfName, pdfSize: msg.metadata.pdfSize }
+    ...(meta.pdfName
+      ? { pdfName: meta.pdfName, pdfSize: meta.pdfSize }
       : filePart?.filename
         ? { pdfName: filePart.filename, pdfSize: 0 }
         : {}),
+    ...(meta.createdAt != null ? { createdAt: meta.createdAt } : {}),
+    ...(meta.model ? { model: meta.model } : {}),
+    ...(meta.totalTokens != null ? { totalTokens: meta.totalTokens } : {}),
   };
 }
 

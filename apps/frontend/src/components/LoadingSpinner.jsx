@@ -1,12 +1,9 @@
-import { Spinner } from "@/components/ui/spinner";
-import React from "react";
+import PulseOrb from "@/components/PulseOrb";
 
+/** Inline branded loader. `size="small"` renders a compact orb. */
 function LoadingSpinner({ size = "default", className }) {
   return (
-    <Spinner
-      size={size === "small" ? "sm" : "default"}
-      className={`text-primary-500 ${className || ""}`}
-    />
+    <PulseOrb size={size === "small" ? "sm" : "md"} className={className} />
   );
 }
 

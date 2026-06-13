@@ -8,7 +8,7 @@ import { updateDoctorProfile } from "@/services/adminService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import {
   Select,
   SelectContent,
@@ -167,7 +167,7 @@ export default function AdminEditDoctorPage() {
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <Spinner className="h-8 w-8" />
+        <LoadingSpinner />
       </div>
     );
   }

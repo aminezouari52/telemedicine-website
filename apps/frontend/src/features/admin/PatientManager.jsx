@@ -10,7 +10,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Spinner } from "@/components/ui/spinner";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import {
   Dialog,
   DialogContent,
@@ -140,7 +140,7 @@ export default function PatientManager() {
 
       {loading ? (
         <div className="flex justify-center py-12">
-          <Spinner className="h-8 w-8" />
+          <LoadingSpinner />
         </div>
       ) : patients.length === 0 ? (
         <Card>
