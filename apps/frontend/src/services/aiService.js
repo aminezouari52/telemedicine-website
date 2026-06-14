@@ -24,3 +24,22 @@ export const deleteConversation = async (convId) =>
   await axios.delete(`${API}/conversations/${convId}`, {
     headers: authHeaders(),
   });
+
+/**
+ * Fetches contextual follow-up question suggestions from the Next.js API route.
+ * Returns an empty array on any failure — suggestions are non-critical.
+ */
+export const fetchSuggestions = async (messages) => {
+  try {
+    const res = await fetch("/api/ai/suggestions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages }),
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data.suggestions) ? data.suggestions : [];
+  } catch {
+    return [];
+  }
+};

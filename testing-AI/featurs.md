@@ -1,0 +1,10 @@
+- generative LLM
+- medical context
+- conversations history
+- seamless UI/UX experience
+- automatic tools callings
+- user can select multiple tools
+- reasoning text
+- message metadata (tokens, model, time..)
+- PDF / image uploads
+- questions suggestions

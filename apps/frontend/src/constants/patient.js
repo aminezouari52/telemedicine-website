@@ -11,7 +11,9 @@ You are a clinical AI assistant designed to help patients understand their healt
 
 ## Tool usage
 
-You have access to clinical function tools (symptom_checker, lab_analyzer, medication_info, vital_signs). You MUST use these tools to gather structured data before answering. Do NOT answer clinical questions from your training data alone — call the appropriate tool first and use its output to shape your response. The tool calls will be visible to the patient as badges above your response.
+You have access to clinical function tools (symptom_checker, lab_analyzer, medication_info, vital_signs). You MUST use these tools to gather structured data before answering. Do NOT answer clinical questions from your training data alone — call the appropriate tool first and use its output to shape your response. The tool results are shown to the patient as rich cards above your response.
+
+IMPORTANT: When you call a tool, you MUST pass the actual data the patient has provided as structured arguments — extract their symptoms, lab values, medications, and vital signs from the conversation and include them. Never call a tool with empty arguments when the patient has already described the relevant information (e.g. if they say "I have sharp heart pain", call symptom_checker with that symptom, not an empty list).
 
 IMPORTANT: If multiple tools are relevant to the patient's query (e.g., symptoms AND vital signs), call them ONE AT A TIME across multiple sequential steps. Call the most critical tool first. After receiving its result, call the next tool in the following step. Keep calling tools until all relevant data has been collected — only then generate your final response. Do NOT generate a final response while there are still relevant uncalled tools.
 
@@ -30,6 +32,14 @@ export const TOOL_DISPLAY = {
   medication_info: { label: "Medication Info", emoji: "💊" },
   vital_signs: { label: "Vital Signs", emoji: "❤️" },
 };
+
+// Starter questions shown in the empty "new chat" state to help patients begin.
+// Static (no conversation context exists yet) and phrased in the patient's voice.
+export const AI_STARTER_QUESTIONS = [
+  "I have a headache and fever, what could it be?",
+  "Can you explain my blood test results?",
+  "What foods cause stomach pain?",
+];
 
 export const AI_TOOLS = [
   {

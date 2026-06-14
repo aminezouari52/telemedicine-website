@@ -11,9 +11,13 @@ const MODEL_ID = "gemini-2.5-flash";
 const tools = {
   symptom_checker: {
     description: `Analyze patient symptoms and return a structured triage assessment.
-Call this tool IMMEDIATELY whenever a patient asks about symptoms, health assessment, or triage — even if no specific symptoms are mentioned yet.
-Extract whatever symptom details are available from the conversation so far and pass them in. If the patient hasn't provided details yet, call the tool with an empty symptoms array to initiate the structured triage flow.`,
-    parameters: z.object({
+Call this tool whenever a patient describes or asks about symptoms.
+CRITICAL: You MUST extract EVERY symptom the patient has mentioned anywhere in the conversation and pass them in the "symptoms" array. For each symptom include its name plus any location, duration, severity (mild/moderate/severe), quality, and aggravating/relieving factors you can infer from the patient's wording.
+Examples:
+- "I have sharp heart pain" → symptoms: [{ name: "chest pain", quality: "sharp", location: "chest" }]
+- "really bad throbbing headache for 3 days" → symptoms: [{ name: "headache", quality: "throbbing", severity: "severe", duration: "3 days" }]
+Only pass an empty symptoms array when the patient has asked about triage but has genuinely not named any symptom yet.`,
+    inputSchema: z.object({
       symptoms: z
         .array(
           z.object({
@@ -80,6 +84,10 @@ Extract whatever symptom details are available from the conversation so far and 
         "chest pain",
         "chest pressure",
         "chest tightness",
+        "heart pain",
+        "cardiac pain",
+        "pain in my heart",
+        "pain in my chest",
         "difficulty breathing",
         "shortness of breath",
         "cannot breathe",
@@ -266,8 +274,8 @@ Extract whatever symptom details are available from the conversation so far and 
   lab_analyzer: {
     description: `Analyze laboratory test results and explain their clinical significance.
 Use this when a patient provides lab results, blood work, urinalysis, or other diagnostic test values.
-Extract test names and values from the conversation or uploaded PDF content.`,
-    parameters: z.object({
+CRITICAL: You MUST extract every test name and value from the conversation or uploaded PDF and pass them in the "tests" array (with reference_range and a flag of normal/high/low/critical_high/critical_low whenever you can determine it). Only pass an empty array if the patient asked about labs but has not yet provided any values.`,
+    inputSchema: z.object({
       tests: z
         .array(
           z.object({
@@ -289,7 +297,11 @@ Extract test names and values from the conversation or uploaded PDF content.`,
               .describe("Whether the result deviates from normal range"),
           }),
         )
-        .describe("List of laboratory tests with their results"),
+        .optional()
+        .default([])
+        .describe(
+          "List of laboratory tests with their results — pass an empty array if no values are available yet",
+        ),
       patient_context: z
         .object({
           age: z.number().optional(),
@@ -302,7 +314,7 @@ Extract test names and values from the conversation or uploaded PDF content.`,
         })
         .optional(),
     }),
-    execute: async ({ tests }) => {
+    execute: async ({ tests = [] }) => {
       const abnormalTests = tests.filter((t) => t.flag && t.flag !== "normal");
       const criticalTests = tests.filter(
         (t) => t.flag === "critical_high" || t.flag === "critical_low",
@@ -325,8 +337,8 @@ Extract test names and values from the conversation or uploaded PDF content.`,
   medication_info: {
     description: `Provide information about medications including usage, dosage, side effects, and drug interactions.
 Use this when a patient asks about a specific medication, drug interactions, side effects, or how to take their medicine.
-Also use when a patient provides a list of their current medications.`,
-    parameters: z.object({
+CRITICAL: You MUST pass every medication the patient has named in the "medications" array (with dosage, frequency, route, and purpose whenever mentioned). Only pass an empty array if the patient asked about medications but has not yet named any.`,
+    inputSchema: z.object({
       medications: z
         .array(
           z.object({
@@ -351,7 +363,11 @@ Also use when a patient provides a list of their current medications.`,
               .describe("Why the patient is taking this medication"),
           }),
         )
-        .describe("List of medications to analyze"),
+        .optional()
+        .default([])
+        .describe(
+          "List of medications to analyze — pass an empty array if none provided yet",
+        ),
       query_type: z
         .enum([
           "general_info",
@@ -362,7 +378,7 @@ Also use when a patient provides a list of their current medications.`,
         .optional()
         .describe("Type of medication information requested"),
     }),
-    execute: async ({ medications }) => {
+    execute: async ({ medications = [] }) => {
       const categories = {
         antibiotic: [
           "amoxicillin",
@@ -432,7 +448,7 @@ Also use when a patient provides a list of their current medications.`,
     description: `Interpret vital sign measurements and assess their clinical significance.
 Use this when a patient provides vital sign readings such as blood pressure, heart rate, temperature, respiratory rate, or oxygen saturation.
 Compare values against standard ranges and flag abnormalities.`,
-    parameters: z.object({
+    inputSchema: z.object({
       blood_pressure: z
         .object({
           systolic: z

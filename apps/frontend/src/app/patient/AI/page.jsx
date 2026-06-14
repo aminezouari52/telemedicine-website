@@ -9,21 +9,35 @@ import {
   Paperclip,
   Image,
   MessageSquareText,
-  Loader2,
+  Square,
+  Check,
+  Plus,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import {
   listConversations,
   createConversation,
   updateConversation,
   deleteConversation,
+  fetchSuggestions,
 } from "@/services/aiService";
 import { getText, toChatMessages, toSaveMessages } from "@/lib/aiDataParts";
-import { SYSTEM_CONTEXT, AI_TOOLS } from "@/constants/patient";
+import {
+  SYSTEM_CONTEXT,
+  AI_TOOLS,
+  AI_STARTER_QUESTIONS,
+} from "@/constants/patient";
 import UserMessage from "./UserMessage";
 import AiMessage from "./AiMessage";
 import ConversationList from "./ConversationList";
 import QuotaAlert from "./QuotaAlert";
+import FollowUpChips from "./FollowUpChips";
 import PulseOrb from "@/components/PulseOrb";
 import PdfPreviewCard from "./PdfPreviewCard";
 import ImagePreviewCard from "./ImagePreviewCard";
@@ -53,18 +67,48 @@ export default function PatientAIPage() {
   const [conversations, setConversations] = useState([]);
   const [currentId, setCurrentId] = useState(null);
   const [historyOpen, setHistoryOpen] = useState(true);
+  // Tools the patient has explicitly toggled on — the AI is told it MUST call
+  // these. Mirrored into a ref so the transport's `body` callback reads the
+  // live selection at send time rather than a stale closure value.
+  const [selectedTools, setSelectedTools] = useState([]);
+
+  const [attachOpen, setAttachOpen] = useState(false);
 
   const inputRef = useRef(null);
+  const pdfInputRef = useRef(null);
+  const imageInputRef = useRef(null);
   const bottomRef = useRef(null);
   const conversationIdRef = useRef(null);
   const isSavingRef = useRef(false);
   const isLoadingMessages = useRef(false);
   const hasAutoSelectedRef = useRef(false);
+  const selectedToolsRef = useRef([]);
+  selectedToolsRef.current = selectedTools;
 
-  const { messages, sendMessage, status, setMessages, error } = useChat({
+  const { messages, sendMessage, status, setMessages, stop, error } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/ai/chat",
-      body: () => ({ systemContext: SYSTEM_CONTEXT }),
+      body: () => {
+        const ids = selectedToolsRef.current;
+        if (ids.length === 0) return { systemContext: SYSTEM_CONTEXT };
+
+        const labels = ids
+          .map((id) => AI_TOOLS.find((t) => t.id === id)?.label)
+          .filter(Boolean);
+        const emphasis =
+          `\n\n## Patient-requested tools\n` +
+          `The patient has toggled on ${ids.length > 1 ? "these tools" : "this tool"}: ` +
+          `${labels.join(", ")} (${ids.join(", ")}), signalling they want ` +
+          `${ids.length > 1 ? "them" : "it"} used. Strongly prefer calling ` +
+          `${ids.length > 1 ? "each one" : "it"} when it is relevant to their ` +
+          `message. If a requested tool needs information the patient hasn't ` +
+          `given yet, ask for it before calling rather than calling with empty ` +
+          `arguments. If a requested tool genuinely does not fit their query, ` +
+          `do NOT force it — skip it and briefly note that it wasn't relevant ` +
+          `to this message. You may also call other tools you deem relevant.`;
+
+        return { systemContext: SYSTEM_CONTEXT + emphasis };
+      },
     }),
     onError: (err) => {
       console.error("[AI Chat] useChat error:", err);
@@ -79,12 +123,11 @@ export default function PatientAIPage() {
   const isStreaming = status === "streaming";
   const isSending = isSubmitting || isStreaming;
 
-  // Show the "Thinking…" orb for the entire in-flight turn, pinned at the bottom
-  // of the list (just above the composer). It stays in view while the answer
-  // streams into the message above it, so the live activity never scrolls away.
-  const showThinking = isSending;
-
   const [quotaAlert, setQuotaAlert] = useState(null);
+
+  // Follow-up chips for the latest assistant reply. `forId` pins them to a
+  // specific message so they only render under the freshest answer.
+  const [suggestions, setSuggestions] = useState({ items: [], forId: null });
 
   useEffect(() => {
     if (!error) {
@@ -227,6 +270,15 @@ export default function PatientAIPage() {
       const text = getText(lastMsg);
       if (text.trim()) {
         saveConversation(messages);
+
+        const lastId = lastMsg.id;
+        const payload = messages.map((m) => ({
+          role: m.role,
+          text: getText(m),
+        }));
+        fetchSuggestions(payload).then((items) => {
+          if (items.length > 0) setSuggestions({ items, forId: lastId });
+        });
       }
     }
   }, [messages, status, saveConversation]);
@@ -241,41 +293,46 @@ export default function PatientAIPage() {
     setImageInfo(null);
   }, []);
 
-  const handleSend = useCallback(async () => {
-    const trimmed = userInput.trim();
-    if (!trimmed || isSending) return;
+  const submit = useCallback(
+    async (text) => {
+      const trimmed = text.trim();
+      if (!trimmed || isSending) return;
 
-    const metadata = {
-      createdAt: Date.now(),
-      ...(pdfInfo ? { pdfName: pdfInfo.name, pdfSize: pdfInfo.size } : {}),
-    };
+      // Hide stale follow-up chips the moment a new turn begins.
+      setSuggestions({ items: [], forId: null });
 
-    const files = await Promise.all(
-      [pdfFile, imageFile].filter(Boolean).map(fileToPart),
+      const metadata = {
+        createdAt: Date.now(),
+        ...(pdfInfo ? { pdfName: pdfInfo.name, pdfSize: pdfInfo.size } : {}),
+      };
+
+      const files = await Promise.all(
+        [pdfFile, imageFile].filter(Boolean).map(fileToPart),
+      );
+
+      sendMessage({
+        text: trimmed,
+        metadata,
+        files: files.length > 0 ? files : undefined,
+      });
+
+      setUserInput("");
+      if (inputRef.current) {
+        inputRef.current.style.height = "auto";
+      }
+      clearPdf();
+      clearImage();
+    },
+    [isSending, pdfInfo, pdfFile, imageFile, sendMessage, clearPdf, clearImage],
+  );
+
+  const handleSend = useCallback(() => submit(userInput), [submit, userInput]);
+
+  const toggleTool = useCallback((id) => {
+    setSelectedTools((prev) =>
+      prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id],
     );
-
-    sendMessage({
-      text: trimmed,
-      metadata,
-      files: files.length > 0 ? files : undefined,
-    });
-
-    setUserInput("");
-    if (inputRef.current) {
-      inputRef.current.style.height = "auto";
-    }
-    clearPdf();
-    clearImage();
-  }, [
-    userInput,
-    isSending,
-    pdfInfo,
-    pdfFile,
-    imageFile,
-    sendMessage,
-    clearPdf,
-    clearImage,
-  ]);
+  }, []);
 
   const handleFileChange = useCallback((event) => {
     const file = event.target.files?.[0];
@@ -311,6 +368,7 @@ export default function PatientAIPage() {
     conversationIdRef.current = null;
     setCurrentId(null);
     setMessages([]);
+    setSuggestions({ items: [], forId: null });
     clearPdf();
     clearImage();
   }, [setMessages, clearPdf, clearImage]);
@@ -321,6 +379,7 @@ export default function PatientAIPage() {
       conversationIdRef.current = conv.id;
       setCurrentId(conv.id);
       setMessages(toChatMessages(conv.messages));
+      setSuggestions({ items: [], forId: null });
       clearPdf();
       clearImage();
     },
@@ -392,8 +451,18 @@ export default function PatientAIPage() {
               </div>
             )}
 
-            {showThinking && (
-              <div className="flex items-center gap-2 mb-2 text-sm font-medium text-primary-500">
+            {!isSending &&
+              suggestions.items.length > 0 &&
+              messages[messages.length - 1]?.id === suggestions.forId && (
+                <FollowUpChips
+                  suggestions={suggestions.items}
+                  onSelect={submit}
+                  disabled={isSending}
+                />
+              )}
+
+            {isSending && (
+              <div className="flex items-center gap-2 mb-4 text-sm font-medium text-primary-500">
                 <PulseOrb size="sm" floating={false} />
                 Thinking…
               </div>
@@ -406,19 +475,32 @@ export default function PatientAIPage() {
         {/* Composer — fixed footer, outside the scroll region */}
         <div className="shrink-0 bg-background">
           <div className="w-full max-w-3xl mx-auto px-10 flex flex-col pb-8">
-            <div className="flex gap-2 mb-3 flex-wrap pb-1">
-              {AI_TOOLS.map((tool) => (
-                <button
-                  key={tool.id}
-                  type="button"
-                  onClick={() => setUserInput(tool.prompt)}
-                  className="flex items-center gap-1.5 shrink-0 px-3 py-1.5 rounded-full border border-primary-200 text-xs font-medium text-primary-700 bg-primary-50 hover:bg-primary-100 transition-colors"
-                >
-                  <span className="text-sm">{tool.emoji}</span>
-                  {tool.label}
-                </button>
-              ))}
-            </div>
+            {messages.length === 0 && (
+              <FollowUpChips
+                suggestions={AI_STARTER_QUESTIONS}
+                onSelect={submit}
+                disabled={isSending}
+              />
+            )}
+            {selectedTools.length > 0 && (
+              <div className="flex items-center gap-2 flex-wrap pb-1">
+                {AI_TOOLS.filter((tool) => selectedTools.includes(tool.id)).map(
+                  (tool) => (
+                    <button
+                      key={tool.id}
+                      type="button"
+                      onClick={() => toggleTool(tool.id)}
+                      title={`${tool.label} will be requested — click to remove`}
+                      className="inline-flex items-center gap-1.5 shrink-0 pl-3 pr-2 py-1.5 rounded-full border border-primary-500 bg-primary-500 text-white text-xs font-medium hover:bg-primary-600 transition-colors"
+                    >
+                      <span className="text-sm">{tool.emoji}</span>
+                      {tool.label}
+                      <X className="w-3 h-3" />
+                    </button>
+                  ),
+                )}
+              </div>
+            )}
             <div className="w-full flex flex-col gap-2">
               <div className="flex gap-2">
                 {pdfInfo && (
@@ -437,38 +519,95 @@ export default function PatientAIPage() {
                 )}
               </div>
               <div className="flex items-end gap-2 bg-white shadow-md rounded-3xl border border-primary-500 p-2 transition-shadow">
-                {!pdfInfo && (
-                  <label
-                    htmlFor="file-input"
-                    className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-primary-50 text-primary-600 hover:bg-primary-100 cursor-pointer border border-primary-200 shrink-0"
-                    title="Attach PDF"
-                  >
-                    <Paperclip className="w-4 h-4" />
-                    <input
-                      id="file-input"
-                      type="file"
-                      accept="application/pdf"
-                      className="hidden"
-                      onChange={handleFileChange}
-                    />
-                  </label>
-                )}
-                {!imageInfo && (
-                  <label
-                    htmlFor="image-input"
-                    className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-primary-50 text-primary-600 hover:bg-primary-100 cursor-pointer border border-primary-200 shrink-0"
-                    title="Attach Image"
-                  >
-                    <Image className="w-4 h-4" />
-                    <input
-                      id="image-input"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleImageChange}
-                    />
-                  </label>
-                )}
+                <input
+                  ref={pdfInputRef}
+                  type="file"
+                  accept="application/pdf"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+                <Popover open={attachOpen} onOpenChange={setAttachOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      title="Add attachment or tool"
+                      className="relative inline-flex items-center justify-center w-9 h-9 rounded-full bg-primary-50 text-primary-600 hover:bg-primary-100 cursor-pointer border border-primary-200 shrink-0"
+                    >
+                      <Plus className="w-4 h-4" />
+                      {selectedTools.length > 0 && (
+                        <span className="absolute -top-1 -right-1 inline-flex items-center justify-center min-w-[1.125rem] h-[1.125rem] px-1 rounded-full bg-primary-500 text-white text-[0.625rem] font-semibold">
+                          {selectedTools.length}
+                        </span>
+                      )}
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent align="start" side="top" className="w-60 p-1">
+                    <p className="px-2.5 pt-1.5 pb-1 text-[0.6875rem] font-semibold uppercase tracking-wide text-gray-400">
+                      Attach
+                    </p>
+                    <button
+                      type="button"
+                      disabled={!!pdfInfo}
+                      onClick={() => {
+                        setAttachOpen(false);
+                        pdfInputRef.current?.click();
+                      }}
+                      className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+                    >
+                      <Paperclip className="w-4 h-4 text-primary-600" />
+                      Attach PDF
+                    </button>
+                    <button
+                      type="button"
+                      disabled={!!imageInfo}
+                      onClick={() => {
+                        setAttachOpen(false);
+                        imageInputRef.current?.click();
+                      }}
+                      className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-md text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+                    >
+                      <Image className="w-4 h-4 text-primary-600" />
+                      Attach Image
+                    </button>
+
+                    <div className="my-1 h-px bg-gray-100" />
+
+                    <p className="px-2.5 pt-1 pb-1 text-[0.6875rem] font-semibold uppercase tracking-wide text-gray-400">
+                      Tools
+                    </p>
+                    {AI_TOOLS.map((tool) => {
+                      const selected = selectedTools.includes(tool.id);
+                      return (
+                        <button
+                          key={tool.id}
+                          type="button"
+                          onClick={() => toggleTool(tool.id)}
+                          aria-pressed={selected}
+                          className={`flex items-center gap-2.5 w-full px-2.5 py-2 rounded-md text-sm text-left transition-colors ${
+                            selected
+                              ? "bg-primary-50 text-primary-700"
+                              : "text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          <span className="text-base leading-none">
+                            {tool.emoji}
+                          </span>
+                          <span className="flex-1">{tool.label}</span>
+                          {selected && (
+                            <Check className="w-4 h-4 text-primary-500 shrink-0" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </PopoverContent>
+                </Popover>
                 <textarea
                   ref={inputRef}
                   value={userInput}
@@ -483,20 +622,28 @@ export default function PatientAIPage() {
                     el.style.height = el.scrollHeight + "px";
                   }}
                 />
-                <Button
-                  type="button"
-                  size="icon"
-                  className="rounded-full shrink-0"
-                  onClick={handleSend}
-                  disabled={!canSend}
-                  title={isSending ? "Generating response..." : "Send message"}
-                >
-                  {isSending ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
+                {isSending ? (
+                  <Button
+                    type="button"
+                    size="icon"
+                    className="rounded-full shrink-0"
+                    onClick={stop}
+                    title="Stop generating"
+                  >
+                    <Square className="w-3.5 h-3.5 fill-current" />
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    size="icon"
+                    className="rounded-full shrink-0"
+                    onClick={handleSend}
+                    disabled={!canSend}
+                    title="Send message"
+                  >
                     <ArrowUp className="w-4 h-4" />
-                  )}
-                </Button>
+                  </Button>
+                )}
               </div>
             </div>
           </div>
