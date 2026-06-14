@@ -26,7 +26,6 @@ import { DateTime } from "luxon";
 
 // components
 import LoadingSpinner from "@/components/LoadingSpinner";
-import ConsultationAlert from "@/components/layout/ConsultationAlert";
 
 // hooks
 import { useQuery } from "@tanstack/react-query";
@@ -363,7 +362,6 @@ export default function PatientConsultationsPage() {
 
   return (
     <div className="flex flex-col gap-10 md:px-6 py-6">
-      <ConsultationAlert />
       <h1 className="text-xl font-semibold">My Consultations</h1>
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <div className="flex items-center justify-between mb-4">

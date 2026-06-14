@@ -12,7 +12,6 @@ import { auth } from "@/firebase";
 // COMPONENTS
 import { DoctorHeader } from "@/components/header";
 import Spinner from "@/components/Spinner";
-import ConsultationAlert from "./ConsultationAlert";
 
 export const DoctorLayout = ({ children }) => {
   const router = useRouter();
@@ -40,7 +39,6 @@ export const DoctorLayout = ({ children }) => {
     <Spinner />
   ) : (
     <div className="max-w-[1550px] mx-auto my-">
-      <ConsultationAlert />
       <DoctorHeader />
       {children}
     </div>

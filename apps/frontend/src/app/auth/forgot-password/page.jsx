@@ -16,7 +16,7 @@ import Logo from "@/components/Logo";
 // style
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+import PulseOrb from "@/components/PulseOrb";
 
 export default function ForgotPasswordPage() {
   const toast = useToast();
@@ -68,7 +68,7 @@ export default function ForgotPasswordPage() {
         <Button type="submit" className="w-full" disabled={!email || loading}>
           {loading ? (
             <>
-              <Spinner className="mr-2 h-4 w-4" />
+              <PulseOrb size="sm" floating={false} className="mr-2" />
               Sending...
             </>
           ) : (

@@ -24,8 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-import { Send } from "lucide-react";
-import { ChevronRight } from "lucide-react";
+import { Send, ChevronRight, PhoneOff, MessagesSquare } from "lucide-react";
 
 export default function ChatPage() {
   const user = useSelector((state) => state.userReducer.user);
@@ -137,6 +136,19 @@ export default function ChatPage() {
 
   const toggleChat = () => setChatVisible((prev) => !prev);
 
+  // Presence shown in the header is always the *other* participant.
+  const isPatient = user?.role === "patient";
+  const peer = {
+    name: isPatient ? currentUsers?.doctor : currentUsers?.patient,
+    label: isPatient ? "Doctor" : "Patient",
+    prefix: isPatient ? "Dr " : "",
+    image: isPatient
+      ? "/assets/avatar-doctor.jpg"
+      : "/assets/avatar-patient.png",
+    fallback: isPatient ? "D" : "P",
+  };
+  const peerOnline = Boolean(peer.name);
+
   const socketJoinedHandler = ({ role, name }) => {
     if (role && name) {
       setCurrentUsers((prev) => ({
@@ -193,60 +205,70 @@ export default function ChatPage() {
         leaveConsultation={leaveConsultation}
         isOpen={isOpenLeave}
       />
-      <div className="flex flex-col justify-between h-screen p-8 gap-4 bg-white">
-        <div className="flex items-center justify-between">
-          {mounted && user?.role === "patient" && (
-            <div className="flex items-center gap-2">
-              <Avatar>
-                <AvatarImage src="/assets/avatar-doctor.jpg" alt="Doctor" />
-                <AvatarFallback>D</AvatarFallback>
-              </Avatar>
-              <p className="text-sm">
-                {currentUsers?.doctor ? (
-                  <span>
-                    Dr <strong>{currentUsers?.doctor}</strong> is active
-                  </span>
+      <div className="flex flex-col h-screen p-4 md:p-6 gap-4 bg-gradient-to-b from-primary-50 to-white">
+        {/* Top bar: peer presence + live status + leave */}
+        <header className="flex items-center justify-between gap-4 rounded-2xl border border-primary-100 bg-white/80 px-4 py-3 shadow-sm backdrop-blur">
+          {mounted && (
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="relative shrink-0">
+                <Avatar className="h-11 w-11 ring-2 ring-primary-100">
+                  <AvatarImage src={peer.image} alt={peer.label} />
+                  <AvatarFallback>{peer.fallback}</AvatarFallback>
+                </Avatar>
+                <span
+                  className={`absolute bottom-0 right-0 h-3.5 w-3.5 rounded-full border-2 border-white ${
+                    peerOnline ? "bg-green-500" : "bg-gray-300"
+                  }`}
+                >
+                  {peerOnline && (
+                    <span className="absolute inset-0 rounded-full bg-green-500 animate-ping" />
+                  )}
+                </span>
+              </div>
+              <div className="min-w-0">
+                {peerOnline ? (
+                  <>
+                    <p className="truncate text-sm font-semibold text-primary-900">
+                      {peer.prefix}
+                      {peer.name}
+                    </p>
+                    <p className="text-xs font-medium text-green-600">Online</p>
+                  </>
                 ) : (
-                  <span>Waiting for the doctor to join...</span>
+                  <>
+                    <p className="truncate text-sm font-semibold text-primary-900">
+                      {peer.label}
+                    </p>
+                    <p className="text-xs text-gray-400">Waiting to join...</p>
+                  </>
                 )}
-              </p>
-            </div>
-          )}
-          {mounted && user?.role === "doctor" && (
-            <div className="flex items-center gap-2">
-              <Avatar>
-                <AvatarImage src="/assets/avatar-patient.png" alt="Patient" />
-                <AvatarFallback>P</AvatarFallback>
-              </Avatar>
-              {currentUsers?.patient ? (
-                <p className="text-sm">
-                  <strong>{currentUsers?.patient}</strong> is active
-                </p>
-              ) : (
-                <p className="text-sm">Waiting for patient to join...</p>
-              )}
+              </div>
             </div>
           )}
 
-          <div className="flex flex-col items-end justify-end">
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1.5">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
+              </span>
+              <span className="text-xs font-semibold text-primary-700">
+                Consultation in progress
+              </span>
+            </div>
             <Button
               size="sm"
               variant="destructive"
-              className="px-4 text-white"
+              className="gap-2 rounded-full px-4 text-white shadow-sm"
               onClick={onOpenLeave}
             >
+              <PhoneOff className="h-4 w-4" />
               Leave
             </Button>
           </div>
-        </div>
-        <div className="flex flex-col">
-          <div className="flex flex-col items-center justify-center">
-            <h2 className="text-md font-semibold text-center">
-              Consultation in progress
-            </h2>
-          </div>
-        </div>
-        <div className="flex h-[87%] w-full gap-4 justify-center">
+        </header>
+
+        <div className="flex flex-1 min-h-0 w-full gap-4 justify-center">
           {token && (
             <div
               className={`w-full h-full ${
@@ -264,61 +286,86 @@ export default function ChatPage() {
           <div
             className={`${
               chatVisible ? "flex" : "hidden"
-            } p-4 gap-4 bg-primary-100 w-[500px] flex-col rounded-md h-full`}
+            } w-full md:w-[420px] flex-col rounded-2xl border border-primary-100 bg-white shadow-sm overflow-hidden h-full`}
           >
-            <button
-              type="button"
-              onClick={toggleChat}
-              className="self-end inline-flex items-center justify-center w-8 h-8 rounded-full bg-secondary-500 text-white hover:opacity-80"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-            <div className="flex flex-col gap-4 h-full min-h-0">
-              <div className="flex flex-col-reverse overflow-y-auto flex-1 p-2">
-                <div className="flex flex-col gap-4">
-                  {messages.map(({ name, message: msg, time }, index) => (
-                    <div className="flex gap-1" key={index}>
-                      {user?.firstName !== name && (
-                        <Avatar>
-                          <AvatarImage
-                            src={
-                              user?.role !== "doctor"
-                                ? "/assets/avatar-doctor.jpg"
-                                : "/assets/avatar-patient.png"
-                            }
-                          />
-                          <AvatarFallback>
-                            {user?.role !== "doctor" ? "D" : "P"}
-                          </AvatarFallback>
-                        </Avatar>
-                      )}
-                      <div
-                        className={`w-full flex ${
-                          user?.firstName !== name
-                            ? "justify-start"
-                            : "justify-end"
-                        }`}
-                      >
-                        <div>
-                          {user?.firstName !== name && (
-                            <p className="font-bold text-sm">{name}</p>
+            {/* Chat header */}
+            <div className="flex items-center justify-between gap-2 border-b border-primary-100 bg-primary-50/60 px-4 py-3">
+              <div className="flex items-center gap-2 text-primary-800">
+                <MessagesSquare className="h-5 w-5" />
+                <span className="text-sm font-semibold">Chat</span>
+              </div>
+              <button
+                type="button"
+                onClick={toggleChat}
+                aria-label="Hide chat"
+                className="inline-flex items-center justify-center w-8 h-8 rounded-full text-primary-700 hover:bg-primary-100 transition-colors"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-3 h-full min-h-0 p-3">
+              <div className="flex flex-col-reverse overflow-y-auto flex-1 px-1">
+                {messages.length === 0 ? (
+                  <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center text-gray-400">
+                    <MessagesSquare className="h-10 w-10 text-primary-200" />
+                    <p className="text-sm font-medium">No messages yet</p>
+                    <p className="text-xs">
+                      Send a message to start the conversation.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3">
+                    {messages.map(({ name, message: msg, time }, index) => {
+                      const isOwn = user?.firstName === name;
+                      return (
+                        <div
+                          className={`flex items-end gap-2 ${
+                            isOwn ? "justify-end" : "justify-start"
+                          }`}
+                          key={index}
+                        >
+                          {!isOwn && (
+                            <Avatar className="h-7 w-7 shrink-0">
+                              <AvatarImage src={peer.image} />
+                              <AvatarFallback>{peer.fallback}</AvatarFallback>
+                            </Avatar>
                           )}
-                          <div className="flex flex-col items-end max-w-[200px] bg-white px-2 py-1 rounded-lg">
-                            <p className="text-sm">{msg}</p>
-                            <p className="text-xs text-gray-500">{time}</p>
+                          <div className="flex flex-col max-w-[75%]">
+                            {!isOwn && (
+                              <p className="mb-0.5 ml-1 text-xs font-semibold text-primary-700">
+                                {name}
+                              </p>
+                            )}
+                            <div
+                              className={`px-3 py-2 text-sm shadow-sm ${
+                                isOwn
+                                  ? "bg-primary-500 text-white rounded-2xl rounded-br-md"
+                                  : "bg-primary-50 text-primary-900 rounded-2xl rounded-bl-md"
+                              }`}
+                            >
+                              <p className="break-words">{msg}</p>
+                              <p
+                                className={`mt-1 text-right text-[10px] ${
+                                  isOwn ? "text-white/70" : "text-gray-400"
+                                }`}
+                              >
+                                {time}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <Input
                   ref={message}
                   type="text"
-                  placeholder="type a message"
-                  className="border-primary-500 focus-visible:ring-primary-500 text-black text-sm"
+                  placeholder="Type a message..."
+                  className="rounded-full border-primary-200 bg-primary-50/40 focus-visible:ring-primary-500 text-black text-sm"
                   onKeyDown={(event) => {
                     if (event.key === "Enter") sendMessage();
                   }}
@@ -326,10 +373,11 @@ export default function ChatPage() {
                 <Button
                   type="button"
                   size="icon"
-                  className="bg-primary-500 text-white hover:opacity-80  focus-visible:ring-primary-500"
+                  aria-label="Send message"
+                  className="shrink-0 rounded-full bg-primary-500 text-white hover:opacity-80 focus-visible:ring-primary-500"
                   onClick={sendMessage}
                 >
-                  <Send />
+                  <Send className="h-4 w-4" />
                 </Button>
               </div>
             </div>

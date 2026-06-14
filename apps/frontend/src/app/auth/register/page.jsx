@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Spinner } from "@/components/ui/spinner";
+import PulseOrb from "@/components/PulseOrb";
 import { Info } from "lucide-react";
 
 export default function RegisterPage() {
@@ -128,7 +128,7 @@ export default function RegisterPage() {
         >
           {loading ? (
             <>
-              <Spinner className="mr-2 h-4 w-4" />
+              <PulseOrb size="sm" floating={false} className="mr-2" />
               Registering...
             </>
           ) : (

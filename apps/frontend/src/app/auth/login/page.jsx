@@ -26,7 +26,7 @@ import Logo from "@/components/Logo";
 // style
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+import PulseOrb from "@/components/PulseOrb";
 
 // assets
 import { Mail } from "lucide-react";
@@ -167,7 +167,7 @@ export default function LoginPage() {
         >
           {loading ? (
             <>
-              <Spinner className="mr-2 h-4 w-4" />
+              <PulseOrb size="sm" floating={false} className="mr-2" />
               Logging in...
             </>
           ) : (
@@ -188,7 +188,7 @@ export default function LoginPage() {
           >
             {resending ? (
               <>
-                <Spinner className="mr-2 h-4 w-4" />
+                <PulseOrb size="sm" floating={false} className="mr-2" />
                 Sending...
               </>
             ) : (

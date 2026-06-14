@@ -36,10 +36,10 @@ async function seedConsultationCollection() {
             date: new Date(
               new Date(
                 faker.date.between({
-                  from: "2024-08-01T00:00:00.000Z",
-                  to: "2025-01-01T00:00:00.000Z",
-                })
-              ).setMinutes(0, 0, 0)
+                  from: "2026-01-01T00:00:00.000Z",
+                  to: "2026-12-01T00:00:00.000Z",
+                }),
+              ).setMinutes(0, 0, 0),
             ),
             status: statuses[statusIndex],
             doctor: doctorsIds[doctorIndex],

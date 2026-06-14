@@ -19,6 +19,38 @@ async function seedPatientCollection() {
 
         await Patient.deleteMany({ role: "patient" }).exec();
 
+        const bloodTypes = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
+        const genders = ["Male", "Female", "Other"];
+        const allergyPool = [
+          "Penicillin",
+          "Peanuts",
+          "Pollen",
+          "Latex",
+          "Aspirin",
+          "Shellfish",
+          "Dust mites",
+        ];
+        const conditionPool = [
+          "Hypertension",
+          "Type 2 diabetes",
+          "Asthma",
+          "Hypothyroidism",
+          "Migraine",
+          "Arthritis",
+        ];
+        const medicationPool = [
+          "Metformin",
+          "Lisinopril",
+          "Atorvastatin",
+          "Levothyroxine",
+          "Ventolin",
+          "Ibuprofen",
+        ];
+
+        // Keep a stable testing account (must match a Firebase Auth user)
+        // so it survives reseeds and can always log in.
+        const testPatientEmail = "christop_hagenes21@gmail.com";
+
         let patients = [];
 
         for (let i = 0; i < documentNumbers; i++) {
@@ -26,7 +58,10 @@ async function seedPatientCollection() {
           const lastName = faker.person.lastName();
 
           let newPatient = {
-            email: faker.internet.email(firstName, lastName),
+            email:
+              i === 0
+                ? testPatientEmail
+                : faker.internet.email(firstName, lastName),
             firstName,
             lastName,
             age: faker.number.int({ min: 18, max: 100 }),
@@ -34,6 +69,23 @@ async function seedPatientCollection() {
             city: faker.location.city(),
             zip: faker.location.zipCode("#####"),
             weight: faker.number.int({ min: 20, max: 150 }).toString(),
+            height: faker.number.int({ min: 150, max: 200 }).toString(),
+            gender: faker.helpers.arrayElement(genders),
+            bloodType: faker.helpers.arrayElement(bloodTypes),
+            allergies: faker.helpers.arrayElements(allergyPool, {
+              min: 0,
+              max: 3,
+            }),
+            chronicConditions: faker.helpers.arrayElements(conditionPool, {
+              min: 0,
+              max: 2,
+            }),
+            currentMedications: faker.helpers.arrayElements(medicationPool, {
+              min: 0,
+              max: 2,
+            }),
+            emergencyContactName: faker.person.fullName(),
+            emergencyContactPhone: randomPhone(),
             phone: randomPhone(),
             role: "patient",
             isProfileCompleted: true,

@@ -12,6 +12,7 @@ import { consultationsMonthlyGrowth } from "@/utils/consultation";
 // components
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Statistics from "@/features/doctor/DoctorHome/Statistics";
+import Charts from "@/features/doctor/DoctorHome/Charts";
 import ConsultationsTable from "@/features/doctor/DoctorHome/ConsultationsTable";
 
 // style
@@ -67,44 +68,49 @@ export default function DoctorHomePage() {
   const isPositive = growth >= 0;
 
   return (
-    <div className="flex flex-col gap-10 py-6 px-12">
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col gap-8 py-6 px-12">
+      <div className="flex flex-col justify-between gap-4 rounded-2xl bg-gradient-to-r from-primary-500 to-secondary-500 p-6 text-white shadow-sm md:flex-row md:items-center">
         <div className="flex items-center gap-4">
-          <Avatar className="w-16 h-16">
+          <Avatar className="h-16 w-16 ring-2 ring-white/40">
             <AvatarImage
               src={data.doctor?.photo || "/assets/avatar-doctor.jpg"}
             />
             <AvatarFallback>DR</AvatarFallback>
           </Avatar>
-          <div className="flex flex-col gap-3">
-            <h2 className="text-lg font-semibold">
-              Hello, Dr {data.doctor?.firstName}!
+          <div className="flex flex-col gap-2">
+            <h2 className="text-xl font-semibold">
+              Hello, Dr {data.doctor?.firstName}! 👋
             </h2>
+            <p className="text-sm text-white/80">
+              Here&apos;s what&apos;s happening with your practice today.
+            </p>
             {!user?.isProfileCompleted && (
               <Button
                 variant="link"
-                className="text-primary-500 font-normal p-0 h-auto"
+                className="h-auto w-fit p-0 font-normal text-white underline-offset-2 hover:opacity-90"
                 onClick={() => router.push("/doctor/profile")}
               >
-                complete your profile
+                Complete your profile
                 <ArrowRight className="ml-1 h-4 w-4" />
               </Button>
             )}
           </div>
         </div>
-        <Card>
+        <Card className="border-none bg-white/15 backdrop-blur-sm">
           <CardContent className="p-4">
             <div className="space-y-1">
-              <p className="text-sm text-muted-foreground">Monthly growth</p>
-              <p className="text-2xl font-bold">{data.consultations?.length}</p>
+              <p className="text-sm text-white/80">Monthly growth</p>
+              <p className="text-2xl font-bold text-white">
+                {data.consultations?.length}
+              </p>
               <div className="flex items-center gap-1 text-sm">
                 {isPositive ? (
-                  <TrendingUp className="h-4 w-4 text-green-500" />
+                  <TrendingUp className="h-4 w-4 text-green-200" />
                 ) : (
-                  <TrendingDown className="h-4 w-4 text-red-500" />
+                  <TrendingDown className="h-4 w-4 text-red-200" />
                 )}
                 <span
-                  className={isPositive ? "text-green-500" : "text-red-500"}
+                  className={isPositive ? "text-green-200" : "text-red-200"}
                 >
                   {isPositive ? "+" : ""}
                   {growth}%
@@ -115,6 +121,7 @@ export default function DoctorHomePage() {
         </Card>
       </div>
       <Statistics doctor={data.doctor} consultations={data.consultations} />
+      <Charts consultations={data.consultations} />
       <ConsultationsTable consultations={data.consultations} />
     </div>
   );
