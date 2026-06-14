@@ -28,6 +28,7 @@ import {
   fetchSuggestions,
 } from "@/services/aiService";
 import { getText, toChatMessages, toSaveMessages } from "@/lib/aiDataParts";
+import { auth } from "@/firebase";
 import {
   SYSTEM_CONTEXT,
   AI_TOOLS,
@@ -88,9 +89,19 @@ export default function PatientAIPage() {
   const { messages, sendMessage, status, setMessages, stop, error } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/ai/chat",
-      body: () => {
+      body: async () => {
+        // Forward a FRESH Firebase ID token so the backend can scope the
+        // search_medical_history retrieval tool to the logged-in patient.
+        // getIdToken() auto-refreshes when near/after the 1h expiry; the
+        // cached localStorage token would be stale and rejected (401).
+        const authToken =
+          (await auth.currentUser?.getIdToken().catch(() => null)) ||
+          JSON.parse(localStorage.getItem("user"))?.token ||
+          "";
+
         const ids = selectedToolsRef.current;
-        if (ids.length === 0) return { systemContext: SYSTEM_CONTEXT };
+        if (ids.length === 0)
+          return { systemContext: SYSTEM_CONTEXT, authToken };
 
         const labels = ids
           .map((id) => AI_TOOLS.find((t) => t.id === id)?.label)
@@ -107,7 +118,7 @@ export default function PatientAIPage() {
           `do NOT force it — skip it and briefly note that it wasn't relevant ` +
           `to this message. You may also call other tools you deem relevant.`;
 
-        return { systemContext: SYSTEM_CONTEXT + emphasis };
+        return { systemContext: SYSTEM_CONTEXT + emphasis, authToken };
       },
     }),
     onError: (err) => {

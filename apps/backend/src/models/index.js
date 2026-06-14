@@ -4,3 +4,4 @@ module.exports.Patient = require("./patient.model");
 module.exports.Consultation = require("./consultation.model");
 module.exports.Payment = require("./payment.model");
 module.exports.AiConversation = require("./aiConversation.model");
+module.exports.MedicalEmbedding = require("./medicalEmbedding.model");

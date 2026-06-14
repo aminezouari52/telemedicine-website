@@ -33,6 +33,21 @@ const patientSchema = new mongoose.Schema({
   },
 });
 
+// Re-index the patient's profile embedding whenever the profile is updated
+// (updatePatient uses findByIdAndUpdate -> "findOneAndUpdate"). Fire-and-forget
+// so an embedding failure never breaks the update; lazy require avoids a
+// models <-> services cycle.
+patientSchema.post("findOneAndUpdate", (doc) => {
+  if (!doc?._id) return;
+  require("../services/medicalEmbedding.service")
+    .syncPatientEmbedding(doc._id)
+    .catch((err) => {
+      require("../config/logger").error(
+        `Patient embedding sync failed: ${err.message}`,
+      );
+    });
+});
+
 const Patient = User.discriminator("patient", patientSchema);
 
 module.exports = Patient;

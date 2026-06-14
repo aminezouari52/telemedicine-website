@@ -1,5 +1,9 @@
 const catchAsync = require("../utils/catchAsync");
-const { patientService, aiConversationService } = require("../services");
+const {
+  patientService,
+  aiConversationService,
+  medicalEmbeddingService,
+} = require("../services");
 const { User } = require("../models");
 const httpStatus = require("http-status");
 
@@ -72,10 +76,27 @@ const deleteConversation = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+// Semantic search over the logged-in patient's own data (profile +
+// consultations). Called by the AI's search_medical_history tool. Scoping is
+// enforced here from the authenticated user, never trusted from the request.
+const getMedicalContext = catchAsync(async (req, res) => {
+  const user = await User.findOne({ email: req.user.email }).exec();
+  if (!user) {
+    return res.status(httpStatus.NOT_FOUND).send({ error: "User not found" });
+  }
+
+  const results = await medicalEmbeddingService.searchMedicalContext(
+    user._id,
+    req.body.query,
+  );
+  res.status(httpStatus.OK).send({ results });
+});
+
 module.exports = {
   updatePatient,
   listConversations,
   createConversation,
   updateConversation,
   deleteConversation,
+  getMedicalContext,
 };

@@ -29,6 +29,9 @@ const envVarsSchema = Joi.object()
     STRIPE_WEBHOOK_SECRET: Joi.string()
       .required()
       .description("Stripe Webhook Secret"),
+    GEMINI_API_KEY: Joi.string()
+      .required()
+      .description("Google Gemini API key (chat + embeddings)"),
   })
   .unknown();
 

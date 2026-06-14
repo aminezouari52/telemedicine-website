@@ -642,8 +642,43 @@ Compare values against standard ranges and flag abnormalities.`,
   },
 };
 
+// Retrieval tool for the patient's own data (profile + past consultations).
+// Built per-request so `execute` can close over the caller's Firebase token,
+// which the backend uses to scope the vector search to that patient only.
+function buildMedicalHistoryTool(authToken) {
+  return {
+    description:
+      'Search the patient\'s own medical history — their health profile and past consultations — to answer questions about their records (e.g. "what did my last consultation involve?", "what\'s in my health profile?"). Call this whenever the patient asks about their own data, history, or records.',
+    inputSchema: z.object({
+      query: z
+        .string()
+        .describe("A natural-language description of what to look up"),
+    }),
+    execute: async ({ query }) => {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_V1_URL}/patient/medical-context`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              authtoken: authToken || "",
+            },
+            body: JSON.stringify({ query }),
+          },
+        );
+        if (!res.ok) return { results: [] };
+        const data = await res.json();
+        return { results: Array.isArray(data.results) ? data.results : [] };
+      } catch {
+        return { results: [] };
+      }
+    },
+  };
+}
+
 export async function POST(req) {
-  const { messages, systemContext } = await req.json();
+  const { messages, systemContext, authToken } = await req.json();
 
   if (!messages || !Array.isArray(messages) || messages.length === 0) {
     return Response.json({ error: "Messages are required." }, { status: 400 });
@@ -663,7 +698,10 @@ export async function POST(req) {
       model: google(MODEL_ID),
       system: systemContext,
       messages: processedMessages,
-      tools,
+      tools: {
+        ...tools,
+        search_medical_history: buildMedicalHistoryTool(authToken),
+      },
       stopWhen: stepCountIs(5),
       providerOptions: {
         google: {

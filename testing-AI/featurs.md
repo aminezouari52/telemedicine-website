@@ -8,3 +8,8 @@
 - message metadata (tokens, model, time..)
 - PDF / image uploads
 - questions suggestions
+- RAG
+  - embeddings
+  - vector DB
+  - semantic search
+  - app aware, personalized RAG

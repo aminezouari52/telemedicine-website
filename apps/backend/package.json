@@ -15,6 +15,7 @@
     "seed:patient": "node src/seeders/patient.seeder.js",
     "seed:consultation": "node src/seeders/consultation.seeder.js",
     "seed:admin": "node src/seeders/admin.seeder.js",
+    "seed:embeddings": "node src/seeders/embedding.seeder.js",
     "lint": "eslint src/**/*.js -f pretty --color"
   },
   "keywords": [

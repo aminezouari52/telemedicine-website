@@ -15,3 +15,7 @@ I took my vitals this morning and want them checked. My blood pressure is 148/96
 ## Files
 
 ## Images
+
+## RAG
+
+what did my last consultation involve?
