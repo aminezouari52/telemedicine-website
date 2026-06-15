@@ -365,7 +365,7 @@ export default function ChatPage() {
                   ref={message}
                   type="text"
                   placeholder="Type a message..."
-                  className="rounded-full border-primary-200 bg-primary-50/40 focus-visible:ring-primary-500 text-black text-sm"
+                  className="rounded-full border-primary-200 bg-primary-50/40 text-black text-sm"
                   onKeyDown={(event) => {
                     if (event.key === "Enter") sendMessage();
                   }}

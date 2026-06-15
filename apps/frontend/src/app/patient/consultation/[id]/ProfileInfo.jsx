@@ -49,7 +49,7 @@ function ProfileInfo({ goToNext, onCancel, form, stepSchema }) {
             <FormItem>
               <FormLabel>First name</FormLabel>
               <FormControl>
-                <Input className="focus-visible:ring-primary-500" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -62,7 +62,7 @@ function ProfileInfo({ goToNext, onCancel, form, stepSchema }) {
             <FormItem>
               <FormLabel>Last name</FormLabel>
               <FormControl>
-                <Input className="focus-visible:ring-primary-500" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -75,7 +75,7 @@ function ProfileInfo({ goToNext, onCancel, form, stepSchema }) {
             <FormItem>
               <FormLabel>Phone</FormLabel>
               <FormControl>
-                <Input className="focus-visible:ring-primary-500" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -89,7 +89,6 @@ function ProfileInfo({ goToNext, onCancel, form, stepSchema }) {
               <FormLabel>Age</FormLabel>
               <FormControl>
                 <Input
-                  className="focus-visible:ring-primary-500"
                   type="number"
                   min={18}
                   max={100}
@@ -111,7 +110,7 @@ function ProfileInfo({ goToNext, onCancel, form, stepSchema }) {
             <FormItem className="md:col-span-2">
               <FormLabel>Address</FormLabel>
               <FormControl>
-                <Input className="focus-visible:ring-primary-500" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -124,7 +123,7 @@ function ProfileInfo({ goToNext, onCancel, form, stepSchema }) {
             <FormItem>
               <FormLabel>City</FormLabel>
               <FormControl>
-                <Input className="focus-visible:ring-primary-500" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -137,11 +136,7 @@ function ProfileInfo({ goToNext, onCancel, form, stepSchema }) {
             <FormItem>
               <FormLabel>ZIP</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  className="focus-visible:ring-primary-500"
-                  {...field}
-                />
+                <Input type="text" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -154,7 +149,7 @@ function ProfileInfo({ goToNext, onCancel, form, stepSchema }) {
             <FormItem>
               <FormLabel>Weight (optional)</FormLabel>
               <FormControl>
-                <Input className="focus-visible:ring-primary-500" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

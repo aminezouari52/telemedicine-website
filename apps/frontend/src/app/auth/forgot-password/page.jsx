@@ -57,7 +57,6 @@ export default function ForgotPasswordPage() {
       </div>
       <div className="w-full flex flex-col items-end gap-2">
         <Input
-          className="focus-visible:ring-primary-500"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}

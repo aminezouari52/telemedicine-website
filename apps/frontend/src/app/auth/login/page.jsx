@@ -132,7 +132,7 @@ export default function LoginPage() {
 
       <div className="w-full flex flex-col items-end gap-2">
         <Input
-          className="focus-visible:ring-primary-500 mt-2"
+          className="mt-2"
           type="email"
           value={email}
           onChange={(e) => {
@@ -144,7 +144,6 @@ export default function LoginPage() {
         />
 
         <Input
-          className="focus-visible:ring-primary-500"
           type="password"
           value={password}
           onChange={(e) => {

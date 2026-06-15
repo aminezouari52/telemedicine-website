@@ -129,7 +129,7 @@ export const PatientHeader = () => {
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
+            className="md:hidden focus-visible:ring-primary-500"
             aria-label="Close menu"
             onClick={closeMobile}
           >
@@ -173,7 +173,7 @@ export const PatientHeader = () => {
           )}
           <Button
             variant="ghost"
-            className="w-full justify-center text-red-500 hover:bg-red-50 hover:text-red-600"
+            className="w-full justify-center text-red-500 hover:bg-red-50 hover:text-red-600 focus-visible:ring-red-300"
             onClick={logoutHandler}
           >
             <LogOut className="mr-2 h-4 w-4" />

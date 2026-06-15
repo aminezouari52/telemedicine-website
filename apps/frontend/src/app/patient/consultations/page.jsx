@@ -253,6 +253,7 @@ export default function PatientConsultationsPage() {
   const user = useSelector((state) => state.userReducer.user);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [page, setPage] = useState(1);
   const [activeTab, setActiveTab] = useState("upcoming");
 
@@ -269,17 +270,29 @@ export default function PatientConsultationsPage() {
     },
   });
 
-  const sortedByDate = (items) =>
-    [...(items ?? [])].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sortByDate = (items, order) =>
+    [...(items ?? [])].sort((a, b) =>
+      order === "asc"
+        ? new Date(a.date) - new Date(b.date)
+        : new Date(b.date) - new Date(a.date),
+    );
 
   const upcomingConsultations = useMemo(
-    () => sortedByDate(consultations?.filter((c) => c.status === "pending")),
-    [consultations],
+    () =>
+      sortByDate(
+        consultations?.filter((c) => c.status === "pending"),
+        sortOrder,
+      ),
+    [consultations, sortOrder],
   );
 
   const historyConsultations = useMemo(
-    () => sortedByDate(consultations?.filter((c) => c.status !== "pending")),
-    [consultations],
+    () =>
+      sortByDate(
+        consultations?.filter((c) => c.status !== "pending"),
+        sortOrder,
+      ),
+    [consultations, sortOrder],
   );
 
   const filteredUpcoming = useMemo(() => {
@@ -384,6 +397,23 @@ export default function PatientConsultationsPage() {
                 setPage(1);
               }}
             />
+          </div>
+          <div className="w-full sm:w-44">
+            <Select
+              value={sortOrder}
+              onValueChange={(v) => {
+                setSortOrder(v);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Sort by date" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="desc">Newest first</SelectItem>
+                <SelectItem value="asc">Oldest first</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           {activeTab === "history" && (
             <div className="w-full sm:w-44">

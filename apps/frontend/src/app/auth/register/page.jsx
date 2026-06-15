@@ -85,7 +85,7 @@ export default function RegisterPage() {
       </div>
       <div className="w-full flex flex-col gap-2">
         <Input
-          className="focus-visible:ring-primary-500 mt-2"
+          className="mt-2"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -94,7 +94,6 @@ export default function RegisterPage() {
         />
 
         <Input
-          className="focus-visible:ring-primary-500"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}

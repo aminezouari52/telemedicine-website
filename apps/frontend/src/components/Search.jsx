@@ -41,7 +41,7 @@ const Search = () => {
         <SearchIcon className="h-4 w-4" />
       </Button>
       <Input
-        className="rounded-l-none focus-visible:ring-primary-500 px-4 text-black"
+        className="rounded-l-none px-4 text-black"
         type="text"
         placeholder="Search..."
         onChange={handleChange}

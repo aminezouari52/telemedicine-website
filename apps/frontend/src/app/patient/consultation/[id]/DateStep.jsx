@@ -53,7 +53,6 @@ function DateStep({ goToNext, goToPrevious, form, stepSchema }) {
               <FormLabel>Date</FormLabel>
               <FormControl>
                 <Input
-                  className="focus-visible:ring-primary-500"
                   type="date"
                   value={getDateString(field.value)}
                   onChange={(event) => {
@@ -92,7 +91,6 @@ function DateStep({ goToNext, goToPrevious, form, stepSchema }) {
               <FormLabel>Time</FormLabel>
               <FormControl>
                 <Input
-                  className="focus-visible:ring-primary-500"
                   type="time"
                   value={getTimeString(field.value)}
                   onChange={(event) => {

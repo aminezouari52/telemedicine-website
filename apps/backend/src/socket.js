@@ -55,10 +55,13 @@ const connectedUsers = {};
 function initializeSocket(server) {
   const io = new Server(server, config.socket);
 
+  // Schedule the status-transition cron jobs once, at startup. Registering
+  // them per-connection (the old behaviour) meant they never ran until a
+  // client connected and then ran N times for N connected clients.
+  scheduleCronJob(io);
+
   io.on("connection", (socket) => {
     logger.info("socket.io connected");
-
-    scheduleCronJob(io);
 
     socket.on("join", ({ roomId, role, name }) => {
       io.to(roomId).emit("joined", {
