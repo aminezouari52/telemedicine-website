@@ -5,6 +5,7 @@
     "dev": "turbo dev",
     "start": "turbo start",
     "build": "turbo build",
+    "preview": "turbo preview",
     "lint": "run-s --print-label \"lint:*\"",
     "lint:format": "prettier --color --write '**/*.{js,jsx}'",
     "lint:backend": "pnpm -F=backend lint",

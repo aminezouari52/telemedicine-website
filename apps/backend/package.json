@@ -11,6 +11,7 @@
   "scripts": {
     "start": "pm2 start ecosystem.config.json --no-daemon",
     "dev": "cross-env NODE_ENV=development nodemon src/index.js",
+    "preview": "cross-env NODE_ENV=development nodemon src/index.js",
     "seed:doctor": "node src/seeders/doctor.seeder.js",
     "seed:patient": "node src/seeders/patient.seeder.js",
     "seed:consultation": "node src/seeders/consultation.seeder.js",
