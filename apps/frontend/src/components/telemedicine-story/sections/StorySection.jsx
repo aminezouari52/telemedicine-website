@@ -19,12 +19,11 @@ const ALIGN_TO_JUSTIFY = {
  */
 export function StorySection({ section }) {
   const router = useRouter();
-  const titleLines = section.title.split("\n");
-  const isHero = !!section.hero;
 
   // Overlay-driven chapters (e.g. the statistics cards) render their own fixed
   // DOM visual elsewhere; here we only reserve the scroll height so the master
-  // progress banding for the chapter is preserved.
+  // progress banding for the chapter is preserved. They carry no copy, so bail
+  // before touching title/body fields.
   if (section.overlay) {
     return (
       <section
@@ -34,6 +33,9 @@ export function StorySection({ section }) {
       />
     );
   }
+
+  const titleLines = section.title.split("\n");
+  const isHero = !!section.hero;
 
   return (
     <section
@@ -55,7 +57,7 @@ export function StorySection({ section }) {
               ? "isolate max-w-3xl"
               : cn(
                   "max-w-xl rounded-[2rem] border border-white/10 bg-white/[0.04] p-8 backdrop-blur-2xl md:p-12",
-                  "shadow-[0_20px_80px_-20px_rgba(34,211,238,0.25)] ring-1 ring-white/5",
+                  "shadow-[0_20px_80px_-20px_rgba(97,94,252,0.25)] ring-1 ring-white/5",
                 ),
           )}
         >
@@ -71,7 +73,7 @@ export function StorySection({ section }) {
           {section.eyebrow && (
             <p
               data-hero-stagger={isHero ? "" : undefined}
-              className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-cyan-300/90"
+              className="mb-4 text-xs font-semibold uppercase tracking-[0.3em] text-primary-300/90"
             >
               {section.eyebrow}
             </p>
@@ -81,7 +83,7 @@ export function StorySection({ section }) {
           <h2
             data-hero-stagger={isHero ? "" : undefined}
             className={cn(
-              "bg-gradient-to-br from-white via-[#cdd6ff] to-[#67e8f9] bg-clip-text font-bold leading-[1.05] text-transparent",
+              "bg-gradient-to-br from-white via-[#dfdffe] to-[#9896fd] bg-clip-text font-bold leading-[1.05] text-transparent",
               isHero
                 ? "text-4xl drop-shadow-[0_2px_24px_rgba(5,7,15,0.85)] sm:text-6xl lg:text-7xl"
                 : "text-3xl sm:text-4xl lg:text-5xl",
@@ -141,10 +143,10 @@ export function StorySection({ section }) {
               )}
             >
               <div className="group relative">
-                <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 opacity-60 blur-lg transition-opacity duration-500 group-hover:opacity-90" />
+                <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-primary-400 via-primary-500 to-primary-700 opacity-60 blur-lg transition-opacity duration-500 group-hover:opacity-90" />
                 <Button
                   size="lg"
-                  className="relative rounded-full bg-gradient-to-r from-cyan-500 to-indigo-600 px-9 py-7 text-base font-semibold text-white shadow-lg shadow-cyan-500/20 transition-shadow hover:shadow-cyan-500/40"
+                  className="relative rounded-full bg-gradient-to-r from-primary-500 to-primary-700 px-9 py-7 text-base font-semibold text-white shadow-lg shadow-primary-500/20 transition-shadow hover:shadow-primary-500/40"
                   onClick={() => router.push(section.cta.href)}
                 >
                   <span>{section.cta.label}</span>

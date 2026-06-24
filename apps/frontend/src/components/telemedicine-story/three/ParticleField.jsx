@@ -35,8 +35,8 @@ const COUNT = 620;
 
 /**
  * The hero's floating medical-particle cloud. A spherical shell of additive,
- * soft-sprite points that drift and rotate, tinted between brand indigo and
- * cyan. Visible only while the hero chapter is on screen.
+ * soft-sprite points that drift and rotate, tinted across the brand indigo
+ * ramp. Visible only while the hero chapter is on screen.
  */
 export function ParticleField({ progress, reducedMotion }) {
   const points = useRef(null);
@@ -46,7 +46,7 @@ export function ParticleField({ progress, reducedMotion }) {
     const positions = new Float32Array(COUNT * 3);
     const colors = new Float32Array(COUNT * 3);
     const speeds = new Float32Array(COUNT);
-    const a = new Color(PALETTE.cyanLight);
+    const a = new Color(PALETTE.glowLight);
     const b = new Color(PALETTE.indigoLight);
     const mix = new Color();
 
@@ -119,7 +119,7 @@ export function ParticleField({ progress, reducedMotion }) {
           size={3}
           speed={0.3}
           opacity={0.5}
-          color={PALETTE.cyan}
+          color={PALETTE.glow}
         />
       )}
     </group>

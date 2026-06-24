@@ -21,13 +21,17 @@ import { useIsomorphicLayoutEffect } from "./useIsomorphicLayoutEffect";
  * @param {import("react").RefObject<HTMLElement>} args.rootRef
  * @param {import("react").MutableRefObject<number>} args.progressRef
  * @param {import("react").RefObject<HTMLElement>} args.progressBarRef
+ * @param {import("react").MutableRefObject<{reviews:number,faq:number}>} [args.tailRef]
  * @param {boolean} args.reducedMotion
+ * @param {boolean} [args.ready] Marketing tail mounted — wire its scroll triggers.
  */
 export function useStoryScroll({
   rootRef,
   progressRef,
   progressBarRef,
+  tailRef,
   reducedMotion,
+  ready,
 }) {
   useIsomorphicLayoutEffect(() => {
     const root = rootRef.current;
@@ -36,7 +40,10 @@ export function useStoryScroll({
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
-      // 1 · Master progress driver.
+      // 1 · Master progress driver for the 3D scenes. Scoped to the story
+      // sections only, so `progress` reaches 1 exactly as the final chapter
+      // (the globe finale) lands and the camera choreography completes — the
+      // marketing block below must NOT stretch this range.
       ScrollTrigger.create({
         trigger: root,
         start: "top top",
@@ -44,6 +51,18 @@ export function useStoryScroll({
         scrub: reducedMotion ? false : 0.6,
         onUpdate: (self) => {
           progressRef.current = self.progress;
+        },
+      });
+
+      // 1b · Reading progress bar — measured across the entire document
+      // (`end: "max"` tracks the full scroll height, including the testimonials,
+      // FAQ and footer that follow the story). This fills the bar to 100% only
+      // when the footer is reached, not when the 3D story ends.
+      ScrollTrigger.create({
+        start: 0,
+        end: "max",
+        scrub: reducedMotion ? false : 0.6,
+        onUpdate: (self) => {
           if (progressBarRef.current) {
             progressBarRef.current.style.transform = `scaleX(${self.progress})`;
           }
@@ -136,4 +155,30 @@ export function useStoryScroll({
       ctx.revert();
     };
   }, [rootRef, progressRef, progressBarRef, reducedMotion]);
+
+  // Marketing-tail scroll tracking. Kept in its own effect (keyed on `ready`)
+  // because the testimonials / FAQ sections mount after hydration — their DOM
+  // nodes don't exist when the main effect runs. Each `[data-tail-chapter]`
+  // block scrubs its own 0→1 progress into `tailRef`, which the matching 3D
+  // backdrop reads each frame. Rebuilding these here (rather than in the main
+  // context) avoids replaying the hero's one-shot entrance on mount.
+  useIsomorphicLayoutEffect(() => {
+    if (!ready || !tailRef) return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    const triggers = gsap.utils.toArray("[data-tail-chapter]").map((el) => {
+      const id = el.getAttribute("data-tail-chapter");
+      return ScrollTrigger.create({
+        trigger: el,
+        start: "top bottom",
+        end: "bottom top",
+        onUpdate: (self) => {
+          if (tailRef.current) tailRef.current[id] = self.progress;
+        },
+      });
+    });
+
+    ScrollTrigger.refresh();
+    return () => triggers.forEach((t) => t.kill());
+  }, [ready, tailRef]);
 }

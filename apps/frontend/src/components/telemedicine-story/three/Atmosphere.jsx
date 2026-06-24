@@ -7,13 +7,13 @@ import { PALETTE } from "../config";
 
 /**
  * Environmental lighting + volumetric backdrop shared by every chapter.
- * A cool key light, two travelling accent point-lights (indigo + cyan) and a
+ * A cool key light, two travelling brand-indigo accent point-lights and a
  * deep starfield give the corridor depth and atmosphere without any external
  * HDR assets (so nothing blocks first paint).
  */
 export function Atmosphere({ progress, reducedMotion }) {
   const indigo = useRef(null);
-  const cyan = useRef(null);
+  const accent = useRef(null);
 
   useFrame((state) => {
     // Accent lights ride along the corridor with the scroll, so whichever
@@ -25,15 +25,15 @@ export function Atmosphere({ progress, reducedMotion }) {
         ? 26
         : 26 + Math.sin(state.clock.elapsedTime * 1.4) * 6;
     }
-    if (cyan.current) {
-      cyan.current.position.z = z - 10;
+    if (accent.current) {
+      accent.current.position.z = z - 10;
     }
   });
 
   return (
     <group>
       <ambientLight intensity={0.55} color={PALETTE.ice} />
-      <hemisphereLight args={[PALETTE.cyanLight, PALETTE.indigoDeep, 0.4]} />
+      <hemisphereLight args={[PALETTE.glowLight, PALETTE.indigoDeep, 0.4]} />
       <directionalLight
         position={[6, 10, 8]}
         intensity={0.7}
@@ -48,12 +48,12 @@ export function Atmosphere({ progress, reducedMotion }) {
         color={PALETTE.indigo}
       />
       <pointLight
-        ref={cyan}
+        ref={accent}
         position={[-5, -2, -4]}
         intensity={22}
         distance={46}
         decay={2}
-        color={PALETTE.cyan}
+        color={PALETTE.glow}
       />
       <Stars
         radius={140}

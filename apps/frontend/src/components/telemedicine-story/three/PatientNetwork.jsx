@@ -45,18 +45,18 @@ function buildNetwork() {
 
   const linePositions = new Float32Array(edges.length * 2 * 3);
   const lineColors = new Float32Array(edges.length * 2 * 3);
-  const cyan = new Color(PALETTE.cyan);
+  const accent = new Color(PALETTE.glow);
   const indigo = new Color(PALETTE.indigoLight);
   edges.forEach(([a, b], e) => {
     const o = e * 6;
     linePositions.set(nodes[a], o);
     linePositions.set(nodes[b], o + 3);
-    lineColors.set([cyan.r, cyan.g, cyan.b], o);
+    lineColors.set([accent.r, accent.g, accent.b], o);
     lineColors.set([indigo.r, indigo.g, indigo.b], o + 3);
   });
 
   const nodeColors = nodes.map(
-    (_, i) => new Color(i % 3 === 0 ? PALETTE.cyanLight : PALETTE.indigoLight),
+    (_, i) => new Color(i % 3 === 0 ? PALETTE.glowLight : PALETTE.indigoLight),
   );
 
   return { nodes, edges, linePositions, lineColors, nodeColors };
@@ -148,7 +148,7 @@ export function PatientNetwork({ progress, reducedMotion }) {
       >
         <sphereGeometry args={[1, 16, 16]} />
         <meshStandardMaterial
-          emissive={PALETTE.cyan}
+          emissive={PALETTE.glow}
           emissiveIntensity={2.2}
           color="#0a1024"
           toneMapped={false}

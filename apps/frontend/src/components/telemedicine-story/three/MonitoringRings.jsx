@@ -12,10 +12,10 @@ const ARC_SEGMENTS = 96;
 const START_ANGLE = Math.PI / 2; // start at top, sweep clockwise
 
 const GAUGES = [
-  { x: -5.2, radius: 1.5, fill: 0.72, color: PALETTE.cyan, delay: 0 },
-  { x: -1.75, radius: 1.5, fill: 0.98, color: PALETTE.cyanLight, delay: 0.08 },
+  { x: -5.2, radius: 1.5, fill: 0.72, color: PALETTE.glow, delay: 0 },
+  { x: -1.75, radius: 1.5, fill: 0.98, color: PALETTE.glowLight, delay: 0.08 },
   { x: 1.75, radius: 1.5, fill: 0.84, color: PALETTE.indigoLight, delay: 0.16 },
-  { x: 5.2, radius: 1.5, fill: 0.77, color: PALETTE.teal, delay: 0.24 },
+  { x: 5.2, radius: 1.5, fill: 0.77, color: PALETTE.secondary, delay: 0.24 },
 ];
 
 /** A radial health gauge: faint track + a glowing arc that fills with scroll. */
@@ -144,7 +144,7 @@ export function MonitoringRings({ progress, reducedMotion }) {
           size={2}
           speed={0.4}
           opacity={0.4}
-          color={PALETTE.cyanLight}
+          color={PALETTE.glowLight}
         />
       )}
     </group>

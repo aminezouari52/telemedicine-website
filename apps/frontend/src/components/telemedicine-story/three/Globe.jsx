@@ -81,7 +81,7 @@ export function Globe({ progress, reducedMotion }) {
   const pulsePositions = useMemo(() => new Float32Array(ARC_COUNT * 3), []);
   const pulseColors = useMemo(() => {
     const colors = new Float32Array(ARC_COUNT * 3);
-    const c = new Color(PALETTE.cyanLight);
+    const c = new Color(PALETTE.glowLight);
     for (let i = 0; i < ARC_COUNT; i++) colors.set([c.r, c.g, c.b], i * 3);
     return colors;
   }, []);
@@ -92,27 +92,32 @@ export function Globe({ progress, reducedMotion }) {
   useFrame((state, delta) => {
     const dt = Math.min(delta, 1 / 30);
     const p = progress.current;
-    // Reveals late and persists through the finale (no exit ramp).
+    // Reveals late, glows for the finale, then recedes over the last sliver of
+    // the journey so the client-reviews / FAQ sections scroll up over a clean
+    // starfield rather than over the globe.
     const reveal = smoothstep(0.73, 0.85, p);
-    const finale = smoothstep(0.9, 1, p);
+    const finale = smoothstep(0.84, 0.92, p);
+    const exit = smoothstep(0.92, 1, p);
+    const shown = reveal * (1 - exit);
     const group = root.current;
     if (!group) return;
 
-    group.visible = reveal > 0.002;
+    group.visible = shown > 0.002;
     if (!group.visible) return;
 
     const t = reducedMotion ? 0 : state.clock.elapsedTime;
     group.rotation.y = t * 0.06;
-    group.scale.setScalar(0.6 + reveal * 0.4 + finale * 0.08);
+    group.scale.setScalar((0.6 + reveal * 0.4 + finale * 0.08) * (1 - exit));
 
     // Hubs.
     const hubs = hubsRef.current;
     if (hubs) {
-      hubs.material.emissiveIntensity = 2 + finale * 2 + Math.sin(t * 2) * 0.3;
+      hubs.material.emissiveIntensity =
+        (2 + finale * 2 + Math.sin(t * 2) * 0.3) * (1 - exit);
       for (let i = 0; i < HUB_COUNT; i++) {
         const pulse = 1 + Math.sin(t * 2 + i) * 0.3;
         dummy.position.copy(data.hubs[i]);
-        dummy.scale.setScalar(0.07 * pulse * reveal);
+        dummy.scale.setScalar(0.07 * pulse * shown);
         dummy.updateMatrix();
         hubs.setMatrixAt(i, dummy.matrix);
       }
@@ -120,7 +125,7 @@ export function Globe({ progress, reducedMotion }) {
     }
 
     if (arcsRef.current) {
-      arcsRef.current.material.opacity = reveal * (0.22 + finale * 0.25);
+      arcsRef.current.material.opacity = shown * (0.22 + finale * 0.25);
     }
 
     // Travelling light pulses along each arc.
@@ -141,12 +146,12 @@ export function Globe({ progress, reducedMotion }) {
         pulsePositions[i * 3 + 2] = a.z + (b.z - a.z) * frac;
       }
       pulse.geometry.getAttribute("position").needsUpdate = true;
-      pulse.material.opacity = reveal;
+      pulse.material.opacity = shown;
     }
 
     if (glowRef.current) {
       const halo = glowRef.current.children[0];
-      halo.material.opacity = reveal * (0.16 + finale * 0.16);
+      halo.material.opacity = shown * (0.16 + finale * 0.16);
     }
   });
 
@@ -172,7 +177,7 @@ export function Globe({ progress, reducedMotion }) {
         <mesh>
           <sphereGeometry args={[RADIUS * 1.18, 36, 36]} />
           <meshBasicMaterial
-            color={PALETTE.cyan}
+            color={PALETTE.glow}
             transparent
             opacity={0.16}
             side={BackSide}
@@ -191,7 +196,7 @@ export function Globe({ progress, reducedMotion }) {
         <sphereGeometry args={[1, 12, 12]} />
         <meshStandardMaterial
           color="#0a1330"
-          emissive={PALETTE.cyanLight}
+          emissive={PALETTE.glowLight}
           emissiveIntensity={2}
           toneMapped={false}
         />
@@ -206,7 +211,7 @@ export function Globe({ progress, reducedMotion }) {
           />
         </bufferGeometry>
         <lineBasicMaterial
-          color={PALETTE.cyan}
+          color={PALETTE.glow}
           transparent
           opacity={0.22}
           depthWrite={false}

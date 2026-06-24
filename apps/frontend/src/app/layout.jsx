@@ -2,8 +2,12 @@ import { Providers } from "./providers";
 import "./globals.css";
 
 export const metadata = {
-  title: "Télémedecine",
-  description: "Télémedecine website for having doctor appointments online",
+  title: {
+    default: "The Future of Care Is Connected | Télémedecine",
+    template: "%s | Télémedecine",
+  },
+  description:
+    "A scroll-driven 3D journey through modern telemedicine — connected patients, virtual consultations, AI-assisted insight, remote monitoring, and global care.",
 };
 
 export default function RootLayout({ children }) {

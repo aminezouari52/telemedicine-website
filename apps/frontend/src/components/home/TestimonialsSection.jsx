@@ -9,7 +9,7 @@ import FadeInOnScroll from "./FadeInOnScroll";
 import BlurText from "@/components/ui/BlurText";
 import { useRouter } from "next/navigation";
 
-function TestimonialsSection() {
+function TestimonialsSection({ transparent = false }) {
   const testimonials = [
     {
       name: "Helene Rose",
@@ -34,7 +34,13 @@ function TestimonialsSection() {
   const router = useRouter();
 
   return (
-    <section className="py-16 md:py-24 bg-gradient-to-b from-gray-900 to-gray-950">
+    <section
+      className={`py-16 md:py-24 ${
+        transparent
+          ? "bg-transparent"
+          : "bg-gradient-to-b from-gray-900 to-gray-950"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <FadeInOnScroll direction="up" className="text-center mb-16">

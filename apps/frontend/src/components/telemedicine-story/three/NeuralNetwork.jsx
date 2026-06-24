@@ -56,9 +56,11 @@ function buildNeural() {
 }
 
 /**
- * Chapter 4 — "Insight at the speed of thought." A layered neural mesh whose
- * synapses light up as data particles stream layer-to-layer. Node glow and the
- * particle flow intensify with scroll, reading as the model "processing."
+ * The neural-mesh flourish (no longer a captioned chapter). A layered mesh whose
+ * synapses light up as data particles stream layer-to-layer; the camera flies
+ * through it on the way from the consultation to the monitoring waypoint, so it
+ * reads as a background beat. Node glow and the particle flow intensify with
+ * scroll, reading as the model "processing."
  */
 export function NeuralNetwork({ progress, reducedMotion }) {
   const nodesRef = useRef(null);
@@ -70,11 +72,11 @@ export function NeuralNetwork({ progress, reducedMotion }) {
   const flowPositions = useMemo(() => new Float32Array(FLOW_COUNT * 3), []);
   const flowColors = useMemo(() => {
     const colors = new Float32Array(FLOW_COUNT * 3);
-    const cyan = new Color(PALETTE.cyanLight);
+    const accent = new Color(PALETTE.glowLight);
     const indigo = new Color(PALETTE.indigoLight);
     const mix = new Color();
     for (let i = 0; i < FLOW_COUNT; i++) {
-      mix.copy(cyan).lerp(indigo, Math.random());
+      mix.copy(accent).lerp(indigo, Math.random());
       colors.set([mix.r, mix.g, mix.b], i * 3);
     }
     return colors;
@@ -157,7 +159,7 @@ export function NeuralNetwork({ progress, reducedMotion }) {
         <icosahedronGeometry args={[1, 1]} />
         <meshStandardMaterial
           color="#0a1330"
-          emissive={PALETTE.cyan}
+          emissive={PALETTE.glow}
           emissiveIntensity={2}
           toneMapped={false}
         />

@@ -17,6 +17,8 @@ import { PatientNetwork } from "./three/PatientNetwork";
 import { NeuralNetwork } from "./three/NeuralNetwork";
 import { MonitoringRings } from "./three/MonitoringRings";
 import { Globe } from "./three/Globe";
+import { ReviewsConstellation } from "./three/ReviewsConstellation";
+import { KnowledgeOrbits } from "./three/KnowledgeOrbits";
 
 /**
  * The single fixed WebGL canvas behind the whole story. Every chapter module
@@ -30,7 +32,7 @@ import { Globe } from "./three/Globe";
  *  - Geometry/material allocation happens once in `useMemo`; the loop only
  *    mutates matrices and attribute buffers.
  */
-export function Scene({ progress, reducedMotion }) {
+export function Scene({ progress, tail, reducedMotion }) {
   const [dpr, setDpr] = useState(1.5);
 
   return (
@@ -63,6 +65,12 @@ export function Scene({ progress, reducedMotion }) {
           <NeuralNetwork progress={progress} reducedMotion={reducedMotion} />
           <MonitoringRings progress={progress} reducedMotion={reducedMotion} />
           <Globe progress={progress} reducedMotion={reducedMotion} />
+
+          {/* Marketing-tail scenes — driven by their own section scroll
+              (`tail`) rather than the story `progress`, which is pinned at 1
+              once the corridor ends. */}
+          <ReviewsConstellation tail={tail} reducedMotion={reducedMotion} />
+          <KnowledgeOrbits tail={tail} reducedMotion={reducedMotion} />
 
           <Preload all />
         </Suspense>

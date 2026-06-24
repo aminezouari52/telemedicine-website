@@ -2,16 +2,18 @@
 export const STORY_BG = "#05070f";
 
 /**
- * Accent palette, anchored to the existing brand indigo (#615EFC / #9896fd from
- * tailwind.config.js) and extended with the requested cyan family.
+ * Accent palette — brand-only. Every tone is drawn from the indigo `primary`
+ * ramp (+ `secondary`) in tailwind.config.js, so the 3D scenes and the DOM
+ * overlays stay on the same colours as the rest of the site. Tonal variety
+ * comes from lightness across the ramp rather than from a second hue.
  */
 export const PALETTE = {
-  indigo: "#615efc",
-  indigoLight: "#9896fd",
-  indigoDeep: "#3a3897",
-  cyan: "#22d3ee",
-  cyanLight: "#67e8f9",
-  teal: "#2dd4bf",
+  indigoDeep: "#3a3897", // primary-700
+  indigo: "#615efc", // primary-500 — core brand
+  secondary: "#7e8ef1", // secondary-500
+  indigoLight: "#9896fd", // primary-400
+  glow: "#b0aefe", // primary-300 — bright accent
+  glowLight: "#c8c7fe", // primary-200 — lightest accent / emissive cores
   ice: "#e6f0ff",
   fog: "#070b18",
 };
@@ -36,10 +38,12 @@ export const CAMERA_KEYFRAMES = [
   { position: [0, 0, 12], target: [0, 0, -2] }, // 1 · hero
   { position: [0, 1.4, -7], target: [0, 0, -20] }, // 2 · patient network
   { position: [3.2, 0.6, -30], target: [0, 0, -43] }, // 3 · consultation
-  { position: [-3.4, 1.2, -52], target: [0, 0, -65] }, // 4 · AI
-  { position: [2.6, 0.4, -74], target: [0, 0, -85] }, // 5 · monitoring
-  { position: [0, 1.6, -98], target: [0, 0, -112] }, // 6 · globe
-  { position: [0.5, 3.2, -90], target: [0, -0.5, -112] }, // 7 · finale (pull back)
+  // No dwell waypoint for the neural mesh: the camera flies straight from the
+  // consultation to the monitoring waypoint, passing through the NeuralNetwork
+  // scene (z -64) so it reads as a background flourish rather than its own beat.
+  { position: [2.6, 0.4, -74], target: [0, 0, -85] }, // 4 · monitoring
+  { position: [0, 1.6, -98], target: [0, 0, -112] }, // 5 · globe
+  { position: [0.5, 3.2, -90], target: [0, -0.5, -112] }, // 6 · finale (pull back)
 ];
 
 /** DOM copy for each scroll chapter. */
@@ -73,17 +77,12 @@ export const STORY_SECTIONS = [
     // section block itself is kept for scroll height / progress banding.
     overlay: "statistics",
   },
-  {
-    id: "ai",
-    index: 3,
-    eyebrow: "AI-assisted healthcare",
-    title: "Insight that moves\nat the speed of thought.",
-    body: "A living neural mesh reads streaming medical signals, surfacing what matters so decisions arrive faster and safer.",
-    align: "left",
-  },
+  // No "ai" chapter card: the NeuralNetwork scene (z -64) still renders and is
+  // flown through as a background flourish on the way from consultation to
+  // monitoring, but it gets no copy card and no dedicated scroll screen.
   {
     id: "monitoring",
-    index: 4,
+    index: 3,
     eyebrow: "Remote monitoring",
     title: "Your vitals,\nalways in view.",
     body: "Wearables stream continuously. Dashboards assemble themselves as the data arrives — no clinic visit required.",
@@ -97,21 +96,16 @@ export const STORY_SECTIONS = [
   },
   {
     id: "globe",
-    index: 5,
+    index: 4,
     eyebrow: "Global healthcare",
     title: "Accessible anywhere,\nanytime.",
     body: "Care hubs light up across continents, linked by pulsing pathways. Distance stops being a diagnosis.",
     align: "left",
   },
-  {
-    id: "finale",
-    index: 6,
-    eyebrow: "The whole ecosystem, assembled",
-    title: "The Future of Care\nIs Connected",
-    body: "Patients, clinicians, intelligence, and monitoring — one continuous system of care.",
-    align: "center",
-    cta: { label: "Book a Virtual Consultation", href: "/auth/register" },
-  },
+  // The journey ends on the globe chapter — the camera's finale pull-back (the
+  // last CAMERA_KEYFRAMES entry) now plays out at the bottom of this chapter,
+  // and the marketing sections (client reviews, FAQ) scroll straight up over
+  // the starfield once the globe has receded. No empty "finale" screen.
 ];
 
 export const SECTION_COUNT = STORY_SECTIONS.length;

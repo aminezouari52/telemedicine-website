@@ -1,11 +1,8 @@
-"use client";
-
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 const NotFound = () => {
-  const router = useRouter();
   return (
     <div className="bg-white h-screen flex flex-col items-center justify-center gap-10">
       <Image
@@ -18,12 +15,10 @@ const NotFound = () => {
       <h1 className="text-xl font-semibold text-center">
         Sorry! The page you are looking for could not be found.
       </h1>
-      <Button
-        size="sm"
-        className="hover:opacity-80"
-        onClick={() => router.push("/")}
-      >
-        Return to the home page
+      {/* Real anchor (asChild) instead of an onClick handler so it navigates
+          reliably even before/without client hydration on the 404 route. */}
+      <Button asChild size="sm" className="hover:opacity-80">
+        <Link href="/">Return to the home page</Link>
       </Button>
     </div>
   );

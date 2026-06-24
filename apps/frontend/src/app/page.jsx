@@ -5,15 +5,7 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 
 import Spinner from "@/components/Spinner";
-
-// Home sections
-import HeroSection from "@/components/home/HeroSection";
-import StatisticsSection from "@/components/home/StatisticsSection";
-import FeaturesSection from "@/components/home/FeaturesSection";
-import TestimonialsSection from "@/components/home/TestimonialsSection";
-import FAQSection from "@/components/home/FAQSection";
-import Footer from "@/components/home/Footer";
-import ScrollToTop from "@/components/home/ScrollToTop";
+import StoryExperience from "@/components/telemedicine-story/StoryExperience";
 
 export default function HomePage() {
   const user = useSelector((state) => state.userReducer.user);
@@ -34,23 +26,9 @@ export default function HomePage() {
     setIsLoading(false);
   }, [user, router]);
 
-  return (
-    <div className="overflow-x-hidden relative">
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <>
-          <div className="relative z-[10]">
-            <HeroSection />
-            <StatisticsSection />
-            <FeaturesSection />
-            <TestimonialsSection />
-            <FAQSection />
-            <Footer />
-          </div>
-        </>
-      )}
-      <ScrollToTop />
-    </div>
-  );
+  // Hold the spinner until the auth check resolves so logged-in users are
+  // redirected to their dashboard rather than flashing the public landing.
+  if (isLoading) return <Spinner />;
+
+  return <StoryExperience />;
 }
