@@ -38,8 +38,9 @@ export default function DoctorPatientsPage() {
     isError,
     error,
   } = useQuery({
-    queryKey: ["patients"],
+    queryKey: ["patients", user?._id],
     queryFn: () => getConsultations(),
+    enabled: !!user?._id,
   });
 
   if (isPending) {

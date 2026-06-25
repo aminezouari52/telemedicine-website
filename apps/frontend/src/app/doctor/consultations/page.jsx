@@ -366,8 +366,9 @@ export default function DoctorConsultationsPage() {
     isError,
     error,
   } = useQuery({
-    queryKey: ["consultations"],
+    queryKey: ["consultations", user?._id],
     queryFn: () => getDoctorConsultationsQuery(),
+    enabled: !!user?._id,
   });
 
   const sortedUpcomingConsultations = () =>

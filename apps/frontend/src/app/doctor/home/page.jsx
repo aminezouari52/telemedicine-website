@@ -40,12 +40,13 @@ export default function DoctorHomePage() {
   };
 
   const { data, isPending, isError, error } = useQuery({
-    queryKey: ["doctor", "consultations"],
+    queryKey: ["doctor", "consultations", user?._id],
     queryFn: async () => {
       const consultations = await getConsultationsQuery();
       const patientsCount = await getPatientsCountQuery();
       return { doctor: { ...user, patientsCount }, consultations };
     },
+    enabled: !!user?._id,
   });
 
   if (isPending) {
