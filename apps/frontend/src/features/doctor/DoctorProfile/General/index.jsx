@@ -243,7 +243,7 @@ const General = ({ setIsLoading }) => {
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <div>
-          <h2 className="text-lg leading-6 font-semibold">Personelles</h2>
+          <h2 className="text-lg leading-6 font-semibold">Personal</h2>
           <p className="my-2 text-sm text-gray-600 dark:text-gray-400">
             Please fill out this form to complete your profile with your
             personal information.

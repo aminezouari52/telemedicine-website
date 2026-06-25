@@ -33,17 +33,21 @@ const steps = [
 
 export default function HowItWorksPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="min-h-screen bg-[#05070f] text-white">
       <PublicNavbar />
       {/* Hero Section */}
-      <section className="pt-32 pb-20 md:pt-40 md:pb-32 bg-gradient-to-br from-primary-500 to-primary-700 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-32 text-white">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_70%_at_50%_-10%,rgba(97,94,252,0.28),transparent_70%)]"
+        />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInOnScroll direction="up">
             <div className="text-center max-w-3xl mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-br from-white via-[#dfdffe] to-[#9896fd] bg-clip-text text-transparent">
                 How It Works
               </h1>
-              <p className="text-xl md:text-2xl text-white/90">
+              <p className="text-xl md:text-2xl text-white/70">
                 Get started with telemedicine in three simple steps. Quality
                 healthcare made accessible and convenient.
               </p>
@@ -73,10 +77,10 @@ export default function HowItWorksPage() {
               const Icon = step.icon;
               return (
                 <FadeInOnScroll key={index} direction="up" delay={index * 0.2}>
-                  <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
+                  <Card className="border border-white/10 bg-white/[0.04] backdrop-blur-md shadow-[0_20px_60px_-20px_rgba(97,94,252,0.3)] hover:border-primary-400/40 hover:shadow-primary-500/10 transition-all duration-300 h-full">
                     <CardContent className="p-8 text-center">
                       <div className="flex justify-center mb-6">
-                        <div className="inline-flex p-4 rounded-full bg-primary-50 text-primary-500">
+                        <div className="inline-flex p-4 rounded-full bg-primary-500/15 text-primary-300">
                           <Icon className="h-8 w-8" />
                         </div>
                       </div>
@@ -87,10 +91,10 @@ export default function HowItWorksPage() {
                           className="w-[200px] h-[200px] object-contain"
                         />
                       </div>
-                      <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                      <h3 className="text-2xl font-bold text-white mb-4">
                         {step.title}
                       </h3>
-                      <p className="text-gray-600 leading-relaxed">
+                      <p className="text-white/60 leading-relaxed">
                         {step.description}
                       </p>
                     </CardContent>
@@ -103,10 +107,10 @@ export default function HowItWorksPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-white/[0.02]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInOnScroll direction="up" className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Why Choose Telemedicine?
             </h2>
           </FadeInOnScroll>
@@ -118,9 +122,9 @@ export default function HowItWorksPage() {
               "Affordable Care",
             ].map((benefit, index) => (
               <FadeInOnScroll key={index} direction="up" delay={index * 0.1}>
-                <div className="flex items-center gap-3 p-4 rounded-lg bg-gray-50 hover:bg-primary-50 transition-colors">
-                  <Check className="h-5 w-5 text-primary-500 flex-shrink-0" />
-                  <span className="font-medium text-gray-900">{benefit}</span>
+                <div className="flex items-center gap-3 p-4 rounded-lg border border-white/10 bg-white/[0.04] hover:border-primary-400/40 hover:bg-primary-500/10 transition-colors">
+                  <Check className="h-5 w-5 text-primary-300 flex-shrink-0" />
+                  <span className="font-medium text-white/90">{benefit}</span>
                 </div>
               </FadeInOnScroll>
             ))}

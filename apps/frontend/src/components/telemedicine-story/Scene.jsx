@@ -17,8 +17,8 @@ import { PatientNetwork } from "./three/PatientNetwork";
 import { NeuralNetwork } from "./three/NeuralNetwork";
 import { MonitoringRings } from "./three/MonitoringRings";
 import { Globe } from "./three/Globe";
-import { ReviewsConstellation } from "./three/ReviewsConstellation";
-import { KnowledgeOrbits } from "./three/KnowledgeOrbits";
+import { AuroraRibbons } from "./three/AuroraRibbons";
+import { ClarityField } from "./three/ClarityField";
 
 /**
  * The single fixed WebGL canvas behind the whole story. Every chapter module
@@ -69,8 +69,8 @@ export function Scene({ progress, tail, reducedMotion }) {
           {/* Marketing-tail scenes — driven by their own section scroll
               (`tail`) rather than the story `progress`, which is pinned at 1
               once the corridor ends. */}
-          <ReviewsConstellation tail={tail} reducedMotion={reducedMotion} />
-          <KnowledgeOrbits tail={tail} reducedMotion={reducedMotion} />
+          <AuroraRibbons tail={tail} reducedMotion={reducedMotion} />
+          <ClarityField tail={tail} reducedMotion={reducedMotion} />
 
           <Preload all />
         </Suspense>

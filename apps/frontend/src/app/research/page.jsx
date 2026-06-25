@@ -38,17 +38,21 @@ const researchAreas = [
 
 export default function ResearchPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="min-h-screen bg-[#05070f] text-white">
       <PublicNavbar />
       {/* Hero Section */}
-      <section className="py-20 md:py-32 bg-gradient-to-br from-primary-500 to-primary-700 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden py-20 md:py-32 text-white">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_70%_at_50%_-10%,rgba(97,94,252,0.28),transparent_70%)]"
+        />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInOnScroll direction="up">
             <div className="text-center max-w-3xl mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-br from-white via-[#dfdffe] to-[#9896fd] bg-clip-text text-transparent">
                 Research & Innovation
               </h1>
-              <p className="text-xl md:text-2xl text-white/90">
+              <p className="text-xl md:text-2xl text-white/70">
                 Advancing healthcare through research, data-driven insights, and
                 continuous innovation.
               </p>
@@ -62,32 +66,32 @@ export default function ResearchPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-8 mb-16">
             <FadeInOnScroll direction="up">
-              <Card className="border-0 shadow-lg text-center">
+              <Card className="border border-white/10 bg-white/[0.04] backdrop-blur-md shadow-[0_20px_60px_-20px_rgba(97,94,252,0.3)] text-center">
                 <CardContent className="p-8">
-                  <div className="text-5xl font-bold text-primary-500 mb-2">
+                  <div className="text-5xl font-bold text-primary-300 mb-2">
                     <AnimatedCounter value={99.9} decimals={1} suffix="%" />
                   </div>
-                  <p className="text-gray-600">Patient Satisfaction</p>
+                  <p className="text-white/60">Patient Satisfaction</p>
                 </CardContent>
               </Card>
             </FadeInOnScroll>
             <FadeInOnScroll direction="up" delay={0.2}>
-              <Card className="border-0 shadow-lg text-center">
+              <Card className="border border-white/10 bg-white/[0.04] backdrop-blur-md shadow-[0_20px_60px_-20px_rgba(97,94,252,0.3)] text-center">
                 <CardContent className="p-8">
-                  <div className="text-5xl font-bold text-primary-500 mb-2">
+                  <div className="text-5xl font-bold text-primary-300 mb-2">
                     <AnimatedCounter value={35} decimals={0} suffix="%" />
                   </div>
-                  <p className="text-gray-600">Reduction in Readmissions</p>
+                  <p className="text-white/60">Reduction in Readmissions</p>
                 </CardContent>
               </Card>
             </FadeInOnScroll>
             <FadeInOnScroll direction="up" delay={0.4}>
-              <Card className="border-0 shadow-lg text-center">
+              <Card className="border border-white/10 bg-white/[0.04] backdrop-blur-md shadow-[0_20px_60px_-20px_rgba(97,94,252,0.3)] text-center">
                 <CardContent className="p-8">
-                  <div className="text-5xl font-bold text-primary-500 mb-2">
+                  <div className="text-5xl font-bold text-primary-300 mb-2">
                     <AnimatedCounter value={50} decimals={0} suffix="+" />
                   </div>
-                  <p className="text-gray-600">Research Publications</p>
+                  <p className="text-white/60">Research Publications</p>
                 </CardContent>
               </Card>
             </FadeInOnScroll>
@@ -95,9 +99,9 @@ export default function ResearchPage() {
 
           {/* Chart */}
           <FadeInOnScroll direction="up" delay={0.6}>
-            <Card className="border-0 shadow-lg">
+            <Card className="border border-white/10 bg-white/[0.04] backdrop-blur-md shadow-[0_20px_60px_-20px_rgba(97,94,252,0.3)]">
               <CardHeader>
-                <CardTitle className="text-2xl font-bold">
+                <CardTitle className="text-2xl font-bold text-white">
                   Patient Activity Trends
                 </CardTitle>
               </CardHeader>
@@ -123,10 +127,10 @@ export default function ResearchPage() {
       </section>
 
       {/* Research Areas */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-white/[0.02]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInOnScroll direction="up" className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               Research Areas
             </h2>
           </FadeInOnScroll>
@@ -135,17 +139,17 @@ export default function ResearchPage() {
               const Icon = area.icon;
               return (
                 <FadeInOnScroll key={index} direction="up" delay={index * 0.1}>
-                  <Card className="border-0 shadow-md hover:shadow-xl transition-shadow">
+                  <Card className="border border-white/10 bg-white/[0.04] backdrop-blur-md shadow-[0_20px_60px_-20px_rgba(97,94,252,0.3)] hover:border-primary-400/40 hover:shadow-primary-500/10 transition-all duration-300">
                     <CardHeader>
-                      <div className="inline-flex p-3 rounded-lg bg-primary-50 text-primary-500 mb-4">
+                      <div className="inline-flex p-3 rounded-lg bg-primary-500/15 text-primary-300 mb-4">
                         <Icon className="h-6 w-6" />
                       </div>
-                      <CardTitle className="text-lg font-bold">
+                      <CardTitle className="text-lg font-bold text-white">
                         {area.title}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-white/60 text-sm">
                         {area.description}
                       </p>
                     </CardContent>

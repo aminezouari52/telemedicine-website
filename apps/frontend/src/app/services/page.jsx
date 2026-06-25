@@ -62,17 +62,21 @@ const services = [
 
 export default function ServicesPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="min-h-screen bg-[#05070f] text-white">
       <PublicNavbar />
       {/* Hero Section */}
-      <section className="py-20 md:py-32 bg-gradient-to-br from-primary-500 to-primary-700 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative overflow-hidden py-20 md:py-32 text-white">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_70%_at_50%_-10%,rgba(97,94,252,0.28),transparent_70%)]"
+        />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <FadeInOnScroll direction="up">
             <div className="text-center max-w-3xl mx-auto">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-br from-white via-[#dfdffe] to-[#9896fd] bg-clip-text text-transparent">
                 Our Services
               </h1>
-              <p className="text-xl md:text-2xl text-white/90">
+              <p className="text-xl md:text-2xl text-white/70">
                 Comprehensive healthcare solutions designed to meet your needs,
                 delivered with care and expertise.
               </p>
@@ -90,17 +94,17 @@ export default function ServicesPage() {
               return (
                 <FadeInOnScroll key={index} direction="up" delay={index * 0.1}>
                   <motion.div whileHover={{ y: -8 }} className="h-full">
-                    <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <Card className="h-full border border-white/10 bg-white/[0.04] backdrop-blur-md shadow-[0_20px_60px_-20px_rgba(97,94,252,0.3)] hover:border-primary-400/40 hover:shadow-primary-500/10 transition-all duration-300">
                       <CardHeader>
-                        <div className="inline-flex p-3 rounded-lg bg-primary-50 text-primary-500 mb-4">
+                        <div className="inline-flex p-3 rounded-lg bg-primary-500/15 text-primary-300 mb-4">
                           <Icon className="h-8 w-8" />
                         </div>
-                        <CardTitle className="text-2xl font-bold text-gray-900">
+                        <CardTitle className="text-2xl font-bold text-white">
                           {service.title}
                         </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <CardDescription className="text-gray-600 text-base leading-relaxed">
+                        <CardDescription className="text-white/60 text-base leading-relaxed">
                           {service.description}
                         </CardDescription>
                       </CardContent>
