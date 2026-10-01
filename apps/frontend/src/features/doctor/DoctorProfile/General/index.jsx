@@ -175,8 +175,8 @@ const General = ({ setIsLoading }) => {
 
   useEffect(() => {
     const getUser = async () => {
-      userCheck(async (token) => {
-        const res = await getCurrentUser(token);
+      userCheck(async () => {
+        const res = await getCurrentUser();
         setCurrentUser(res.data);
       });
     };

@@ -28,7 +28,8 @@ pnpm -F=frontend lint            # eslint src/**/*.jsx -f pretty
 pnpm -F=backend seed:doctor      # seeders
 pnpm -F=backend seed:patient
 pnpm -F=backend seed:consultation
-pnpm -F=backend seed:admin       # creates admin@gmail.com in Firebase + MongoDB
+pnpm -F=backend seed:admin       # creates ADMIN_EMAIL in Clerk + MongoDB
+pnpm -F=backend seed:logins      # demo doctor/patient accounts in Clerk + MongoDB (needs DEMO_* env)
 pnpm start                       # turbo start (production-like)
 ```
 
@@ -38,8 +39,8 @@ Backend production: `pm2 start ecosystem.config.json --no-daemon`
 
 Copy from `.env.example` in each app directory.
 
-- **backend**: `MONGODB_URL`, `CLOUDINARY_*`, `LIVEKIT_*`, `GEMINI_API_KEY`, `WEB_FRONTEND_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`
-- **frontend**: `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_API_V1_URL`, `NEXT_PUBLIC_LIVEKIT_URL`
+- **backend**: `MONGODB_URL`, `CLOUDINARY_*`, `LIVEKIT_*`, `GEMINI_API_KEY`, `WEB_FRONTEND_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `CLERK_SECRET_KEY` (optional `CLERK_JWT_KEY` for networkless token verification; optional `DEMO_DOCTOR_EMAIL`, `DEMO_PATIENT_EMAIL`, `DEMO_PASSWORD` for demo mode)
+- **frontend**: `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_API_V1_URL`, `NEXT_PUBLIC_LIVEKIT_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` (same Clerk application as the backend), `GEMINI_API_KEY` (used server-side by `src/app/api/ai/*` routes), optional `NEXT_PUBLIC_DEMO_MODE` + `NEXT_PUBLIC_DEMO_*` (demo logins on auth pages — see README "Demo mode")
 
 ## Linting & formatting
 
@@ -53,7 +54,10 @@ Pre-commit (husky): `pnpm lint-staged` — runs prettier + eslint on staged `.js
 ## Architecture notes
 
 - API base: `/v1/*` (routes: auth, consultation, doctor, patient, livekit)
-- Auth: Firebase on frontend, Firebase Admin on backend
+- Auth: Clerk (`@clerk/nextjs` v7 / Core 3) on frontend, `@clerk/backend` on backend
+  - Sign-in/sign-up use Clerk's prebuilt `<SignIn>`/`<SignUp>` in `src/app/auth/{login,register}/[[...]]` catch-all routes; `src/proxy.js` (Next 16 middleware) protects `/patient`, `/doctor`, `/admin`, `/consultation`
+  - The axios interceptor (`src/lib/axiosAuth.js`) attaches a fresh Clerk session token as the `authtoken` header; backend `middlewares/auth.js` verifies it and sets `req.user = { uid, email }`
+  - Roles live in MongoDB, not Clerk. `/auth/login-user` creates the MongoDB user on first sign-in using the role set by the sign-up page (`unsafeMetadata.role`): `/auth/register` → patient, `/auth/register/doctor` → doctor (admins are seeded)
 - Real-time chat: Socket.io (backend `src/socket.js`, frontend `src/socket.js`)
 - Video calls: LiveKit (backend SDK + frontend `@livekit/components-react`)
 - AI doctor: Gemini API via LangChain

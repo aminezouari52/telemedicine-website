@@ -28,7 +28,7 @@ import {
   fetchSuggestions,
 } from "@/services/aiService";
 import { getText, toChatMessages, toSaveMessages } from "@/lib/aiDataParts";
-import { auth } from "@/firebase";
+import { getToken } from "@clerk/nextjs";
 import {
   SYSTEM_CONTEXT,
   AI_TOOLS,
@@ -90,14 +90,11 @@ export default function PatientAIPage() {
     transport: new DefaultChatTransport({
       api: "/api/ai/chat",
       body: async () => {
-        // Forward a FRESH Firebase ID token so the backend can scope the
+        // Forward a FRESH Clerk session token so the backend can scope the
         // search_medical_history retrieval tool to the logged-in patient.
-        // getIdToken() auto-refreshes when near/after the 1h expiry; the
-        // cached localStorage token would be stale and rejected (401).
-        const authToken =
-          (await auth.currentUser?.getIdToken().catch(() => null)) ||
-          JSON.parse(localStorage.getItem("user"))?.token ||
-          "";
+        // Clerk tokens expire after ~60s, so the copy cached in localStorage
+        // would be rejected (401); getToken() refreshes it when needed.
+        const authToken = (await getToken().catch(() => null)) || "";
 
         const ids = selectedToolsRef.current;
         if (ids.length === 0)

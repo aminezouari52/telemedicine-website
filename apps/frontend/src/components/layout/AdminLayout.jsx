@@ -1,49 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
-import { onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "@/firebase";
-import { logout } from "@/reducers/userReducer";
+import { useAuth } from "@clerk/nextjs";
+import { useLogout } from "@/hooks";
+import { SIGN_IN_URL } from "@/constants/auth";
 import Spinner from "@/components/Spinner";
 import { Button } from "@/components/ui/button";
-import { useQueryClient } from "@tanstack/react-query";
 import { Shield, LogOut } from "lucide-react";
 
 export const AdminLayout = ({ children }) => {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const queryClient = useQueryClient();
+  const logoutHandler = useLogout();
+  const { isLoaded, isSignedIn } = useAuth();
   const user = useSelector((state) => state.userReducer.user);
-  const [isLoading, setIsLoading] = useState(true);
+  const isLoading = !isLoaded || !isSignedIn;
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
-      if (!authUser) {
-        router.replace("/auth/login");
-      }
-      setIsLoading(false);
-    });
-    return () => unsubscribe();
-  }, [router]);
+    if (isLoaded && !isSignedIn) {
+      router.replace(SIGN_IN_URL);
+    }
+  }, [isLoaded, isSignedIn, router]);
 
   useEffect(() => {
     if (!isLoading && user?.role && user.role !== "admin") {
-      router.replace("/auth/login");
+      router.replace(SIGN_IN_URL);
     }
   }, [isLoading, user, router]);
-
-  const logoutHandler = async () => {
-    try {
-      await signOut(auth);
-      dispatch(logout(null));
-      queryClient.removeQueries();
-      router.push("/auth/login");
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   return isLoading ? (
     <Spinner />

@@ -2,9 +2,6 @@
 
 This project is a Real-Time Doctor-Patient consultations website designed to facilitate secure, real-time text-based consultations between doctors and patients. With a focus on simplicity and ease of use, the website allows patients and doctors to engage in private, secure conversations without the need for in-person visits, leveraging modern web technologies.
 
-**Live Website**
-You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed64.netlify.app)
-
 ## Table of Contents
 
 - [Features](#features)
@@ -13,6 +10,7 @@ You can try the website live at: [Live Website Link](https://bucolic-malabi-07ed
 - [Roadmap](#roadmap)
 - [Technologies Used](#technologies-used)
 - [Run the project](#run-the-project)
+- [Demo mode](#demo-mode)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -115,7 +113,7 @@ If “chest pain + shortness of breath” → always recommend emergency care fi
 - Frontend: NextJS, Shadcn
 - Backend: Node.js, Express.js, MongoDB Atlas
 - AI: Gemini API, Vercel AI-SDK
-- Authentication: Firebase
+- Authentication: Clerk
 - Real-time chat: Socket.io
 - Real-time notifications: [Node Cron](https://www.npmjs.com/package/node-cron)
 - Deployment: Render.com, Netlify
@@ -125,7 +123,7 @@ If “chest pain + shortness of breath” → always recommend emergency care fi
 Clone the repository
 
 ```bash
-git clone https://github.com/aminezouari52/telemedicine-website.git
+git clone <your-repo-url>
 ```
 
 Create the `.env` files
@@ -145,6 +143,33 @@ Use the package manager [pnpm](https://pnpm.io/) to install and run the project.
 pnpm install
 pnpm dev
 ```
+
+## Demo mode
+
+Demo mode adds two fixed login accounts (a doctor and a patient) and shows them, with copy buttons, on the sign-in and sign-up pages. It's meant for a public demo deployment. **It is off by default:** if you don't set the variables below, nothing demo-related appears or gets seeded.
+
+### Turning it on
+
+1. In `apps/backend/.env`, set `DEMO_DOCTOR_EMAIL`, `DEMO_PATIENT_EMAIL` and `DEMO_PASSWORD`. Pick a password that isn't in a public breach list, or Clerk forces a reset at sign-in.
+2. Create the accounts in Clerk and MongoDB:
+
+   ```bash
+   pnpm -F=backend seed:logins
+   ```
+
+3. In `apps/frontend/.env` (and your frontend host's environment variables), set `NEXT_PUBLIC_DEMO_MODE=true` and `NEXT_PUBLIC_DEMO_DOCTOR_EMAIL`, `NEXT_PUBLIC_DEMO_PATIENT_EMAIL`, `NEXT_PUBLIC_DEMO_PASSWORD` to the same values. `NEXT_PUBLIC_*` values are built into the frontend, so rebuild after changing them.
+
+### Removing the demo
+
+To turn it off, leave the variables unset. To delete the code entirely:
+
+1. Delete `apps/frontend/src/components/demo/DemoCredentials.jsx`.
+2. In `apps/frontend/src/components/layout/AuthLayout.jsx`, delete the `DemoCredentials` import and the `<DemoCredentials />` line.
+3. Delete `apps/backend/src/seeders/loginAccounts.seeder.js` and the `seed:logins` script in `apps/backend/package.json`.
+4. Remove the `DEMO_*` keys from `apps/backend/src/config/config.js` (schema and the `demo` block), the `demoPatientEmail` lines in `apps/backend/src/seeders/patient.seeder.js`, and the demo sections of both `.env.example` files.
+5. If you ran `seed:logins` before, delete the two demo users in the Clerk dashboard.
+
+Step 4 is optional: with the variables unset, that code does nothing.
 
 ## Contributing
 

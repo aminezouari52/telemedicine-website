@@ -1,3 +1,4 @@
+import { AppClerkProvider } from "./clerk-provider";
 import { Providers } from "./providers";
 import "./globals.css";
 
@@ -28,7 +29,9 @@ export default function RootLayout({ children }) {
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body suppressHydrationWarning>
-        <Providers>{children}</Providers>
+        <AppClerkProvider>
+          <Providers>{children}</Providers>
+        </AppClerkProvider>
       </body>
     </html>
   );

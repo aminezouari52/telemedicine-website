@@ -1,13 +1,13 @@
 "use client";
 
 // HOOKS
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
-// FUNCTIONS
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/firebase";
+// CONSTANTS
+import { SIGN_IN_URL } from "@/constants/auth";
 
 // COMPONENTS
 import { PatientHeader } from "@/components/header";
@@ -15,23 +15,19 @@ import Spinner from "@/components/Spinner";
 
 export const PatientLayout = ({ children }) => {
   const router = useRouter();
+  const { isLoaded, isSignedIn } = useAuth();
   const user = useSelector((state) => state.userReducer.user);
-  const [isLoading, setIsLoading] = useState(true);
+  const isLoading = !isLoaded || !isSignedIn;
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
-      if (!authUser) {
-        router.replace("/auth/login");
-      }
-      setIsLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [router]);
+    if (isLoaded && !isSignedIn) {
+      router.replace(SIGN_IN_URL);
+    }
+  }, [isLoaded, isSignedIn, router]);
 
   useEffect(() => {
     if (!isLoading && user?.role && user.role !== "patient") {
-      router.replace("/auth/login");
+      router.replace(SIGN_IN_URL);
     }
   }, [isLoading, user, router]);
 

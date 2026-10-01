@@ -5,28 +5,33 @@ const express = require("express");
 const app = express();
 const { User } = require("../models");
 
-const adminEmail = process.env.ADMIN_EMAIL || "admin@gmail.com";
-const adminPassword = process.env.ADMIN_PASSWORD || "adminadmin";
+// No fallbacks: a default admin login is a backdoor waiting to be deployed.
+// ADMIN_PASSWORD must not be in a public breach list, or Clerk rejects it.
+const { email: adminEmail, password: adminPassword } = config.admin;
 
-async function createFirebaseUser() {
+async function createClerkUser() {
+  const { ensureClerkUser, clerkErrorMessage } = require("../clerk");
   try {
-    const admin = require("../firebase");
-    const firebaseUser = await admin.auth().createUser({
-      email: adminEmail,
-      password: adminPassword,
-    });
-    logger.info(`Firebase account created: ${firebaseUser.email}`);
+    const { created } = await ensureClerkUser(adminEmail, adminPassword);
+    logger.info(
+      created
+        ? `Clerk account created: ${adminEmail}`
+        : `Clerk account already exists for ${adminEmail}; password reset`,
+    );
   } catch (err) {
-    if (err.code === "auth/email-already-exists") {
-      logger.warn(`Firebase account already exists for ${adminEmail}`);
-    } else {
-      logger.warn(`Could not create Firebase account (${err.message})`);
-      logger.warn("You can register manually via the signup page.");
-    }
+    logger.warn(`Could not create Clerk account (${clerkErrorMessage(err)})`);
+    logger.warn("You can register manually via the signup page.");
   }
 }
 
 async function seedAdmin() {
+  if (!adminEmail || !adminPassword) {
+    logger.error(
+      "Set ADMIN_EMAIL and ADMIN_PASSWORD in apps/backend/.env to seed the admin.",
+    );
+    process.exit(1);
+  }
+
   let server;
   try {
     mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
@@ -36,7 +41,7 @@ async function seedAdmin() {
 
         logger.info(`Seeding admin: ${adminEmail}`);
 
-        await createFirebaseUser();
+        await createClerkUser();
 
         await User.deleteOne({ email: adminEmail }).exec();
 

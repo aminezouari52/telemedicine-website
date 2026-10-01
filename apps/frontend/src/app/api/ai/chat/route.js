@@ -643,7 +643,7 @@ Compare values against standard ranges and flag abnormalities.`,
 };
 
 // Retrieval tool for the patient's own data (profile + past consultations).
-// Built per-request so `execute` can close over the caller's Firebase token,
+// Built per-request so `execute` can close over the caller's Clerk token,
 // which the backend uses to scope the vector search to that patient only.
 function buildMedicalHistoryTool(authToken) {
   return {

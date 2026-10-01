@@ -1,96 +1,55 @@
 "use client";
 
 // HOOKS
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
+import { useAuth } from "@clerk/nextjs";
+
+// CONSTANTS
+import { ROLE_REDIRECTS } from "@/constants/auth";
 
 // COMPONENTS
 import Spinner from "@/components/Spinner";
-
-// STYLE
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import DemoCredentials from "@/components/demo/DemoCredentials";
 
 // ASSETS
 import Image from "next/image";
-import { CircleAlert } from "lucide-react";
-
-const ROLE_REDIRECTS = {
-  admin: "/admin",
-  doctor: "/doctor/home",
-  patient: "/patient/dashboard",
-};
 
 export const AuthLayout = ({ children }) => {
   const router = useRouter();
+  const { isSignedIn } = useAuth();
   const user = useSelector((state) => state.userReducer.user);
-  const [isSessionChecking, setIsSessionChecking] = useState(true);
+
+  // Already signed in with a known role: skip the auth pages.
+  const redirectPath = isSignedIn ? ROLE_REDIRECTS[user?.role] : undefined;
 
   useEffect(() => {
-    if (!user?.token) {
-      setIsSessionChecking(false);
-      return;
-    }
+    if (redirectPath) router.replace(redirectPath);
+  }, [router, redirectPath]);
 
-    const redirectPath = ROLE_REDIRECTS[user?.role];
-
-    if (!redirectPath) {
-      setIsSessionChecking(false);
-      return;
-    }
-
-    router.replace(redirectPath);
-  }, [router, user?.role, user?.token]);
-
-  return isSessionChecking ? (
+  return redirectPath ? (
     <Spinner />
   ) : (
-    <div className="flex justify-between items-center h-screen bg-white">
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            size="icon"
-            variant="ghost"
-            className="absolute top-4 right-[58%] text-primary-700 mr-4"
-          >
-            <CircleAlert />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[367px]">
-          <div className="space-y-2">
-            <h4 className="font-semibold mb-2">
-              For testing purposes you can login with these credentials
-            </h4>
-            <div className="space-y-1">
-              <div className="flex gap-1">
-                <span className="font-bold">doctor: </span>
-                <span>freddie24@yahoo.com</span>
-              </div>
-              <div className="flex gap-1">
-                <span className="font-bold">patient: </span>
-                <span>christop_hagenes21@gmail.com</span>
-              </div>
-            </div>
-            <div className="flex gap-1 pt-2 border-t">
-              <span className="font-bold">Password: </span>
-              <span>testtest</span>
-            </div>
-          </div>
-        </PopoverContent>
-      </Popover>
-
-      <div className="flex justify-center items-center w-1/2">{children}</div>
-      <div className="h-screen w-[70%] relative">
+    <div className="flex h-screen bg-white">
+      {/* `md` (960px) is also where useAuthFormAppearance flattens the Clerk
+          card, so the form and the layout switch together. The logo is
+          rendered by Clerk inside the card, above the form title. */}
+      <div className="w-full md:w-1/2 lg:w-[42%] h-screen overflow-y-auto flex flex-col">
+        <header className="flex justify-end px-4 pt-4 empty:hidden">
+          <DemoCredentials />
+        </header>
+        <div className="flex-1 flex justify-center items-center px-4 py-4">
+          {children}
+        </div>
+      </div>
+      {/* Illustration only fits beside the form on large screens. */}
+      <div className="hidden md:block flex-1 h-screen relative">
         <Image
           src="/assets/login.webp"
           alt="Login illustration"
           fill
-          sizes="70%"
+          sizes="(min-width: 1400px) 58vw, 50vw"
           className="object-cover"
           priority
         />

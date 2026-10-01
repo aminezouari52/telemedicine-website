@@ -3,14 +3,11 @@
 // HOOKS
 import { useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useDispatch, useSelector } from "react-redux";
-import { useToast } from "@/hooks";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
+import { useLogout } from "@/hooks";
+import { useQuery } from "@tanstack/react-query";
 
 // FUNCTIONS
-import { auth } from "@/firebase";
-import { signOut } from "firebase/auth";
-import { logout } from "@/reducers/userReducer";
 import { getPatientConsultations } from "@/services/consultationService";
 import { findJoinableConsultation } from "@/utils/consultationJoinable";
 
@@ -55,9 +52,7 @@ const navItems = [
 export const PatientHeader = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const dispatch = useDispatch();
-  const queryClient = useQueryClient();
-  const toast = useToast();
+  const logoutHandler = useLogout();
   const user = useSelector((state) => state.userReducer.user);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -70,18 +65,6 @@ export const PatientHeader = () => {
     enabled: !!user?._id,
     refetchInterval: !!user?._id ? 30_000 : false,
   });
-
-  const logoutHandler = async () => {
-    try {
-      await signOut(auth);
-      dispatch(logout(null));
-      queryClient.removeQueries();
-      router.push("/auth/login");
-    } catch (err) {
-      console.log(err);
-      toast("Logout failed!", "error");
-    }
-  };
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
 

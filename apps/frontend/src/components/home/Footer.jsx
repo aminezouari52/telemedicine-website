@@ -23,19 +23,12 @@ function Footer() {
     console.info(email);
   };
 
+  // TODO(template): replace with your own social profiles
   const socialLinks = [
     { icon: Facebook, href: "#", label: "Facebook" },
-    {
-      icon: Github,
-      href: "https://github.com/aminezouari52/telemedecine-app/",
-      label: "GitHub",
-    },
+    { icon: Github, href: "#", label: "GitHub" },
     { icon: Instagram, href: "#", label: "Instagram" },
-    {
-      icon: Linkedin,
-      href: "https://www.linkedin.com/in/amine-zouari52/",
-      label: "LinkedIn",
-    },
+    { icon: Linkedin, href: "#", label: "LinkedIn" },
   ];
 
   return (
@@ -108,24 +101,25 @@ function Footer() {
           {/* Company Info */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Company</h3>
+            {/* TODO(template): replace with your company's contact details */}
             <div className="text-sm text-white/80 space-y-2">
-              <p>Tunisia, Sousse 5054</p>
-              <p>Ahmed bouselem street</p>
-              <p>Amine Zouari building, 1st floor</p>
+              <p>123 Example Street</p>
+              <p>Suite 100</p>
+              <p>Your City, Country</p>
               <p className="pt-2">
                 <a
-                  href="tel:+21621316325"
+                  href="tel:+10000000000"
                   className="hover:text-white transition-colors"
                 >
-                  +216 21 316 325
+                  +1 (000) 000-0000
                 </a>
               </p>
               <p>
                 <a
-                  href="mailto:zouariamine52@gmail.com"
+                  href="mailto:contact@example.com"
                   className="hover:text-white transition-colors"
                 >
-                  zouariamine52@gmail.com
+                  contact@example.com
                 </a>
               </p>
             </div>
@@ -135,7 +129,8 @@ function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-white/20 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-white/60">
-            Copyright 2025 © télémedecine.inc. All rights reserved.
+            Copyright {new Date().getFullYear()} © Your Company. All rights
+            reserved.
           </p>
           <div className="flex items-center gap-4">
             {/* Social Icons */}

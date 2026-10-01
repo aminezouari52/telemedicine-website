@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Node.js backend for the telemedicine website",
   "main": "src/index.js",
-  "author": "Amine Zouari <zouariamine52@gmail.com>",
+  "author": "Your Name <you@example.com>",
   "license": "MIT",
   "engines": {
     "node": ">=20"
@@ -37,6 +37,7 @@
     "prettier"
   ],
   "dependencies": {
+    "@clerk/backend": "^3.20.1",
     "@langchain/core": "^1.1.44",
     "@langchain/google-genai": "^2.1.30",
     "cloudinary": "^1.41.3",
@@ -47,7 +48,6 @@
     "express-form-data": "^2.0.23",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^7.3.1",
-    "firebase-admin": "^11.11.0",
     "helmet": "^7.1.0",
     "http-status": "^1.7.4",
     "joi": "^17.13.3",

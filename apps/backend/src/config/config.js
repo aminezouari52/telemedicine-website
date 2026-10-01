@@ -32,6 +32,28 @@ const envVarsSchema = Joi.object()
     GEMINI_API_KEY: Joi.string()
       .required()
       .description("Google Gemini API key (chat + embeddings)"),
+    CLERK_SECRET_KEY: Joi.string().required().description("Clerk Secret Key"),
+    CLERK_JWT_KEY: Joi.string()
+      .optional()
+      .description("Clerk JWT public key (PEM) for networkless verification"),
+    ADMIN_EMAIL: Joi.string()
+      .email()
+      .optional()
+      .description("Admin login (seed:admin)"),
+    ADMIN_PASSWORD: Joi.string()
+      .optional()
+      .description("Admin password (seed:admin)"),
+    DEMO_DOCTOR_EMAIL: Joi.string()
+      .email()
+      .optional()
+      .description("Demo doctor login (seed:logins)"),
+    DEMO_PATIENT_EMAIL: Joi.string()
+      .email()
+      .optional()
+      .description("Demo patient login (seed:logins, seed:patient)"),
+    DEMO_PASSWORD: Joi.string()
+      .optional()
+      .description("Password for both demo logins (seed:logins)"),
   })
   .unknown();
 
@@ -70,5 +92,24 @@ module.exports = {
   stripe: {
     secretKey: envVars.STRIPE_SECRET_KEY,
     webhookSecret: envVars.STRIPE_WEBHOOK_SECRET,
+  },
+  clerk: {
+    secretKey: envVars.CLERK_SECRET_KEY,
+    jwtKey: envVars.CLERK_JWT_KEY,
+    // Session tokens carry the origin that minted them (`azp`); rejecting other
+    // origins stops tokens issued to a different app from being replayed here.
+    authorizedParties: [envVars.WEB_FRONTEND_URL.replace(/\/+$/, "")],
+  },
+  // Only `seed:admin` reads these; it refuses to run without both.
+  admin: {
+    email: envVars.ADMIN_EMAIL,
+    password: envVars.ADMIN_PASSWORD,
+  },
+  // Optional: only the demo seeders read these. Leave them unset to seed
+  // purely random data with no fixed login accounts.
+  demo: {
+    doctorEmail: envVars.DEMO_DOCTOR_EMAIL,
+    patientEmail: envVars.DEMO_PATIENT_EMAIL,
+    password: envVars.DEMO_PASSWORD,
   },
 };

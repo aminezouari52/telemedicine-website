@@ -37,4 +37,10 @@ yarn-error.log*
 .DS_Store
 *.pem
 
+# Secrets — never commit service-account credentials
+**/fbServiceAccountKey.json
+
+# Clerk keyless-mode temporary keys
+.clerk/
+
 .opencode

@@ -47,9 +47,10 @@ async function seedPatientCollection() {
           "Ibuprofen",
         ];
 
-        // Keep a stable testing account (must match a Firebase Auth user)
-        // so it survives reseeds and can always log in.
-        const testPatientEmail = "christop_hagenes21@gmail.com";
+        // When a demo patient is configured, the first seeded patient takes
+        // its email so the demo login (seed:logins) keeps a full profile and
+        // history across reseeds. Unset, every patient is random.
+        const demoPatientEmail = config.demo.patientEmail;
 
         let patients = [];
 
@@ -59,8 +60,8 @@ async function seedPatientCollection() {
 
           let newPatient = {
             email:
-              i === 0
-                ? testPatientEmail
+              i === 0 && demoPatientEmail
+                ? demoPatientEmail
                 : faker.internet.email(firstName, lastName),
             firstName,
             lastName,

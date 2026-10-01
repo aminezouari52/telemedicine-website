@@ -1,31 +1,17 @@
 import axios from "axios";
 
-export const loginUser = async (user) => {
+// The Clerk session token is attached by the interceptor in lib/axiosAuth.js.
+
+// Returns the MongoDB user, creating it on the first sign-in.
+export const loginUser = async () => {
   return await axios.get(
     `${process.env.NEXT_PUBLIC_API_V1_URL}/auth/login-user`,
-    {
-      headers: {
-        authtoken: user.token,
-      },
-    },
   );
 };
 
-export const registerUser = async (user) => {
-  return await axios.post(
-    `${process.env.NEXT_PUBLIC_API_V1_URL}/auth/register-user`,
-    { role: user.role, email: user.email },
-  );
-};
-
-export const getCurrentUser = async (authtoken) => {
+export const getCurrentUser = async () => {
   return await axios.post(
     `${process.env.NEXT_PUBLIC_API_V1_URL}/auth/current-user`,
     {},
-    {
-      headers: {
-        authtoken,
-      },
-    },
   );
 };

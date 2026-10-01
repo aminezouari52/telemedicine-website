@@ -13,6 +13,7 @@
   "dependencies": {
     "@ai-sdk/google": "^3.0.79",
     "@ai-sdk/react": "^3.0.193",
+    "@clerk/nextjs": "^7.9.7",
     "@google/genai": "^1.20.0",
     "@hookform/resolvers": "^3.9.1",
     "@livekit/components-react": "^2.9.12",
@@ -42,7 +43,6 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
-    "firebase": "^9.22.1",
     "framer-motion": "^7.10.3",
     "gsap": "^3.13.0",
     "livekit-client": "^2.13.8",

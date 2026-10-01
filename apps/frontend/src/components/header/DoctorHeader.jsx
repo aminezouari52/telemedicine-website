@@ -2,15 +2,12 @@
 
 // HOOKS
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useRouter, usePathname } from "next/navigation";
-import { useToast } from "@/hooks";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useLogout } from "@/hooks";
+import { useQuery } from "@tanstack/react-query";
 
 // FUNCTIONS
-import { signOut } from "firebase/auth";
-import { logout } from "@/reducers/userReducer";
-import { auth } from "@/firebase";
 import { getDoctorConsultations } from "@/services/consultationService";
 import { findJoinableConsultation } from "@/utils/consultationJoinable";
 
@@ -36,12 +33,10 @@ import { LogOut } from "lucide-react";
 
 export const DoctorHeader = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
   const pathname = usePathname();
-  const queryClient = useQueryClient();
+  const logoutHandler = useLogout();
   const user = useSelector((state) => state.userReducer.user);
   const [isProfileCompleted, setIsProfileCompleted] = useState();
-  const toast = useToast();
   const [isNotification, setIsNotification] = useState([]);
 
   const { data: consultation } = useQuery({
@@ -74,18 +69,6 @@ export const DoctorHeader = () => {
     },
     enabled: !!user?._id,
   });
-
-  const logoutHandler = async () => {
-    try {
-      await signOut(auth);
-      dispatch(logout(null));
-      queryClient.removeQueries();
-      router.push("/auth/login");
-    } catch (err) {
-      console.log(err);
-      toast("Logout failed!", "error");
-    }
-  };
 
   const addNotificationIfNotExist = (notification) => {
     setIsNotification((prev) =>
