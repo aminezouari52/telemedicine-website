@@ -26,5 +26,10 @@
   "packageManager": "pnpm@8.15.6",
   "engines": {
     "node": ">=20"
+  },
+  "pnpm": {
+    "overrides": {
+      "basic-ftp": "5.3.1"
+    }
   }
 }
