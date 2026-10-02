@@ -4,12 +4,25 @@ const ApiError = require("../utils/ApiError");
 const cloudinary = require("cloudinary");
 const mongoose = require("mongoose");
 
+// Sortable fields exposed on the doctor listing. Whitelisting prevents callers
+// from injecting arbitrary (or nested) field names into Mongo's `.sort()`.
+const ALLOWED_SORT_FIELDS = new Set(["price", "createdAt", "lastName"]);
+
+const MAX_SEARCH_LENGTH = 100;
+
+// Escape regex metacharacters so user input is matched literally, and cap the
+// length so a crafted pattern cannot make MongoDB do unbounded work.
+const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 const query = async function (Schema, filter, options) {
   let sort = "";
   if (options.sortBy) {
     const sortingCriteria = [];
     options.sortBy.split(",").forEach((sortOption) => {
       const [key, order] = sortOption.split(":");
+      if (!ALLOWED_SORT_FIELDS.has(key)) {
+        throw new ApiError(httpStatus.BAD_REQUEST, `Invalid sort field: ${key}`);
+      }
       sortingCriteria.push((order === "desc" ? "-" : "") + key);
     });
     sort = sortingCriteria.join(" ");
@@ -34,10 +47,11 @@ const query = async function (Schema, filter, options) {
   }
 
   if (text && text.trim()) {
+    const escapedText = escapeRegex(text.trim().slice(0, MAX_SEARCH_LENGTH));
     queryString.$or = [
-      { firstName: { $regex: text, $options: "i" } },
-      { lastName: { $regex: text, $options: "i" } },
-      { email: { $regex: text, $options: "i" } },
+      { firstName: { $regex: escapedText, $options: "i" } },
+      { lastName: { $regex: escapedText, $options: "i" } },
+      { email: { $regex: escapedText, $options: "i" } },
     ];
   }
 
