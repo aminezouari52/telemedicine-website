@@ -4,11 +4,9 @@
 import { useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
-import { useLogout } from "@/hooks";
-import { useQuery } from "@tanstack/react-query";
+import { useLogout, useMyConsultations } from "@/hooks";
 
 // FUNCTIONS
-import { getPatientConsultations } from "@/services/consultationService";
 import { findJoinableConsultation } from "@/utils/consultationJoinable";
 
 // COMPONENTS
@@ -56,14 +54,9 @@ export const PatientHeader = () => {
   const user = useSelector((state) => state.userReducer.user);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { data: consultation } = useQuery({
-    queryKey: ["consultation", "joinable", user?._id],
-    queryFn: async () => {
-      const consultationsData = (await getPatientConsultations(user?._id)).data;
-      return findJoinableConsultation(consultationsData) || null;
-    },
-    enabled: !!user?._id,
-    refetchInterval: !!user?._id ? 30_000 : false,
+  const { data: consultation } = useMyConsultations({
+    select: findJoinableConsultation,
+    refetchInterval: 30_000,
   });
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);

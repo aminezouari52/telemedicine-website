@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const app = require("./app");
 const config = require("./config/config");
 const logger = require("./config/logger");
-const initializeSocket = require("./socket");
+const { scheduleConsultationJobs } = require("./jobs/consultationCron");
 
 let server;
 
@@ -12,7 +12,7 @@ mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
     logger.info(`Listening to port ${config.port}`);
   });
 
-  initializeSocket(server);
+  scheduleConsultationJobs();
 });
 
 const exitHandler = () => {

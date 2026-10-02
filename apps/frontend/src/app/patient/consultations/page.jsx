@@ -2,7 +2,7 @@
 
 // hooks
 import { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useMyConsultations } from "@/hooks";
 
 // style
 import { Badge } from "@/components/ui/badge";
@@ -21,14 +21,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, CreditCard, MapPin, Search, X } from "lucide-react";
 
 // functions
-import { getPatientConsultations } from "@/services/consultationService";
 import { DateTime } from "luxon";
 
 // components
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 // hooks
-import { useQuery } from "@tanstack/react-query";
 
 // constants
 const PER_PAGE = 5;
@@ -250,7 +248,6 @@ function ResultsInfo({ from, to, total }) {
 }
 
 export default function PatientConsultationsPage() {
-  const user = useSelector((state) => state.userReducer.user);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortOrder, setSortOrder] = useState("desc");
@@ -262,13 +259,7 @@ export default function PatientConsultationsPage() {
     isPending,
     isError,
     error,
-  } = useQuery({
-    queryKey: ["consultations"],
-    queryFn: async () => {
-      const res = await getPatientConsultations(user?._id);
-      return res.data;
-    },
-  });
+  } = useMyConsultations();
 
   const sortByDate = (items, order) =>
     [...(items ?? [])].sort((a, b) =>

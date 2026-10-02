@@ -12,19 +12,6 @@ export function isConsultationInCurrentHourSlot(consultationDate) {
   return d >= startHour && d < endHour;
 }
 
-/** Patient or doctor: allowed to open the video room (matches backend cron rules). */
-export function isConsultationJoinable(consultation) {
-  if (!consultation) return false;
-  if (consultation.status === "in-progress") return true;
-  if (
-    consultation.status === "pending" &&
-    isConsultationInCurrentHourSlot(consultation.date)
-  ) {
-    return true;
-  }
-  return false;
-}
-
 export function findJoinableConsultation(consultations) {
   if (!Array.isArray(consultations) || consultations.length === 0) return null;
   const active = consultations.find((c) => c.status === "in-progress");

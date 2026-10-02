@@ -3,8 +3,6 @@ const { faker } = require("@faker-js/faker");
 const mongoose = require("mongoose");
 const config = require("../config/config");
 const logger = require("../config/logger");
-const express = require("express");
-const app = express();
 const { Doctor } = require("../models");
 const randomPhone = require("../utils/randomPhone");
 
@@ -74,88 +72,76 @@ const schedule = [
 ];
 
 async function seedDoctorCollection() {
-  let server;
   try {
-    mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
-      logger.info("Connected to MongoDB");
-      server = app.listen(config.port, async () => {
-        logger.info(`Listening to port ${config.port}`);
+    await mongoose.connect(config.mongoose.url, config.mongoose.options);
+    logger.info("Connected to MongoDB");
 
-        await Doctor.deleteMany({ role: "doctor" }).exec();
+    await Doctor.deleteMany({ role: "doctor" }).exec();
 
-        let doctors = [];
+    let doctors = [];
 
-        for (let i = 0; i < documentNumbers; i++) {
-          const firstName = faker.person.firstName();
-          const lastName = faker.person.lastName();
-          const specialtyIndex = Math.floor(
-            Math.random() * specialities.length,
-          );
-          const experienceIndex = Math.floor(
-            Math.random() * experiences.length,
-          );
-          const hospitalIndex = Math.floor(Math.random() * hospitals.length);
-          const randomParam = Math.random();
-          const gender = randomParam > 0.3 ? "male" : "female";
-          const profileUrl = `https://xsgames.co/randomusers/avatar.php?g=${gender}&random=${randomParam}`;
+    for (let i = 0; i < documentNumbers; i++) {
+      const firstName = faker.person.firstName();
+      const lastName = faker.person.lastName();
+      const specialtyIndex = Math.floor(Math.random() * specialities.length);
+      const experienceIndex = Math.floor(Math.random() * experiences.length);
+      const hospitalIndex = Math.floor(Math.random() * hospitals.length);
+      const randomParam = Math.random();
+      const gender = randomParam > 0.3 ? "male" : "female";
+      const profileUrl = `https://xsgames.co/randomusers/avatar.php?g=${gender}&random=${randomParam}`;
 
-          let newDoctor = {
-            specialty: specialities[specialtyIndex],
-            degrees: [],
-            certifications: [],
-            schedule: [],
-            email: faker.internet.email(firstName, lastName),
-            role: "doctor",
-            address: faker.location.streetAddress(true),
-            age: faker.number.int({ min: 18, max: 100 }),
-            city: faker.location.city(),
-            description: faker.lorem.lines({ min: 2, max: 4 }),
-            experience: experiences[experienceIndex],
-            firstName,
-            hospital: hospitals[hospitalIndex],
-            lastName,
-            phone: randomPhone(),
-            price: faker.number.int({ min: 1, max: 1000 }),
-            zip: faker.location.zipCode("#####"),
-            photo: profileUrl,
-            isProfileCompleted: true,
-            approvalStatus: "approved",
-          };
+      let newDoctor = {
+        specialty: specialities[specialtyIndex],
+        degrees: [],
+        certifications: [],
+        schedule: [],
+        email: faker.internet.email(firstName, lastName),
+        role: "doctor",
+        address: faker.location.streetAddress(true),
+        age: faker.number.int({ min: 18, max: 100 }),
+        city: faker.location.city(),
+        description: faker.lorem.lines({ min: 2, max: 4 }),
+        experience: experiences[experienceIndex],
+        firstName,
+        hospital: hospitals[hospitalIndex],
+        lastName,
+        phone: randomPhone(),
+        price: faker.number.int({ min: 1, max: 1000 }),
+        zip: faker.location.zipCode("#####"),
+        photo: profileUrl,
+        isProfileCompleted: true,
+        approvalStatus: "approved",
+      };
 
-          // array
-          for (let j = 0; j < randomIntFromInterval(1, 5); j++) {
-            const newDegree =
-              degrees[Math.floor(Math.random() * degrees.length)];
-            const newCertfication =
-              certificats[Math.floor(Math.random() * certificats.length)];
-            newDoctor.degrees.push(newDegree);
-            newDoctor.certifications.push(newCertfication);
-          }
+      // array
+      for (let j = 0; j < randomIntFromInterval(1, 5); j++) {
+        const newDegree = degrees[Math.floor(Math.random() * degrees.length)];
+        const newCertfication =
+          certificats[Math.floor(Math.random() * certificats.length)];
+        newDoctor.degrees.push(newDegree);
+        newDoctor.certifications.push(newCertfication);
+      }
 
-          for (let k = 0; k < randomIntFromInterval(1, 7); k++) {
-            const emploiDisponible = schedule.filter(
-              (jour) => !newDoctor.schedule.includes(jour),
-            );
-            const nouvelEmploi =
-              emploiDisponible[
-                Math.floor(Math.random() * emploiDisponible.length)
-              ];
-            newDoctor.schedule.push(nouvelEmploi);
-          }
+      for (let k = 0; k < randomIntFromInterval(1, 7); k++) {
+        const emploiDisponible = schedule.filter(
+          (jour) => !newDoctor.schedule.includes(jour),
+        );
+        const nouvelEmploi =
+          emploiDisponible[Math.floor(Math.random() * emploiDisponible.length)];
+        newDoctor.schedule.push(nouvelEmploi);
+      }
 
-          doctors.push(newDoctor);
-        }
+      doctors.push(newDoctor);
+    }
 
-        await Doctor.create(doctors);
+    await Doctor.create(doctors);
 
-        logger.info("Doctor model seeded! :)");
+    logger.info("Doctor model seeded! :)");
 
-        server.close();
-        process.exit();
-      });
-    });
+    process.exit();
   } catch (err) {
     console.log(err.stack);
+    process.exit(1);
   }
 }
 

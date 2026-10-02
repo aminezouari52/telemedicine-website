@@ -1,14 +1,11 @@
 "use client";
 
 // HOOKS
-import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useRouter, usePathname } from "next/navigation";
-import { useLogout } from "@/hooks";
-import { useQuery } from "@tanstack/react-query";
+import { useLogout, useMyConsultations } from "@/hooks";
 
 // FUNCTIONS
-import { getDoctorConsultations } from "@/services/consultationService";
 import { findJoinableConsultation } from "@/utils/consultationJoinable";
 
 // COMPONENTS
@@ -31,82 +28,39 @@ import { Bell } from "lucide-react";
 import { MessageSquareMore } from "lucide-react";
 import { LogOut } from "lucide-react";
 
+const NEW_CONSULTATION_WINDOW_MS = 3 * 24 * 60 * 60 * 1000;
+
 export const DoctorHeader = () => {
   const router = useRouter();
   const pathname = usePathname();
   const logoutHandler = useLogout();
   const user = useSelector((state) => state.userReducer.user);
-  const [isProfileCompleted, setIsProfileCompleted] = useState();
-  const [isNotification, setIsNotification] = useState([]);
 
-  const { data: consultation } = useQuery({
-    queryKey: ["consultation", "joinable", user?._id],
-    queryFn: async () => {
-      const consultationsData = (await getDoctorConsultations(user?._id)).data;
-      return findJoinableConsultation(consultationsData) || null;
-    },
-    enabled: !!user?._id,
-    refetchInterval: !!user?._id ? 30_000 : false,
+  const { data: consultations } = useMyConsultations({
+    refetchInterval: 30_000,
   });
+  const consultation = findJoinableConsultation(consultations);
+  const newConsultationsCount =
+    consultations?.filter(
+      (c) =>
+        c.status === "pending" &&
+        Date.now() - new Date(c.createdAt) <= NEW_CONSULTATION_WINDOW_MS,
+    ).length ?? 0;
 
-  const { data: newConsultationsValue } = useQuery({
-    queryKey: ["newConsultations", user?._id],
-    queryFn: async () => {
-      const consultationsData = (await getDoctorConsultations(user?._id)).data;
-      const now = new Date();
-      const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
-
-      const newConsultations = consultationsData?.filter((consultation) => {
-        const date = new Date(consultation.createdAt);
-        return (
-          date >= threeDaysAgo &&
-          date <= now &&
-          consultation.status === "pending"
-        );
-      });
-
-      return newConsultations.length;
+  const notifications = [
+    user?.isProfileCompleted === false && {
+      msg: "Complete your profile to attract patients",
+      route: "/doctor/profile",
     },
-    enabled: !!user?._id,
-  });
-
-  const addNotificationIfNotExist = (notification) => {
-    setIsNotification((prev) =>
-      prev.some(
-        (existingNotification) =>
-          existingNotification.route === notification.route,
-      )
-        ? prev
-        : [...prev, notification],
-    );
-  };
-
-  useEffect(() => {
-    if (user?.token) setIsProfileCompleted(user.isProfileCompleted);
-  }, [user]);
-
-  useEffect(() => {
-    if (user) {
-      if (isProfileCompleted !== undefined && !isProfileCompleted) {
-        addNotificationIfNotExist({
-          msg: "Complete your profile to attract patients",
-          route: "/doctor/profile",
-        });
-      }
-      if (newConsultationsValue) {
-        addNotificationIfNotExist({
-          msg: `You have ${newConsultationsValue} new consultations`,
-          route: "/doctor/consultations",
-        });
-      }
-      if (consultation) {
-        addNotificationIfNotExist({
-          msg: "You have a consultation now",
-          route: `/consultation/${consultation?._id}`,
-        });
-      }
-    }
-  }, [user, isProfileCompleted, newConsultationsValue, consultation]);
+    newConsultationsCount > 0 && {
+      msg: `You have ${newConsultationsCount} new consultations`,
+      route: "/doctor/consultations",
+    },
+    consultation && {
+      msg: "You have a consultation now",
+      route: `/consultation/${consultation._id}`,
+    },
+  ].filter(Boolean);
 
   return (
     <header className="sticky top-0 z-[5] grid w-full grid-cols-2 gap-3 bg-white px-4 py-2 md:h-[62px] md:grid-cols-3 md:items-center md:px-14 md:py-0">
@@ -147,22 +101,22 @@ export const DoctorHeader = () => {
               className="rounded-full bg-transparent hover:opacity-80 relative"
             >
               <Bell />
-              {isNotification?.length > 0 && (
+              {notifications.length > 0 && (
                 <Badge className="absolute top-2.5 right-2.5 h-2 w-2 p-1 bg-red-600 text-red-100 rounded-full text-xs font-bold" />
               )}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent>
-            {isNotification?.map((notif, key) => (
+            {notifications.map((notif) => (
               <DropdownMenuItem
-                key={key}
+                key={notif.route}
                 onClick={() => router.push(notif.route)}
               >
                 {notif.msg}
               </DropdownMenuItem>
             ))}
 
-            {!isNotification?.length > 0 && (
+            {notifications.length === 0 && (
               <div className="px-2 py-1.5 text-sm">
                 you don't have any notifications
               </div>

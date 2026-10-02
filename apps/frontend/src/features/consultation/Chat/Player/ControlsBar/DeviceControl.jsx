@@ -11,33 +11,47 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import {
   CameraDisabledIcon,
   CameraIcon,
+  MicDisabledIcon,
+  MicIcon,
   useLocalParticipant,
   useMediaDeviceSelect,
 } from "@livekit/components-react";
 import { cn } from "@/lib/utils";
 
-const VideoDevice = () => {
-  const { isCameraEnabled, localParticipant } = useLocalParticipant();
+const DEVICES = {
+  audioinput: {
+    OnIcon: MicIcon,
+    OffIcon: MicDisabledIcon,
+    isEnabled: (state) => state.isMicrophoneEnabled,
+    setEnabled: (participant, enabled) =>
+      participant.setMicrophoneEnabled(enabled),
+  },
+  videoinput: {
+    OnIcon: CameraIcon,
+    OffIcon: CameraDisabledIcon,
+    isEnabled: (state) => state.isCameraEnabled,
+    setEnabled: (participant, enabled) => participant.setCameraEnabled(enabled),
+  },
+};
+
+const DeviceControl = ({ kind }) => {
+  const { OnIcon, OffIcon, isEnabled, setEnabled } = DEVICES[kind];
+  const localState = useLocalParticipant();
+  const enabled = isEnabled(localState);
   const { devices, activeDeviceId, setActiveMediaDevice } =
-    useMediaDeviceSelect({
-      kind: "videoinput",
-    });
+    useMediaDeviceSelect({ kind });
 
   const [isOpen, setIsOpen] = useState(false);
-
-  const toggleCamera = () => {
-    localParticipant.setCameraEnabled(!localParticipant.isCameraEnabled);
-  };
 
   return (
     <div className="inline-flex rounded-md border border-gray-800">
       <Button
-        onClick={toggleCamera}
+        onClick={() => setEnabled(localState.localParticipant, !enabled)}
         size="sm"
         variant="outline"
         className="px-4 rounded-r-none border-r-0 border-gray-800"
       >
-        {isCameraEnabled ? <CameraIcon /> : <CameraDisabledIcon />}
+        {enabled ? <OnIcon /> : <OffIcon />}
       </Button>
 
       <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -46,7 +60,6 @@ const VideoDevice = () => {
             size="sm"
             variant="outline"
             className="rounded-l-none border-gray-800"
-            onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? (
               <ChevronUp className="h-4 w-4" />
@@ -81,4 +94,4 @@ const VideoDevice = () => {
   );
 };
 
-export default VideoDevice;
+export default DeviceControl;

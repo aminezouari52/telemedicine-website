@@ -73,8 +73,6 @@ const consultationSchema = z.object({
     (v) => (v === "" || v == null ? undefined : String(v)),
     z.string().optional(),
   ),
-  patient: z.coerce.string().min(1, "Patient is required"),
-  doctor: z.coerce.string().min(1, "Doctor is required"),
   isProfileCompleted: z.boolean(),
 });
 
@@ -104,8 +102,6 @@ export default function BookConsultationPage() {
         user?.weight === "" || user?.weight == null
           ? ""
           : formString(user?.weight),
-      patient: formString(user?._id),
-      doctor: formString(params?.id),
       isProfileCompleted: true,
     },
   });
@@ -166,14 +162,12 @@ export default function BookConsultationPage() {
         user?.weight === "" || user?.weight == null
           ? ""
           : formString(user?.weight),
-      patient: formString(user?._id),
-      doctor: formString(params?.id),
       isProfileCompleted: true,
     });
   }, [user, params.id]);
 
   const handlePayment = async (values) => {
-    const { date, patient, doctor: doctorId, ...resValues } = values;
+    const { date, ...resValues } = values;
 
     await updatePatient({ id: user._id, token: user.token }, resValues);
 
@@ -183,20 +177,16 @@ export default function BookConsultationPage() {
         ...resValues,
       }),
     );
-    queryClient.invalidateQueries({ queryKey: ["consultations"] });
 
     const price = doctor?.price;
     if (!price || price <= 0) {
-      await createConsultation({ date, patient, doctor: doctorId });
+      await createConsultation({ date, doctor: params.id });
+      queryClient.invalidateQueries({ queryKey: ["consultations"] });
       router.push("/patient/consultations");
       return;
     }
 
-    const res = await createCheckoutSession({
-      doctorId,
-      patientId: patient,
-      date,
-    });
+    const res = await createCheckoutSession({ doctorId: params.id, date });
 
     window.location.href = res.data.sessionUrl;
   };

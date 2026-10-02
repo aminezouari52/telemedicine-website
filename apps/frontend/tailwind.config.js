@@ -28,6 +28,9 @@ export default {
           foreground: "hsl(var(--accent-foreground))",
         },
         destructive: "hsl(var(--destructive))",
+        // Brand colours: change these to rebrand. primary.500 is the main
+        // brand colour; the other primary steps are lighter and darker shades
+        // of it. A few files repeat these hex values (see docs/branding.md).
         primary: {
           900: "#131332",
           800: "#272665",

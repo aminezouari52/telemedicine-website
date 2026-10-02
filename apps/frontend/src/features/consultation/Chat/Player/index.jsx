@@ -1,12 +1,12 @@
 "use client";
 
-import { RoomAudioRenderer, LiveKitRoom } from "@livekit/components-react";
+import { RoomAudioRenderer } from "@livekit/components-react";
 import "@livekit/components-styles";
 import { useRef, useState } from "react";
 import ControlsBar from "./ControlsBar";
 import VideoRenderer from "./VideoRenderer";
 
-const Player = ({ token, url, chatVisible, setChatVisible }) => {
+const Player = ({ chatVisible, setChatVisible }) => {
   const [controlsVisible, setControlsVisible] = useState(true);
   const timeoutRef = useRef(null);
 
@@ -18,7 +18,7 @@ const Player = ({ token, url, chatVisible, setChatVisible }) => {
   };
 
   return (
-    <LiveKitRoom token={token} serverUrl={url}>
+    <>
       <div
         className="h-full w-full bg-black relative rounded-md overflow-hidden flex items-center justify-center"
         onClick={viewControls}
@@ -33,7 +33,7 @@ const Player = ({ token, url, chatVisible, setChatVisible }) => {
         />
       </div>
       <RoomAudioRenderer />
-    </LiveKitRoom>
+    </>
   );
 };
 

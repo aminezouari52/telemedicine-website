@@ -49,7 +49,7 @@ function AuthSync() {
       .then((token) => {
         if (!cancelled && token) dispatch(setUser({ ...currentUser, token }));
       })
-      .catch((err) => console.log("Failed to sync user:", err));
+      .catch((err) => console.error("[auth] Failed to sync user:", err));
     return () => {
       cancelled = true;
     };

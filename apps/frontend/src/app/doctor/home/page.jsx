@@ -3,10 +3,11 @@
 // hooks
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import { useMyConsultations } from "@/hooks";
 
 // functions
 import { getDoctorPatientsCount } from "@/services/doctorService";
-import { getDoctorConsultations } from "@/services/consultationService";
 import { consultationsMonthlyGrowth } from "@/utils/consultation";
 
 // components
@@ -21,33 +22,26 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, TrendingUp, TrendingDown } from "lucide-react";
 
-// assets
-import { useQuery } from "@tanstack/react-query";
-
 export default function DoctorHomePage() {
   const router = useRouter();
   const user = useSelector((state) => state.userReducer.user);
 
-  const getConsultationsQuery = async () => {
-    const consultationsData = (await getDoctorConsultations(user?._id)).data;
-    return consultationsData;
-  };
-
-  const getPatientsCountQuery = async () => {
-    const patientsCount = (await getDoctorPatientsCount(user._id)).data
-      .patientsCount;
-    return patientsCount;
-  };
-
-  const { data, isPending, isError, error } = useQuery({
-    queryKey: ["doctor", "consultations", user?._id],
-    queryFn: async () => {
-      const consultations = await getConsultationsQuery();
-      const patientsCount = await getPatientsCountQuery();
-      return { doctor: { ...user, patientsCount }, consultations };
-    },
+  const consultationsQuery = useMyConsultations();
+  const patientsCountQuery = useQuery({
+    queryKey: ["doctor", "patientsCount", user?._id],
+    queryFn: async () =>
+      (await getDoctorPatientsCount(user._id)).data.patientsCount,
     enabled: !!user?._id,
   });
+
+  const isPending =
+    consultationsQuery.isPending || patientsCountQuery.isPending;
+  const error = consultationsQuery.error || patientsCountQuery.error;
+  const isError = Boolean(error);
+  const data = {
+    doctor: { ...user, patientsCount: patientsCountQuery.data },
+    consultations: consultationsQuery.data,
+  };
 
   if (isPending) {
     return (

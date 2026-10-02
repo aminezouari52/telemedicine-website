@@ -6,6 +6,7 @@
 
 // HOOKS
 import { useEffect, useRef, useState } from "react";
+import { useToast } from "@/hooks";
 
 // STYLE
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,7 @@ const COPIED_FEEDBACK_MS = 1500;
 const CopyButton = ({ value, label }) => {
   const [copied, setCopied] = useState(false);
   const timeoutRef = useRef();
+  const toast = useToast();
 
   useEffect(() => () => clearTimeout(timeoutRef.current), []);
 
@@ -45,8 +47,9 @@ const CopyButton = ({ value, label }) => {
         () => setCopied(false),
         COPIED_FEEDBACK_MS,
       );
-    } catch (err) {
-      console.log("Failed to copy:", err);
+    } catch {
+      // Clipboard access is blocked on insecure origins and by some browsers.
+      toast("Couldn't copy. Select the text and copy it instead.", "error");
     }
   };
 

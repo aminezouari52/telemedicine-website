@@ -1,13 +1,11 @@
 "use client";
 
-import { useSelector } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
+import { useMyConsultations } from "@/hooks";
 import { DateTime } from "luxon";
 import { Users } from "lucide-react";
 
 import DataTable from "@/components/DataTable";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import { getDoctorConsultations } from "@/services/consultationService";
 import {
   Card,
   CardContent,
@@ -25,22 +23,13 @@ function getInitials(firstName, lastName) {
 }
 
 export default function DoctorPatientsPage() {
-  const user = useSelector((state) => state.userReducer.user);
-
-  const getConsultations = async () => {
-    const consultationsData = (await getDoctorConsultations(user?._id)).data;
-    return consultationsData?.filter((c) => c.status === "completed");
-  };
-
   const {
     data: consultations,
     isPending,
     isError,
     error,
-  } = useQuery({
-    queryKey: ["patients", user?._id],
-    queryFn: () => getConsultations(),
-    enabled: !!user?._id,
+  } = useMyConsultations({
+    select: (data) => data.filter((c) => c.status === "completed"),
   });
 
   if (isPending) {

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Node.js backend for the telemedicine website",
   "main": "src/index.js",
-  "author": "Your Name <you@example.com>",
+  "author": "Amine Zouari <zouariamine52@gmail.com>",
   "license": "MIT",
   "engines": {
     "node": ">=20"
@@ -18,23 +18,21 @@
     "seed:admin": "node src/seeders/admin.seeder.js",
     "seed:logins": "node src/seeders/loginAccounts.seeder.js",
     "seed:embeddings": "node src/seeders/embedding.seeder.js",
+    "seed:all": "node src/seeders/all.seeder.js",
     "lint": "eslint src/**/*.js -f pretty --color"
   },
   "keywords": [
-    "node",
+    "telemedicine",
     "node.js",
     "express",
     "rest",
     "api",
     "mongodb",
     "mongoose",
-    "es6",
-    "es7",
-    "es8",
-    "es9",
-    "joi",
-    "eslint",
-    "prettier"
+    "clerk",
+    "livekit",
+    "stripe",
+    "gemini"
   ],
   "dependencies": {
     "@clerk/backend": "^3.20.1",
@@ -57,7 +55,6 @@
     "morgan": "^1.10.0",
     "node-cron": "^3.0.3",
     "pm2": "^5.4.3",
-    "socket.io": "^4.8.0",
     "stripe": "^22.1.1",
     "validator": "^13.12.0",
     "winston": "^3.13.1"

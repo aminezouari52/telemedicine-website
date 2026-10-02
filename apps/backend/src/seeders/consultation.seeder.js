@@ -2,8 +2,6 @@ const { faker } = require("@faker-js/faker");
 const mongoose = require("mongoose");
 const config = require("../config/config");
 const logger = require("../config/logger");
-const express = require("express");
-const app = express();
 const { Doctor, Consultation, Patient, Payment } = require("../models");
 
 const documentNumbers = 4000;
@@ -32,123 +30,122 @@ function paymentStatusFor(consultationStatus) {
 }
 
 async function seedConsultationCollection() {
-  let server;
   try {
-    mongoose.connect(config.mongoose.url, config.mongoose.options).then(() => {
-      logger.info("Connected to MongoDB");
-      server = app.listen(config.port, async () => {
-        logger.info(`Listening to port ${config.port}`);
+    await mongoose.connect(config.mongoose.url, config.mongoose.options);
+    logger.info("Connected to MongoDB");
 
-        await dropIfExists(Consultation);
-        await dropIfExists(Payment);
+    await dropIfExists(Consultation);
+    await dropIfExists(Payment);
 
-        let consultations = [];
-        let payments = [];
+    let consultations = [];
+    let payments = [];
 
-        // Only assign consultations to presentable accounts: approved,
-        // profile-completed doctors and profile-completed patients. Real
-        // (incomplete) signups otherwise surface in the consultation lists as
-        // "Dr. " with no name, photo, or specialty.
-        const doctors = await Doctor.find({
-          approvalStatus: "approved",
-          isProfileCompleted: true,
-        });
-        const patients = await Patient.find({ isProfileCompleted: true });
-
-        if (!doctors.length || !patients.length) {
-          throw new Error(
-            `Cannot seed consultations: need at least one complete doctor and patient ` +
-              `(have ${doctors.length} doctors, ${patients.length} patients). Seed doctors/patients first.`,
-          );
-        }
-
-        // A consultation's status has to agree with its date: a slot in the
-        // past can only be completed (mostly) or canceled, while a future slot
-        // is still pending (mostly) or canceled. Anything within the current
-        // hour is in-progress. Randomising status independently of the date is
-        // what produced nonsense like a "pending" appointment months ago.
-        const HOUR_MS = 60 * 60 * 1000;
-        const now = Date.now();
-        const statusForDate = (date) => {
-          const t = date.getTime();
-          if (t < now - HOUR_MS) {
-            return faker.helpers.weightedArrayElement([
-              { value: "completed", weight: 8 },
-              { value: "canceled", weight: 2 },
-            ]);
-          }
-          if (t > now + HOUR_MS) {
-            return faker.helpers.weightedArrayElement([
-              { value: "pending", weight: 8 },
-              { value: "canceled", weight: 2 },
-            ]);
-          }
-          return "in-progress";
-        };
-
-        for (let i = 0; i < documentNumbers; i++) {
-          const doctor = doctors[Math.floor(Math.random() * doctors.length)];
-          const patient = patients[Math.floor(Math.random() * patients.length)];
-
-          const date = new Date(
-            new Date(
-              faker.date.between({
-                from: "2026-01-01T00:00:00.000Z",
-                to: "2026-12-01T00:00:00.000Z",
-              }),
-            ).setMinutes(0, 0, 0),
-          );
-
-          const status = statusForDate(date);
-
-          // Pre-generate ids so consultation <-> payment can reference each
-          // other without a second pass of updates.
-          const consultationId = new mongoose.Types.ObjectId();
-          const paymentId = new mongoose.Types.ObjectId();
-
-          // Bill the doctor's configured rate; fall back to a sane range for
-          // any doctor seeded without a price.
-          const amount =
-            doctor.price && doctor.price > 0
-              ? doctor.price
-              : faker.number.int({ min: 20, max: 300 });
-          const paymentStatus = paymentStatusFor(status);
-
-          consultations.push({
-            _id: consultationId,
-            date,
-            status,
-            doctor: doctor._id,
-            patient: patient._id,
-            payment: paymentId,
-          });
-
-          payments.push({
-            _id: paymentId,
-            stripeSessionId: `cs_test_seed_${i}_${faker.string.alphanumeric(20)}`,
-            stripePaymentIntentId: `pi_seed_${i}_${faker.string.alphanumeric(20)}`,
-            amount,
-            currency: "usd",
-            status: paymentStatus,
-            patient: patient._id,
-            doctor: doctor._id,
-            consultation: consultationId,
-            metadata: { date, seeded: true },
-          });
-        }
-
-        await Payment.create(payments);
-        await Consultation.create(consultations);
-
-        console.log("Consultation + Payment collections seeded! :)");
-
-        // close database and exit process
-        server.close();
-        process.exit();
-      });
+    // Only assign consultations to presentable accounts: approved,
+    // profile-completed doctors and profile-completed patients. Real
+    // (incomplete) signups otherwise surface in the consultation lists as
+    // "Dr. " with no name, photo, or specialty.
+    const doctors = await Doctor.find({
+      approvalStatus: "approved",
+      isProfileCompleted: true,
     });
+    const patients = await Patient.find({ isProfileCompleted: true });
+
+    if (!doctors.length || !patients.length) {
+      throw new Error(
+        `Cannot seed consultations: need at least one complete doctor and patient ` +
+          `(have ${doctors.length} doctors, ${patients.length} patients). Seed doctors/patients first.`,
+      );
+    }
+
+    // A consultation's status has to agree with its date: a slot in the
+    // past can only be completed (mostly) or canceled, while a future slot
+    // is still pending (mostly) or canceled. Anything within the current
+    // hour is in-progress. Randomising status independently of the date is
+    // what produced nonsense like a "pending" appointment months ago.
+    const HOUR_MS = 60 * 60 * 1000;
+    const DAY_MS = 24 * HOUR_MS;
+    const now = Date.now();
+    const statusForDate = (date) => {
+      const t = date.getTime();
+      if (t < now - HOUR_MS) {
+        return faker.helpers.weightedArrayElement([
+          { value: "completed", weight: 8 },
+          { value: "canceled", weight: 2 },
+        ]);
+      }
+      if (t > now + HOUR_MS) {
+        return faker.helpers.weightedArrayElement([
+          { value: "pending", weight: 8 },
+          { value: "canceled", weight: 2 },
+        ]);
+      }
+      return "in-progress";
+    };
+
+    for (let i = 0; i < documentNumbers; i++) {
+      const doctor = doctors[Math.floor(Math.random() * doctors.length)];
+      const patient = patients[Math.floor(Math.random() * patients.length)];
+
+      // Mostly history, plus two months of upcoming appointments, counted
+      // from today so a reseed always gives doctors a future schedule.
+      const date = new Date(
+        new Date(
+          faker.date.between({
+            from: now - 270 * DAY_MS,
+            to: now + 60 * DAY_MS,
+          }),
+        ).setMinutes(0, 0, 0),
+      );
+
+      const status = statusForDate(date);
+
+      // Pre-generate ids so consultation <-> payment can reference each
+      // other without a second pass of updates.
+      const consultationId = new mongoose.Types.ObjectId();
+      const paymentId = new mongoose.Types.ObjectId();
+
+      // Bill the doctor's configured rate; fall back to a sane range for
+      // any doctor seeded without a price.
+      const amount =
+        doctor.price && doctor.price > 0
+          ? doctor.price
+          : faker.number.int({ min: 20, max: 300 });
+      const paymentStatus = paymentStatusFor(status);
+
+      consultations.push({
+        _id: consultationId,
+        date,
+        status,
+        doctor: doctor._id,
+        patient: patient._id,
+        payment: paymentId,
+      });
+
+      payments.push({
+        _id: paymentId,
+        stripeSessionId: `cs_test_seed_${i}_${faker.string.alphanumeric(20)}`,
+        stripePaymentIntentId: `pi_seed_${i}_${faker.string.alphanumeric(20)}`,
+        amount,
+        currency: "usd",
+        status: paymentStatus,
+        patient: patient._id,
+        doctor: doctor._id,
+        consultation: consultationId,
+        metadata: { date, seeded: true },
+      });
+    }
+
+    await Payment.create(payments);
+    // insertMany skips the post-save hook, which would start one Gemini
+    // embedding call per consultation. Backfill with `seed:embeddings`.
+    await Consultation.insertMany(consultations);
+
+    console.log("Consultation + Payment collections seeded! :)");
+
+    process.exit();
   } catch (err) {
     console.log(err.stack);
+    process.exit(1);
   }
 }
 

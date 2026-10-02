@@ -1,14 +1,14 @@
 import { AppClerkProvider } from "./clerk-provider";
 import { Providers } from "./providers";
 import "./globals.css";
+import { siteConfig } from "@/site.config";
 
 export const metadata = {
   title: {
-    default: "The Future of Care Is Connected | Télémedecine",
-    template: "%s | Télémedecine",
+    default: `${siteConfig.title} | ${siteConfig.name}`,
+    template: `%s | ${siteConfig.name}`,
   },
-  description:
-    "A scroll-driven 3D journey through modern telemedicine — connected patients, virtual consultations, AI-assisted insight, remote monitoring, and global care.",
+  description: siteConfig.description,
 };
 
 export default function RootLayout({ children }) {
@@ -26,7 +26,6 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap"
           rel="stylesheet"
         />
-        <link rel="manifest" href="/manifest.json" />
       </head>
       <body suppressHydrationWarning>
         <AppClerkProvider>

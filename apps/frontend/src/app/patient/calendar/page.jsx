@@ -8,27 +8,19 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useState, useMemo } from "react";
-import { useSelector } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
-import { getPatientConsultations } from "@/services/consultationService";
+import { useMyConsultations } from "@/hooks";
 import { DateTime } from "luxon";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 export default function PatientCalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const user = useSelector((state) => state.userReducer.user);
-
   const {
     data: consultations,
     isPending,
     isError,
     error,
-  } = useQuery({
-    queryKey: ["consultations", "calendar"],
-    queryFn: async () => {
-      const data = (await getPatientConsultations(user?._id)).data;
-      return data.filter((c) => c.status === "pending");
-    },
+  } = useMyConsultations({
+    select: (data) => data.filter((c) => c.status === "pending"),
   });
 
   const daysInMonth = new Date(

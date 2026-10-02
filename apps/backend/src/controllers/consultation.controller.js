@@ -1,26 +1,36 @@
 const catchAsync = require("../utils/catchAsync");
 const { consultationService } = require("../services");
 const httpStatus = require("http-status");
+const ApiError = require("../utils/ApiError");
+const getCurrentUser = require("../utils/getCurrentUser");
+
+const assertSelf = (user, id) => {
+  if (String(user._id) !== id) {
+    throw new ApiError(httpStatus.FORBIDDEN, "Forbidden");
+  }
+};
 
 const createConsultation = catchAsync(async (req, res) => {
-  const consultation = await consultationService.createConsultation(req.body);
+  const user = await getCurrentUser(req);
+  const consultation = await consultationService.createFreeConsultation(
+    user,
+    req.body,
+  );
   res.status(httpStatus.CREATED).send(consultation);
 });
 
-const updateConsultation = catchAsync(async (req, res) => {
-  const consultation = await consultationService.updateConsultation(
+const completeConsultation = catchAsync(async (req, res) => {
+  const user = await getCurrentUser(req);
+  const consultation = await consultationService.completeConsultation(
     req.params.id,
-    req.body,
+    user,
   );
   res.status(httpStatus.OK).send(consultation);
 });
 
-const getConsultation = catchAsync(async (req, res) => {
-  const consultation = await consultationService.getConsultation(req.params.id);
-  res.status(httpStatus.OK).send(consultation);
-});
-
 const getPatientConsultations = catchAsync(async (req, res) => {
+  const user = await getCurrentUser(req);
+  assertSelf(user, req.params.patientId);
   const consultations = await consultationService.getPatientConsultations(
     req.params.patientId,
   );
@@ -28,6 +38,8 @@ const getPatientConsultations = catchAsync(async (req, res) => {
 });
 
 const getDoctorConsultations = catchAsync(async (req, res) => {
+  const user = await getCurrentUser(req);
+  assertSelf(user, req.params.doctorId);
   const consultations = await consultationService.getDoctorConsultations(
     req.params.doctorId,
   );
@@ -36,8 +48,7 @@ const getDoctorConsultations = catchAsync(async (req, res) => {
 
 module.exports = {
   createConsultation,
+  completeConsultation,
   getPatientConsultations,
-  updateConsultation,
   getDoctorConsultations,
-  getConsultation,
 };

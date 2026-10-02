@@ -3,14 +3,15 @@ const catchAsync = require("../utils/catchAsync");
 const { paymentService } = require("../services");
 const httpStatus = require("http-status");
 const config = require("../config/config");
+const getCurrentUser = require("../utils/getCurrentUser");
 
 const stripe = Stripe(config.stripe.secretKey);
 
 const createCheckoutSession = catchAsync(async (req, res) => {
-  const { doctorId, patientId, date } = req.body;
-  const result = await paymentService.createCheckoutSession({
+  const user = await getCurrentUser(req);
+  const { doctorId, date } = req.body;
+  const result = await paymentService.createCheckoutSession(user, {
     doctorId,
-    patientId,
     date,
   });
   res.status(httpStatus.OK).send(result);
@@ -36,12 +37,6 @@ const handleWebhook = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send({ received: true });
 });
 
-const getPaymentStatus = catchAsync(async (req, res) => {
-  const { sessionId } = req.params;
-  const payment = await paymentService.getPaymentBySessionId(sessionId);
-  res.status(httpStatus.OK).send(payment);
-});
-
 const confirmPayment = catchAsync(async (req, res) => {
   const { sessionId } = req.body;
   const payment = await paymentService.confirmPayment(sessionId);
@@ -51,6 +46,5 @@ const confirmPayment = catchAsync(async (req, res) => {
 module.exports = {
   createCheckoutSession,
   handleWebhook,
-  getPaymentStatus,
   confirmPayment,
 };

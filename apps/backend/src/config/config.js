@@ -9,7 +9,7 @@ const envVarsSchema = Joi.object()
     NODE_ENV: Joi.string()
       .valid("production", "development", "test")
       .required(),
-    PORT: Joi.number().default(3000),
+    PORT: Joi.number().default(8000),
     MONGODB_URL: Joi.string().required().description("Mongo DB url"),
     WEB_FRONTEND_URL: Joi.string().required().description("The frontend url"),
     CLOUDINARY_CLOUD_NAME: Joi.string()
@@ -68,16 +68,12 @@ if (error) {
 module.exports = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
+  webFrontendUrl: envVars.WEB_FRONTEND_URL,
   mongoose: {
     url: envVars.MONGODB_URL + (envVars.NODE_ENV === "test" ? "-test" : ""),
     options: {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-    },
-  },
-  socket: {
-    cors: {
-      origin: envVars.WEB_FRONTEND_URL,
     },
   },
   cloudinary: {

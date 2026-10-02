@@ -5,19 +5,18 @@ const router = express.Router();
 
 const consultationController = require("../../controllers/consultation.controller");
 
-router.route("/").post(consultationController.createConsultation);
+router.route("/").post(authCheck, consultationController.createConsultation);
 
 router
-  .route("/:id")
-  .patch(authCheck, consultationController.updateConsultation)
-  .get(consultationController.getConsultation);
+  .route("/:id/complete")
+  .post(authCheck, consultationController.completeConsultation);
 
 router
   .route("/patient/:patientId")
-  .get(consultationController.getPatientConsultations);
+  .get(authCheck, consultationController.getPatientConsultations);
 
 router
   .route("/doctor/:doctorId")
-  .get(consultationController.getDoctorConsultations);
+  .get(authCheck, consultationController.getDoctorConsultations);
 
 module.exports = router;

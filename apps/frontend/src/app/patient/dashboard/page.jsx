@@ -1,9 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useSelector } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
-import { getPatientConsultations } from "@/services/consultationService";
+import { useMyConsultations } from "@/hooks";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   BarChart,
@@ -30,16 +28,7 @@ const STATUS_COLORS = {
 };
 
 export default function PatientDashboardPage() {
-  const user = useSelector((state) => state.userReducer.user);
-
-  const { data: consultations, isPending } = useQuery({
-    queryKey: ["consultations", user?._id],
-    queryFn: async () => {
-      const res = await getPatientConsultations(user._id);
-      return res.data;
-    },
-    enabled: !!user?._id,
-  });
+  const { data: consultations, isPending } = useMyConsultations();
 
   const stats = useMemo(() => {
     if (!consultations) return [];

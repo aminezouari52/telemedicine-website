@@ -4,10 +4,11 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
-import { Facebook, Instagram, Github, Linkedin } from "lucide-react";
+import { Github, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { footerEmailInputValidations } from "@/utils/formValidations";
+import { siteConfig } from "@/site.config";
 
 function Footer() {
   const router = useRouter();
@@ -23,12 +24,17 @@ function Footer() {
     console.info(email);
   };
 
-  // TODO(template): replace with your own social profiles
   const socialLinks = [
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Github, href: "#", label: "GitHub" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
+    {
+      icon: Github,
+      href: "https://github.com/aminezouari52/telemedicine-website",
+      label: "GitHub",
+    },
+    {
+      icon: Linkedin,
+      href: "https://www.linkedin.com/in/amine-zouari52/",
+      label: "LinkedIn",
+    },
   ];
 
   return (
@@ -39,7 +45,7 @@ function Footer() {
           <div className="space-y-4">
             <Image
               src="/assets/logo-dark.png"
-              alt="logo"
+              alt={siteConfig.name}
               width={180}
               height={60}
               className="h-auto object-cover brightness-0 invert"
@@ -98,28 +104,16 @@ function Footer() {
             </div>
           </div>
 
-          {/* Company Info */}
+          {/* Contact */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Company</h3>
-            {/* TODO(template): replace with your company's contact details */}
+            <h3 className="text-lg font-semibold">Contact</h3>
             <div className="text-sm text-white/80 space-y-2">
-              <p>123 Example Street</p>
-              <p>Suite 100</p>
-              <p>Your City, Country</p>
-              <p className="pt-2">
-                <a
-                  href="tel:+10000000000"
-                  className="hover:text-white transition-colors"
-                >
-                  +1 (000) 000-0000
-                </a>
-              </p>
               <p>
                 <a
-                  href="mailto:contact@example.com"
+                  href="mailto:zouariamine52@gmail.com"
                   className="hover:text-white transition-colors"
                 >
-                  contact@example.com
+                  zouariamine52@gmail.com
                 </a>
               </p>
             </div>
@@ -129,8 +123,8 @@ function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-white/20 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-white/60">
-            Copyright {new Date().getFullYear()} © Your Company. All rights
-            reserved.
+            Copyright {new Date().getFullYear()} © {siteConfig.name}. All
+            rights reserved.
           </p>
           <div className="flex items-center gap-4">
             {/* Social Icons */}

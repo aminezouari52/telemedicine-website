@@ -18,7 +18,7 @@ const useLogout = () => {
       dispatch(logout(null));
       queryClient.removeQueries();
     } catch (err) {
-      console.log(err);
+      console.error("[auth] Sign-out failed:", err);
       toast("Logout failed!", "error");
     }
   };

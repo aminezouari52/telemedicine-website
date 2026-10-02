@@ -3,8 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { MessageCircle, MessageCircleOff } from "lucide-react";
 import { cn } from "@/lib/utils";
-import AudioDevice from "./AudioDevice";
-import VideoDevice from "./VideoDevice";
+import DeviceControl from "./DeviceControl";
 
 const ControlsBar = ({ show, chatVisible, setChatVisible }) => {
   const toggleChatVisible = () => setChatVisible((prev) => !prev);
@@ -16,9 +15,9 @@ const ControlsBar = ({ show, chatVisible, setChatVisible }) => {
         show ? "opacity-100" : "opacity-0",
       )}
     >
-      <AudioDevice />
+      <DeviceControl kind="audioinput" />
 
-      <VideoDevice />
+      <DeviceControl kind="videoinput" />
 
       <Button
         onClick={toggleChatVisible}

@@ -1,14 +1,13 @@
 "use client";
 
 // hooks
-import { useSelector } from "react-redux";
+import { useMyConsultations } from "@/hooks";
 import { useState } from "react";
 
 // components
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 // functions
-import { getDoctorConsultations } from "@/services/consultationService";
 import { DateTime } from "luxon";
 
 // style
@@ -31,7 +30,6 @@ import {
   Stethoscope,
   Weight,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -353,22 +351,13 @@ function AllConsultationsModal({ consultations, onClose, isOpen }) {
 
 export default function DoctorConsultationsPage() {
   const [isOpen, setIsOpen] = useState(false);
-  const user = useSelector((state) => state.userReducer.user);
-
-  const getDoctorConsultationsQuery = async () => {
-    const consultationsData = (await getDoctorConsultations(user?._id)).data;
-    return consultationsData.filter((c) => c.status === "pending");
-  };
-
   const {
     data: consultations,
     isPending,
     isError,
     error,
-  } = useQuery({
-    queryKey: ["consultations", user?._id],
-    queryFn: () => getDoctorConsultationsQuery(),
-    enabled: !!user?._id,
+  } = useMyConsultations({
+    select: (data) => data.filter((c) => c.status === "pending"),
   });
 
   const sortedUpcomingConsultations = () =>

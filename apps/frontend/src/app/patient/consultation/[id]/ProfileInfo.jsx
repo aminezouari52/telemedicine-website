@@ -17,8 +17,6 @@ const profileFieldNames = [
   "city",
   "zip",
   "weight",
-  "patient",
-  "doctor",
   "isProfileCompleted",
 ];
 

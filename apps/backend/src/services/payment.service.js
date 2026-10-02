@@ -6,9 +6,13 @@ const httpStatus = require("http-status");
 
 const stripe = Stripe(config.stripe.secretKey);
 
-const WEB_FRONTEND_URL = config.socket.cors.origin || "http://localhost:5173";
+const WEB_FRONTEND_URL = config.webFrontendUrl;
 
-const createCheckoutSession = async ({ doctorId, patientId, date }) => {
+const createCheckoutSession = async (patient, { doctorId, date }) => {
+  if (patient.role !== "patient") {
+    throw new ApiError(httpStatus.FORBIDDEN, "Only patients can book");
+  }
+  const patientId = patient._id;
   const doctor = await Doctor.findById(doctorId);
   if (!doctor) {
     throw new ApiError(httpStatus.NOT_FOUND, "Doctor not found");
@@ -64,76 +68,52 @@ const createCheckoutSession = async ({ doctorId, patientId, date }) => {
   };
 };
 
+// Called by both the success page and the webhook; the conditional update runs it once.
+const fulfillPayment = async (stripeSessionId, paymentIntentId) => {
+  const payment = await Payment.findOneAndUpdate(
+    { stripeSessionId, status: { $ne: "paid" } },
+    {
+      status: "paid",
+      ...(paymentIntentId && { stripePaymentIntentId: paymentIntentId }),
+    },
+    { new: true },
+  );
+  if (!payment) return;
+
+  const consultation = await Consultation.create({
+    date: new Date(payment.metadata.date),
+    doctor: payment.doctor,
+    patient: payment.patient,
+    payment: payment._id,
+  });
+  payment.consultation = consultation._id;
+  await payment.save();
+};
+
 const confirmPayment = async (sessionId) => {
   const payment = await Payment.findOne({ stripeSessionId: sessionId });
   if (!payment) {
     throw new ApiError(httpStatus.NOT_FOUND, "Payment not found");
   }
-
-  if (payment.status === "paid") {
-    return payment.populate(["doctor", "patient", "consultation"]);
-  }
+  if (payment.status === "paid") return payment;
 
   const session = await stripe.checkout.sessions.retrieve(sessionId);
-
   if (session.payment_status !== "paid") {
     throw new ApiError(
       httpStatus.PAYMENT_REQUIRED,
       "Payment has not been completed",
     );
   }
+  await fulfillPayment(sessionId, session.payment_intent);
 
-  payment.stripePaymentIntentId =
-    session.payment_intent || payment.stripePaymentIntentId;
-  payment.status = "paid";
-  await payment.save();
-
-  const consultation = await Consultation.create({
-    date: new Date(payment.metadata.date),
-    status: "pending",
-    doctor: payment.doctor,
-    patient: payment.patient,
-    payment: payment._id,
-  });
-
-  payment.consultation = consultation._id;
-  await payment.save();
-
-  return payment.populate(["doctor", "patient", "consultation"]);
+  return Payment.findById(payment._id);
 };
 
 const handleWebhookEvent = async (event) => {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object;
-
-      const existingPayment = await Payment.findOne({
-        stripeSessionId: session.id,
-      });
-      if (!existingPayment) {
-        return;
-      }
-
-      if (existingPayment.status === "paid") {
-        return;
-      }
-
-      existingPayment.stripePaymentIntentId =
-        session.payment_intent || existingPayment.stripePaymentIntentId;
-      existingPayment.status = "paid";
-      await existingPayment.save();
-
-      const consultation = await Consultation.create({
-        date: new Date(existingPayment.metadata.date),
-        status: "pending",
-        doctor: existingPayment.doctor,
-        patient: existingPayment.patient,
-        payment: existingPayment._id,
-      });
-
-      existingPayment.consultation = consultation._id;
-      await existingPayment.save();
-
+      await fulfillPayment(session.id, session.payment_intent);
       break;
     }
 
@@ -152,19 +132,8 @@ const handleWebhookEvent = async (event) => {
   }
 };
 
-const getPaymentBySessionId = async (sessionId) => {
-  const payment = await Payment.findOne({
-    stripeSessionId: sessionId,
-  }).populate(["doctor", "patient", "consultation"]);
-  if (!payment) {
-    throw new ApiError(httpStatus.NOT_FOUND, "Payment not found");
-  }
-  return payment;
-};
-
 module.exports = {
   createCheckoutSession,
   handleWebhookEvent,
-  getPaymentBySessionId,
   confirmPayment,
 };
