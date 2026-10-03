@@ -28,12 +28,7 @@ import {
   fetchSuggestions,
 } from "@/services/aiService";
 import { getText, toChatMessages, toSaveMessages } from "@/lib/aiDataParts";
-import { getToken } from "@clerk/nextjs";
-import {
-  SYSTEM_CONTEXT,
-  AI_TOOLS,
-  AI_STARTER_QUESTIONS,
-} from "@/constants/patient";
+import { AI_TOOLS, AI_STARTER_QUESTIONS } from "@/constants/patient";
 import UserMessage from "./UserMessage";
 import AiMessage from "./AiMessage";
 import ConversationList from "./ConversationList";
@@ -57,6 +52,19 @@ function fileToPart(file) {
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+}
+
+/**
+ * The chat route answers errors with JSON ({ error, isQuota }), which reaches
+ * useChat as the raw response text. Returns its message, or null.
+ */
+function parseRouteError(text) {
+  try {
+    const { error } = JSON.parse(text);
+    return typeof error === "string" ? error : null;
+  } catch {
+    return null;
+  }
 }
 
 export default function PatientAIPage() {
@@ -89,34 +97,9 @@ export default function PatientAIPage() {
   const { messages, sendMessage, status, setMessages, stop, error } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/ai/chat",
-      body: async () => {
-        // Forward a FRESH Clerk session token so the backend can scope the
-        // search_medical_history retrieval tool to the logged-in patient.
-        // Clerk tokens expire after ~60s, so the copy cached in localStorage
-        // would be rejected (401); getToken() refreshes it when needed.
-        const authToken = (await getToken().catch(() => null)) || "";
-
-        const ids = selectedToolsRef.current;
-        if (ids.length === 0)
-          return { systemContext: SYSTEM_CONTEXT, authToken };
-
-        const labels = ids
-          .map((id) => AI_TOOLS.find((t) => t.id === id)?.label)
-          .filter(Boolean);
-        const emphasis =
-          `\n\n## Patient-requested tools\n` +
-          `The patient has toggled on ${ids.length > 1 ? "these tools" : "this tool"}: ` +
-          `${labels.join(", ")} (${ids.join(", ")}), signalling they want ` +
-          `${ids.length > 1 ? "them" : "it"} used. Strongly prefer calling ` +
-          `${ids.length > 1 ? "each one" : "it"} when it is relevant to their ` +
-          `message. If a requested tool needs information the patient hasn't ` +
-          `given yet, ask for it before calling rather than calling with empty ` +
-          `arguments. If a requested tool genuinely does not fit their query, ` +
-          `do NOT force it — skip it and briefly note that it wasn't relevant ` +
-          `to this message. You may also call other tools you deem relevant.`;
-
-        return { systemContext: SYSTEM_CONTEXT + emphasis, authToken };
-      },
+      // The route builds the system prompt and reads the Clerk session from
+      // the request cookies; it only needs to know which tools are on.
+      body: () => ({ selectedTools: selectedToolsRef.current }),
     }),
     onError: (err) => {
       console.error("[AI Chat] useChat error:", err);
@@ -143,6 +126,7 @@ export default function PatientAIPage() {
       return;
     }
     const msg = error.message?.toLowerCase() || "";
+    const routeError = parseRouteError(error.message);
     const isQuota =
       msg.includes("quota") ||
       msg.includes("rate limit") ||
@@ -151,11 +135,14 @@ export default function PatientAIPage() {
       msg.includes("resource exhausted");
     if (isQuota) {
       setQuotaAlert(
-        error.message ||
+        routeError ||
+          error.message ||
           "API quota exceeded. Please try again later or check your plan.",
       );
     } else if (status === "error") {
-      setQuotaAlert("Something went wrong. Please try again in a moment.");
+      setQuotaAlert(
+        routeError || "Something went wrong. Please try again in a moment.",
+      );
     }
   }, [error, status]);
 

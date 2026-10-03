@@ -40,6 +40,12 @@ It can:
 
 If you skip step 2, the assistant still works, but it can't look up the patient's history.
 
+## Access and limits
+
+Both AI routes need a signed-in user. The system prompt is built on the server (`apps/frontend/src/lib/aiSystemPrompt.js`), so a client can't replace it.
+
+Before every model call, the routes ask the backend to count the request (`POST /v1/patient/ai-usage`). Each user may send 30 chat messages per clock hour by default. To change that, set `AI_MESSAGES_PER_HOUR` in `apps/backend/.env`. Follow-up suggestions have their own counter with the same limit, so they never use up chat messages. If the backend can't be reached, the chat refuses the message instead of calling Gemini without a limit.
+
 ## Prompts to try
 
 | Feature         | Prompt                                                                                                                                    |

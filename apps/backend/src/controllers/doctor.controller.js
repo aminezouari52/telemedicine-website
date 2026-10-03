@@ -4,6 +4,9 @@ const cloudinary = require("cloudinary");
 const config = require("../config/config");
 const pick = require("../utils/pick");
 const httpStatus = require("http-status");
+const ApiError = require("../utils/ApiError");
+const getCurrentUser = require("../utils/getCurrentUser");
+const assertSelf = require("../utils/assertSelf");
 
 cloudinary.config(config.cloudinary);
 
@@ -19,12 +22,19 @@ const getDoctor = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send(doctor);
 });
 
+// The body only holds fields a doctor may edit (see doctor.validation.js).
 const updateDoctor = catchAsync(async (req, res) => {
+  const user = await getCurrentUser(req);
+  assertSelf(user, req.params.id);
   const doctor = await doctorService.updateDoctor(req.params.id, req.body);
   res.status(httpStatus.OK).send(doctor);
 });
 
 const uploadProfilePicture = catchAsync(async (req, res) => {
+  const user = await getCurrentUser(req);
+  if (user.role !== "doctor") {
+    throw new ApiError(httpStatus.FORBIDDEN, "Only doctors have a photo");
+  }
   const image = await doctorService.uploadProfilePicture(req.body.image);
   res.status(httpStatus.OK).send(image);
 });

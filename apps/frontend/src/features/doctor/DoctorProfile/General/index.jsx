@@ -215,12 +215,15 @@ const General = ({ setIsLoading }) => {
     }
 
     if (user) {
-      const imageResponse = await uploadProfilePicture(user, imageSrc);
+      // imageSrc is a data URL after a new pick, or the saved photo's URL.
+      const photo = imageSrc.startsWith("data:")
+        ? (await uploadProfilePicture(user, imageSrc)).data.url
+        : imageSrc;
       await updateDoctor(
         { id: user._id, token: user.token },
         {
           ...values,
-          photo: imageResponse.data.url,
+          photo,
           isProfileCompleted: true,
         },
       );

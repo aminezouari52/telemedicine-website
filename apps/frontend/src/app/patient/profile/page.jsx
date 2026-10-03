@@ -60,7 +60,10 @@ const profileSchema = z.object({
     .string()
     .min(1, "Last name is required")
     .max(50, "Last name cannot exceed 50 characters"),
-  phone: z.string().min(1, "Phone number is required"),
+  phone: z
+    .string()
+    .min(1, "Phone number is required")
+    .regex(/^[0-9]+$/, "Phone number must contain only numbers"),
   address: z
     .string()
     .min(1, "Address is required")

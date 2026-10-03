@@ -32,6 +32,11 @@ const envVarsSchema = Joi.object()
     GEMINI_API_KEY: Joi.string()
       .required()
       .description("Google Gemini API key (chat + embeddings)"),
+    AI_MESSAGES_PER_HOUR: Joi.number()
+      .integer()
+      .min(1)
+      .default(30)
+      .description("AI assistant messages each user may send per hour"),
     CLERK_SECRET_KEY: Joi.string().required().description("Clerk Secret Key"),
     CLERK_JWT_KEY: Joi.string()
       .optional()
@@ -88,6 +93,9 @@ module.exports = {
   stripe: {
     secretKey: envVars.STRIPE_SECRET_KEY,
     webhookSecret: envVars.STRIPE_WEBHOOK_SECRET,
+  },
+  ai: {
+    messagesPerHour: envVars.AI_MESSAGES_PER_HOUR,
   },
   clerk: {
     secretKey: envVars.CLERK_SECRET_KEY,

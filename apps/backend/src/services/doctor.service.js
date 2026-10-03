@@ -85,7 +85,7 @@ const updateDoctor = async (id, body) => {
 const uploadProfilePicture = async (image) => {
   const result = await cloudinary.uploader.upload(image, {
     public_id: Date.now(),
-    resource_type: "auto",
+    resource_type: "image",
   });
 
   return {

@@ -2,12 +2,18 @@ const catchAsync = require("../utils/catchAsync");
 const {
   patientService,
   aiConversationService,
+  aiUsageService,
   medicalEmbeddingService,
 } = require("../services");
 const { User } = require("../models");
 const httpStatus = require("http-status");
+const getCurrentUser = require("../utils/getCurrentUser");
+const assertSelf = require("../utils/assertSelf");
 
+// The body only holds fields a patient may edit (see patient.validation.js).
 const updatePatient = catchAsync(async (req, res) => {
+  const user = await getCurrentUser(req);
+  assertSelf(user, req.params.id);
   const patient = await patientService.updatePatient(req.params.id, req.body);
   res.status(httpStatus.OK).send(patient);
 });
@@ -92,6 +98,14 @@ const getMedicalContext = catchAsync(async (req, res) => {
   res.status(httpStatus.OK).send({ results });
 });
 
+// Called by the Next.js AI routes before every model call; answers 429 once
+// the user is over their hourly limit.
+const consumeAiUsage = catchAsync(async (req, res) => {
+  const user = await getCurrentUser(req);
+  const usage = await aiUsageService.consumeAiUsage(user._id, req.body.kind);
+  res.status(httpStatus.OK).send(usage);
+});
+
 module.exports = {
   updatePatient,
   listConversations,
@@ -99,4 +113,5 @@ module.exports = {
   updateConversation,
   deleteConversation,
   getMedicalContext,
+  consumeAiUsage,
 };

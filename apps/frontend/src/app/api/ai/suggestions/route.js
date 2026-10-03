@@ -1,12 +1,17 @@
 import { generateObject } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
+import { consumeAiUsage } from "@/lib/aiUsage";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
 const MODEL_ID = "gemini-2.5-flash";
+
+// Each message is cut to this length before it goes into the prompt.
+const MAX_MESSAGE_LENGTH = 1000;
 
 const schema = z.object({
   suggestions: z
@@ -22,9 +27,20 @@ const schema = z.object({
  * adds minimal latency/cost on top of the main chat turn.
  */
 export async function POST(req) {
+  const { userId, getToken } = await auth();
+  if (!userId) {
+    return Response.json({ suggestions: [] }, { status: 401 });
+  }
+
   const { messages } = await req.json();
 
   if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    return Response.json({ suggestions: [] });
+  }
+
+  // Over the hourly limit: no chips, but no error in the chat either.
+  const usage = await consumeAiUsage(await getToken(), "suggestions");
+  if (!usage.ok) {
     return Response.json({ suggestions: [] });
   }
 
@@ -32,7 +48,8 @@ export async function POST(req) {
   const transcript = messages
     .slice(-6)
     .map(
-      (m) => `${m.role === "assistant" ? "Assistant" : "Patient"}: ${m.text}`,
+      (m) =>
+        `${m.role === "assistant" ? "Assistant" : "Patient"}: ${String(m.text ?? "").slice(0, MAX_MESSAGE_LENGTH)}`,
     )
     .join("\n");
 

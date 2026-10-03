@@ -1,12 +1,29 @@
 import { stepCountIs, streamText, convertToModelMessages } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
+import { buildSystemPrompt } from "@/lib/aiSystemPrompt";
+import { consumeAiUsage } from "@/lib/aiUsage";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
 const MODEL_ID = "gemini-2.5-flash";
+
+// Longest text a patient may type in one message. Attached PDFs and images
+// travel as file parts and aren't counted.
+const MAX_USER_TEXT_LENGTH = 8000;
+
+const hasOversizedUserText = (messages) =>
+  messages.some(
+    (message) =>
+      message.role === "user" &&
+      message.parts?.some(
+        (part) =>
+          part.type === "text" && part.text?.length > MAX_USER_TEXT_LENGTH,
+      ),
+  );
 
 const tools = {
   symptom_checker: {
@@ -678,13 +695,39 @@ function buildMedicalHistoryTool(authToken) {
 }
 
 export async function POST(req) {
-  const { messages, systemContext, authToken } = await req.json();
+  const { userId, getToken } = await auth();
+  if (!userId) {
+    return Response.json({ error: "Please sign in." }, { status: 401 });
+  }
+
+  // The system prompt is built here; the client only picks tool ids.
+  const { messages, selectedTools } = await req.json();
 
   if (!messages || !Array.isArray(messages) || messages.length === 0) {
     return Response.json({ error: "Messages are required." }, { status: 400 });
   }
 
   const recentMessages = messages.slice(-10);
+
+  if (hasOversizedUserText(recentMessages)) {
+    return Response.json(
+      {
+        error: `Messages can be at most ${MAX_USER_TEXT_LENGTH} characters long.`,
+      },
+      { status: 413 },
+    );
+  }
+
+  // The backend scopes search_medical_history and the hourly limit to the
+  // owner of this token.
+  const authToken = await getToken();
+  const usage = await consumeAiUsage(authToken, "chat");
+  if (!usage.ok) {
+    return Response.json(
+      { error: usage.message, isQuota: usage.status === 429 },
+      { status: usage.status },
+    );
+  }
 
   // In AI SDK v5 a tool invocation is a single `tool-<name>` part holding both
   // input and output. ignoreIncompleteToolCalls drops any tool call without an
@@ -696,7 +739,7 @@ export async function POST(req) {
   try {
     const result = streamText({
       model: google(MODEL_ID),
-      system: systemContext,
+      system: buildSystemPrompt(selectedTools),
       messages: processedMessages,
       tools: {
         ...tools,

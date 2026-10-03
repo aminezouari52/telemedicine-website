@@ -9,3 +9,4 @@ module.exports.adminService = require("./admin.service");
 module.exports.aiConversationService = require("./aiConversation.service");
 module.exports.embeddingService = require("./embedding.service");
 module.exports.medicalEmbeddingService = require("./medicalEmbedding.service");
+module.exports.aiUsageService = require("./aiUsage.service");

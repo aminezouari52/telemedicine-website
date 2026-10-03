@@ -1,14 +1,8 @@
 const catchAsync = require("../utils/catchAsync");
 const { consultationService } = require("../services");
 const httpStatus = require("http-status");
-const ApiError = require("../utils/ApiError");
 const getCurrentUser = require("../utils/getCurrentUser");
-
-const assertSelf = (user, id) => {
-  if (String(user._id) !== id) {
-    throw new ApiError(httpStatus.FORBIDDEN, "Forbidden");
-  }
-};
+const assertSelf = require("../utils/assertSelf");
 
 const createConsultation = catchAsync(async (req, res) => {
   const user = await getCurrentUser(req);

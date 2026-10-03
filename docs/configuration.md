@@ -21,7 +21,7 @@ All six can be used for free during development (Stripe in test mode).
 
 - **Clerk:** both apps must use keys from the same Clerk application.
 - **Gemini:** set `GEMINI_API_KEY` in both. The frontend uses it for the chat, the backend for embeddings.
-- **Backend URL:** `NEXT_PUBLIC_API_BASE_URL` and `NEXT_PUBLIC_API_V1_URL` point at the backend. Locally that's `http://localhost:8000`, the backend's default `PORT`.
+- **Backend URL:** `NEXT_PUBLIC_API_BASE_URL` and `NEXT_PUBLIC_API_V1_URL` point at the backend. Locally that's `http://localhost:8000`, the backend's default `PORT`. The AI chat also calls the backend from the server to count each user's messages, so if this URL is wrong the assistant refuses every message.
 - **Demo accounts:** the frontend's `NEXT_PUBLIC_DEMO_*` values must equal the backend's `DEMO_*` values. See [Demo mode](demo-mode.md).
 
 ## `WEB_FRONTEND_URL` affects sign-in and payments

@@ -43,7 +43,7 @@ Backend production: `pm2 start ecosystem.config.json --no-daemon`
 
 Copy from `.env.example` in each app directory. `docs/configuration.md` explains the services and which values must match across apps.
 
-- **backend**: `MONGODB_URL`, `CLOUDINARY_*`, `LIVEKIT_*`, `GEMINI_API_KEY`, `WEB_FRONTEND_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `CLERK_SECRET_KEY` (optional `CLERK_JWT_KEY` for networkless token verification; optional `DEMO_DOCTOR_EMAIL`, `DEMO_PATIENT_EMAIL`, `DEMO_PASSWORD` for demo mode)
+- **backend**: `MONGODB_URL`, `CLOUDINARY_*`, `LIVEKIT_*`, `GEMINI_API_KEY`, `WEB_FRONTEND_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `CLERK_SECRET_KEY` (optional `CLERK_JWT_KEY` for networkless token verification; optional `AI_MESSAGES_PER_HOUR`, default 30; optional `DEMO_DOCTOR_EMAIL`, `DEMO_PATIENT_EMAIL`, `DEMO_PASSWORD` for demo mode)
 - **frontend**: `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_API_V1_URL`, `NEXT_PUBLIC_LIVEKIT_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` (same Clerk application as the backend), `GEMINI_API_KEY` (used server-side by `src/app/api/ai/*` routes), optional `NEXT_PUBLIC_DEMO_MODE` + `NEXT_PUBLIC_DEMO_*` (demo logins on auth pages — see `docs/demo-mode.md`)
 
 ## Linting & formatting
@@ -64,7 +64,8 @@ Pre-commit (husky): `pnpm lint-staged` — runs prettier + eslint on staged `.js
   - Roles live in MongoDB, not Clerk. `/auth/login-user` creates the MongoDB user on first sign-in using the role set by the sign-up page (`unsafeMetadata.role`): `/auth/register` → patient, `/auth/register/doctor` → doctor (admins are seeded)
 - Real-time chat: LiveKit room (`useChat`, `useRemoteParticipants`, `useDataChannel("consultation")` for the "ended" signal) in `features/consultation/Chat/ConsultationRoom.jsx`; no Socket.io. Consultation status cron jobs live in backend `src/jobs/consultationCron.js`
 - Video calls: LiveKit (backend SDK + frontend `@livekit/components-react`)
-- AI assistant: Gemini via the Vercel AI SDK in Next route handlers (`src/app/api/ai/*`); the backend builds RAG embeddings with LangChain (`services/medicalEmbedding.service.js`). See `docs/ai-assistant.md`
+- AI assistant: Gemini via the Vercel AI SDK in Next route handlers (`src/app/api/ai/*`); the backend builds RAG embeddings with LangChain (`services/medicalEmbedding.service.js`). The routes require a Clerk session, build the system prompt server-side (`src/lib/aiSystemPrompt.js`), and count each call against a per-user hourly limit kept by the backend (`POST /v1/patient/ai-usage`). See `docs/ai-assistant.md`
+- Profile updates: `PATCH /v1/doctor/:id` and `/v1/patient/:id` only accept the caller's own id, and Joi schemas in `src/validations/` list the fields a user may change (anything else, such as `approvalStatus`, is rejected)
 - State: Redux Toolkit (`userReducer`, `searchReducer`)
 - Data fetching: TanStack React Query
 - Forms: React Hook Form + Zod
