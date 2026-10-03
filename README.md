@@ -1,13 +1,16 @@
 # Télémédecine
 
-An open-source telemedicine platform. Patients find a doctor, book and pay for a consultation, then meet the doctor over video and chat. Patients also get an AI assistant that can read their own health records. Doctors manage their consultations and patients, and admins approve new doctors.
+An open-source telemedicine boilerplate: a working telehealth app you can rebrand and build your product on.
 
-It's built with Next.js, Express, MongoDB, Clerk, LiveKit, Stripe and Gemini, and released under the MIT license. Use it as the starting point for your own telehealth product.
+It's built with Next.js, Express, MongoDB, Clerk, LiveKit, Stripe and Gemini.
 
-![Home](docs/screenshots/home.png)
+**[Live demo](https://bucolic-malabi-07ed64.netlify.app)**: the sign-in page lists a demo patient and a demo doctor account, so you can try both sides without signing up.
+
+![Landing page](docs/screenshots/Home-Hero.png)
 
 ## Table of Contents
 
+- [What's included](#whats-included)
 - [Features](#features)
 - [Screenshots](#screenshots)
 - [Tech stack](#tech-stack)
@@ -47,25 +50,25 @@ It's built with Next.js, Express, MongoDB, Clerk, LiveKit, Stripe and Gemini, an
 
 ## Screenshots
 
-### Doctor Dashboard
+### Find a doctor
 
-![DoctorDashboard](docs/screenshots/doctor-dashboard.png)
+![Doctor search with name, specialty and hospital filters](docs/screenshots/Patient-Doctors.png)
 
-### Patient Home Page
+### Book and pay
 
-![PatientHome](docs/screenshots/patient-home.png)
+![Booking confirmation showing the consultation fee before Stripe Checkout](docs/screenshots/Patient-Booking.png)
 
-### Book a Consultation
+### Video consultation
 
-![BookConsultation](docs/screenshots/book-consultation.png)
+![Consultation room with video and chat](docs/screenshots/consultation.png)
 
-### Real-time Consultation
+### AI assistant
 
-![Consultation](docs/screenshots/consultation.png)
+![AI assistant answering a symptom question, with chat history](docs/screenshots/Patient-AI.png)
 
-### AI Consultation
+### Doctor dashboard
 
-![AIConsultation](docs/screenshots/ai-consultation.png)
+![Doctor dashboard with consultation stats and pending consultations](docs/screenshots/doctor-dashboard.png)
 
 ## Tech stack
 
@@ -118,22 +121,6 @@ You need Node.js 20 or later, [pnpm](https://pnpm.io/) 8, and free accounts with
 | [Demo mode](docs/demo-mode.md)         | Public demo logins: turning them on and removing them                    |
 | [Branding](docs/branding.md)           | Changing the name, logo, colours and fonts                               |
 | [AGENTS.md](AGENTS.md)                 | Architecture notes and commands, for contributors and AI coding agents   |
-
-## Roadmap
-
-### AI assistant
-
-- **Safety check before the model runs.** Today, emergency red flags (chest pain, stroke signs, self-harm) are only caught when the model calls the `symptom_checker` tool. A check on every message, before it reaches the model, would always recommend emergency care first and block dangerous requests such as dosing for self-harm.
-- **Trusted medical knowledge base.** Extend retrieval beyond the patient's own records to vetted sources (WHO, NHS, Mayo Clinic), so answers can cite them.
-- **Real drug data.** Replace the built-in medication table in `medication_info` with a drug database API (for example openFDA or RxNorm) for dosing and interaction checks.
-- **Guided symptom checker.** A step-by-step question flow (decision tree) instead of a single free-text assessment.
-- **Evaluation suite.** A fixed set of test cases (chest pain, headache, fever, anxiety) that checks whether the assistant recommends a doctor when it should and avoids inventing a diagnosis, run on every change to catch regressions.
-
-### Platform
-
-- **Automated tests.** The project has no automated tests yet. Unit tests for the backend services and end-to-end tests for booking, payment and joining a consultation come first.
-- **Join early.** Let the patient and doctor enter the consultation room a few minutes before the scheduled hour.
-- Multi-language support.
 
 ## Contributing
 
