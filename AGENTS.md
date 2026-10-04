@@ -77,6 +77,10 @@ Pre-commit (husky): `pnpm lint-staged` — runs prettier + eslint on staged `.js
 
 There is no Jest, Vitest, or any test runner configured. Do not assume tests exist or run any test command.
 
+## GitHub issues
+
+To create, open or file a GitHub issue, follow `.claude/skills/create-issue/SKILL.md`.
+
 ## Deployment
 
 - Frontend: Netlify (`netlify.toml` uses `@netlify/plugin-nextjs`)
