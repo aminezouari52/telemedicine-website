@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema(
         /^[0-9]+$/,
         "Please enter a valid zip code which contains only numbers",
       ],
-      minlength: 5,
+      minlength: 4,
       maxlength: 5,
     },
     isProfileCompleted: {

@@ -24,7 +24,7 @@ const ImageUpload = ({ onChange }) => {
     <Input
       type="file"
       className="hidden"
-      accept="images/*"
+      accept="image/*"
       onChange={uploadImageHandler}
     />
   );
