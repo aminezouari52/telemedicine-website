@@ -1,5 +1,10 @@
 # Télémédecine
 
+[![Connect with me on LinkedIn](https://img.shields.io/badge/LinkedIn-Connect%20with%20me-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/amine-zouari52)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/3f8d6c43-8d6f-4ea9-ab75-4f0b68d544de/deploy-status)](https://app.netlify.com/sites/telemed-demo/deploys)
+[![Live Demo](https://img.shields.io/badge/Live-Demo-00C7B7?logo=netlify&logoColor=white)](https://telemed-demo.netlify.app)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
+
 An open-source telemedicine boilerplate: a working telehealth app you can rebrand and build your product on.
 
 It's built with Next.js, Express, MongoDB, Clerk, LiveKit, Stripe and Gemini.
