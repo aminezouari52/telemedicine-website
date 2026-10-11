@@ -4,7 +4,7 @@ An open-source telemedicine boilerplate: a working telehealth app you can rebran
 
 It's built with Next.js, Express, MongoDB, Clerk, LiveKit, Stripe and Gemini.
 
-**[Live demo](https://bucolic-malabi-07ed64.netlify.app)**: the sign-in page lists a demo patient and a demo doctor account, so you can try both sides without signing up.
+**[Live demo](https://telemed-demo.netlify.app)**: the sign-in page lists a demo patient and a demo doctor account, so you can try both sides without signing up.
 
 ![Landing page](docs/screenshots/Home-Hero.png)
 
