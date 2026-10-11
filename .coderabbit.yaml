@@ -1,0 +1,37 @@
+reviews:
+  enabled: true
+  profile: chill
+  request_changes_threshold: medium
+  high_level_summary: true
+  poem: false
+
+  path_instructions:
+    - path: "apps/frontend/**"
+      instructions: |
+        Focus on React/Next.js correctness, accessibility, performance, and security.
+        Flag risky UI logic, auth/session handling, and state management issues.
+        Keep suggestions practical and concise.
+
+    - path: "apps/backend/**"
+      instructions: |
+        Focus on API correctness, validation, auth, authorization, database safety, and payment flow integrity.
+        Call out security issues, improper input handling, and incorrect business logic.
+        Prefer actionable feedback over style-only comments.
+
+    - path: "**/*.md"
+      instructions: |
+        Keep documentation suggestions concise and useful.
+        Prefer clarity, structure, and accurate setup instructions over stylistic nitpicks.
+
+  ignore:
+    - "**/node_modules/**"
+    - "**/dist/**"
+    - "**/.next/**"
+    - "**/coverage/**"
+    - "**/*.lock"
+    - "**/.env*"
+    - "**/*.png"
+    - "**/*.jpg"
+    - "**/*.jpeg"
+    - "**/*.gif"
+    - "**/*.svg"
