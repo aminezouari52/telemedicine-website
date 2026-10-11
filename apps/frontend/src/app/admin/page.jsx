@@ -58,7 +58,7 @@ export default function AdminDashboard() {
     try {
       const res = await getDoctors(status || undefined);
       setDoctors(res.data.results || []);
-    } catch (err) {
+    } catch (_err) {
       toast("Failed to fetch doctors", "error");
     } finally {
       setLoading(false);
