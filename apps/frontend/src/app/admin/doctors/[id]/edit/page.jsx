@@ -101,7 +101,7 @@ export default function AdminEditDoctorPage() {
           certifications: d.certifications?.length ? d.certifications : [""],
           schedule: d.schedule || [],
         });
-      } catch (err) {
+      } catch (_err) {
         toast("Failed to load doctor", "error");
         router.push("/admin");
       } finally {
