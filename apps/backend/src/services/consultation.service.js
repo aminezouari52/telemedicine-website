@@ -61,8 +61,21 @@ const markInProgress = (id) =>
 const completeConsultation = async (id, user) => {
   const consultation = await getConsultation(id);
   assertParticipant(consultation, user);
-  consultation.status = "completed";
-  return consultation.save();
+  // Only a consultation under way can end. The status is checked in the update
+  // itself, as markInProgress does, so two requests cannot race past it.
+  const completed = await Consultation.findOneAndUpdate(
+    { _id: consultation._id, status: "in-progress" },
+    { status: "completed" },
+    { new: true },
+  ).exec();
+  if (completed) return completed;
+  // Leaving a consultation the other participant has already ended still works.
+  const current = await getConsultation(id);
+  if (current.status === "completed") return current;
+  throw new ApiError(
+    httpStatus.CONFLICT,
+    `Only a consultation in progress can be completed; this one is ${current.status}`,
+  );
 };
 
 const getPatientConsultations = async (patientId) => {
