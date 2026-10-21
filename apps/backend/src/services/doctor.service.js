@@ -3,16 +3,11 @@ const { Doctor, Consultation } = require("../models");
 const ApiError = require("../utils/ApiError");
 const cloudinary = require("cloudinary");
 const mongoose = require("mongoose");
+const { escapeRegex, MAX_SEARCH_LENGTH } = require("../utils/escapeRegex");
 
 // Sortable fields exposed on the doctor listing. Whitelisting prevents callers
 // from injecting arbitrary (or nested) field names into Mongo's `.sort()`.
 const ALLOWED_SORT_FIELDS = new Set(["price", "createdAt", "lastName"]);
-
-const MAX_SEARCH_LENGTH = 100;
-
-// Escape regex metacharacters so user input is matched literally, and cap the
-// length so a crafted pattern cannot make MongoDB do unbounded work.
-const escapeRegex = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 const query = async function (Schema, filter, options) {
   let sort = "";

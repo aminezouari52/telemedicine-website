@@ -1,6 +1,7 @@
 const httpStatus = require("http-status");
 const { Doctor, Patient } = require("../models");
 const ApiError = require("../utils/ApiError");
+const { escapeRegex, MAX_SEARCH_LENGTH } = require("../utils/escapeRegex");
 
 const getDoctors = async (status) => {
   const filter = {};
@@ -36,10 +37,11 @@ const updateDoctorProfile = async (id, body) => {
 const getPatients = async (name) => {
   const filter = { role: "patient" };
   if (name && name.trim()) {
+    const term = escapeRegex(name.trim().slice(0, MAX_SEARCH_LENGTH));
     filter.$or = [
-      { firstName: { $regex: name, $options: "i" } },
-      { lastName: { $regex: name, $options: "i" } },
-      { email: { $regex: name, $options: "i" } },
+      { firstName: { $regex: term, $options: "i" } },
+      { lastName: { $regex: term, $options: "i" } },
+      { email: { $regex: term, $options: "i" } },
     ];
   }
   const patients = await Patient.find(filter).sort({ createdAt: -1 }).exec();
