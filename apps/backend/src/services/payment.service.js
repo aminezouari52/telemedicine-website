@@ -69,25 +69,39 @@ const createCheckoutSession = async (patient, { doctorId, date }) => {
 };
 
 // Called by both the success page and the webhook; the conditional update runs it once.
+// If creating the consultation fails, the payment goes back to its previous
+// status so a later confirm or webhook retry can fulfill it again.
 const fulfillPayment = async (stripeSessionId, paymentIntentId) => {
-  const payment = await Payment.findOneAndUpdate(
+  const previous = await Payment.findOneAndUpdate(
     { stripeSessionId, status: { $ne: "paid" } },
     {
       status: "paid",
       ...(paymentIntentId && { stripePaymentIntentId: paymentIntentId }),
     },
-    { new: true },
   );
-  if (!payment) return;
+  if (!previous) return;
 
-  const consultation = await Consultation.create({
-    date: new Date(payment.metadata.date),
-    doctor: payment.doctor,
-    patient: payment.patient,
-    payment: payment._id,
-  });
-  payment.consultation = consultation._id;
-  await payment.save();
+  try {
+    const existing = await Consultation.findOne({ payment: previous._id });
+    const consultation =
+      existing ||
+      (await Consultation.create({
+        date: new Date(previous.metadata.date),
+        doctor: previous.doctor,
+        patient: previous.patient,
+        payment: previous._id,
+      }));
+    await Payment.updateOne(
+      { _id: previous._id },
+      { consultation: consultation._id },
+    );
+  } catch (err) {
+    await Payment.updateOne(
+      { _id: previous._id, status: "paid", consultation: { $in: [null] } },
+      { status: previous.status },
+    );
+    throw err;
+  }
 };
 
 const confirmPayment = async (sessionId) => {
