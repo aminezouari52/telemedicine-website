@@ -77,15 +77,27 @@ const isFulfilled = (payment) =>
 const STALE_FULFILLMENT_MS = 60 * 1000;
 
 const createConsultationFor = async (payment) => {
-  const existing = await Consultation.findOne({ payment: payment._id });
-  const consultation =
-    existing ||
-    (await Consultation.create({
-      date: new Date(payment.metadata.date),
-      doctor: payment.doctor,
-      patient: payment.patient,
-      payment: payment._id,
-    }));
+  // Atomic upsert keyed on the payment; the unique index on
+  // Consultation.payment turns a concurrent insert into a duplicate-key error,
+  // in which case the other caller's consultation is used.
+  let consultation;
+  try {
+    consultation = await Consultation.findOneAndUpdate(
+      { payment: payment._id },
+      {
+        $setOnInsert: {
+          date: new Date(payment.metadata.date),
+          doctor: payment.doctor,
+          patient: payment.patient,
+          payment: payment._id,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    );
+  } catch (err) {
+    if (err?.code !== 11000) throw err;
+    consultation = await Consultation.findOne({ payment: payment._id });
+  }
   await Payment.updateOne(
     { _id: payment._id },
     { consultation: consultation._id },
