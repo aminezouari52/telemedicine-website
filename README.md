@@ -124,6 +124,7 @@ You need Node.js 20 or later, [pnpm](https://pnpm.io/) 8, and free accounts with
 | [AI assistant](docs/ai-assistant.md)   | What the assistant can do, its setup, and prompts to try                 |
 | [Demo mode](docs/demo-mode.md)         | Public demo logins: turning them on and removing them                    |
 | [Branding](docs/branding.md)           | Changing the name, logo, colours and fonts                               |
+| [AI coding agents](docs/ai-agents.md)  | Claude Code, Cursor and OpenCode setup, and where to add skills and MCPs |
 | [AGENTS.md](AGENTS.md)                 | Architecture notes and commands, for contributors and AI coding agents   |
 
 ## Contributing
