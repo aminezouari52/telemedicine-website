@@ -48,7 +48,7 @@ export default function PatientManager() {
     try {
       const res = await getPatients(name || undefined);
       setPatients(res.data.results || []);
-    } catch (err) {
+    } catch (_err) {
       toast("Failed to fetch patients", "error");
     } finally {
       setLoading(false);
