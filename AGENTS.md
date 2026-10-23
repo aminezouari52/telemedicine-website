@@ -43,8 +43,8 @@ Backend production: `pm2 start ecosystem.config.json --no-daemon`
 
 Copy from `.env.example` in each app directory. `docs/configuration.md` explains the services and which values must match across apps.
 
-- **backend**: `MONGODB_URL`, `CLOUDINARY_*`, `LIVEKIT_*`, `GEMINI_API_KEY`, `WEB_FRONTEND_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD`, `CLERK_SECRET_KEY` (optional `CLERK_JWT_KEY` for networkless token verification; optional `AI_MESSAGES_PER_HOUR`, default 30; optional `DEMO_DOCTOR_EMAIL`, `DEMO_PATIENT_EMAIL`, `DEMO_PASSWORD` for demo mode)
-- **frontend**: `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_API_V1_URL`, `NEXT_PUBLIC_LIVEKIT_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` (same Clerk application as the backend), `GEMINI_API_KEY` (used server-side by `src/app/api/ai/*` routes), optional `NEXT_PUBLIC_DEMO_MODE` + `NEXT_PUBLIC_DEMO_*` (demo logins on auth pages — see `docs/demo-mode.md`)
+- **backend**: `MONGODB_URL`, `WEB_FRONTEND_URL`, `CLERK_SECRET_KEY`. Optional services, each switched on by setting all its keys (`config.features`, served at `GET /v1/features`, routes guarded by `middlewares/requireFeature.js`): `STRIPE_*` (payments; unset = every booking is free), `LIVEKIT_*` (consultation rooms), `CLOUDINARY_*` (photo uploads), `GEMINI_API_KEY` (AI assistant + embeddings). `ADMIN_EMAIL`, `ADMIN_PASSWORD` for `seed:admin` (optional `CLERK_JWT_KEY` for networkless token verification; optional `AI_MESSAGES_PER_HOUR`, default 30; optional `DEMO_DOCTOR_EMAIL`, `DEMO_PATIENT_EMAIL`, `DEMO_PASSWORD` for demo mode)
+- **frontend**: `NEXT_PUBLIC_API_BASE_URL`, `NEXT_PUBLIC_API_V1_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` (same Clerk application as the backend), optional `NEXT_PUBLIC_LIVEKIT_URL` and `GEMINI_API_KEY` (used server-side by `src/app/api/ai/*` routes) to match the backend's optional services; the UI reads which are on with `useFeatures()`, optional `NEXT_PUBLIC_DEMO_MODE` + `NEXT_PUBLIC_DEMO_*` (demo logins on auth pages — see `docs/demo-mode.md`)
 
 ## Linting & formatting
 
@@ -91,8 +91,8 @@ To create, open or file a GitHub issue, follow `.claude/skills/create-issue/SKIL
 - Payment is handled via Stripe Checkout (hosted page) — no frontend card elements needed
 - Flow: booking form → VerifyData (shows price) → redirect to Stripe → return to `/payment/success`, which calls `POST /v1/payment/confirm-payment` (checks the session with Stripe and creates the consultation). The webhook does the same if the tab was closed; `fulfillPayment` runs once per payment
 - Backend endpoint: `POST /v1/payment/webhook` (raw body, registered before `express.json()`)
-- Free consultations (`price <= 0`) skip payment entirely
-- **Required env vars**: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (backend `.env`). The frontend's `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is unused unless you add Stripe Elements
+- Free consultations (`price <= 0`) skip payment entirely. Without Stripe keys every consultation is free and `/v1/payment/*` answers 503
+- **Env vars** (both or neither): `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (backend `.env`). The frontend's `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is unused unless you add Stripe Elements
 - Full guide: `docs/payments.md`
 
 ### Testing locally

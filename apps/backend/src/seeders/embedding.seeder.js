@@ -12,6 +12,10 @@ const {
 const CONSULTATION_LIMIT = 100;
 
 async function seedEmbeddingCollection() {
+  if (!config.features.ai) {
+    logger.error("GEMINI_API_KEY is not set; nothing to embed.");
+    process.exit(1);
+  }
   try {
     await mongoose.connect(config.mongoose.url, config.mongoose.options);
     logger.info("Connected to MongoDB");

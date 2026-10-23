@@ -6,12 +6,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-function VerifyData({ isOpen, onClose, onConfirm, doctor }) {
+function VerifyData({ isOpen, onClose, onConfirm, price }) {
   if (!isOpen) {
     return null;
   }
-
-  const price = doctor?.price;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

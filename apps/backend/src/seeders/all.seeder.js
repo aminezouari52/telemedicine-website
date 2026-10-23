@@ -28,7 +28,11 @@ const steps = [
     skip: !hasAdmin && "ADMIN_EMAIL or ADMIN_PASSWORD not set",
   },
   { script: "seed:consultation", file: "consultation.seeder.js" },
-  { script: "seed:embeddings", file: "embedding.seeder.js" },
+  {
+    script: "seed:embeddings",
+    file: "embedding.seeder.js",
+    skip: !config.features.ai && "GEMINI_API_KEY not set",
+  },
 ];
 
 for (const { script, file, skip } of steps) {

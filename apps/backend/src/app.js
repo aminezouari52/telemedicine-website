@@ -13,8 +13,22 @@ const ApiError = require("./utils/ApiError");
 const os = require("os");
 const formData = require("express-form-data");
 const { paymentController } = require("./controllers");
+const requireFeature = require("./middlewares/requireFeature");
+const logger = require("./config/logger");
 
 const app = express();
+
+const disabledFeatures = Object.keys(config.features).filter(
+  (feature) => !config.features[feature],
+);
+if (disabledFeatures.length > 0) {
+  logger.warn(
+    `Optional services not configured: ${disabledFeatures.join(", ")}. See docs/configuration.md.`,
+  );
+}
+if (!config.features.payments) {
+  logger.warn("Stripe is not configured: every consultation is booked free.");
+}
 
 if (config.env !== "test") {
   app.use(morgan.successHandler);
@@ -26,6 +40,7 @@ app.use(helmet());
 // Stripe webhook needs raw body — must be before express.json()
 app.post(
   "/v1/payment/webhook",
+  requireFeature("payments"),
   express.raw({ type: "application/json" }),
   paymentController.handleWebhook,
 );

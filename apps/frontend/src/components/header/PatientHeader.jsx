@@ -4,7 +4,7 @@
 import { useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
-import { useLogout, useMyConsultations } from "@/hooks";
+import { useFeatures, useLogout, useMyConsultations } from "@/hooks";
 
 // FUNCTIONS
 import { findJoinableConsultation } from "@/utils/consultationJoinable";
@@ -53,6 +53,10 @@ export const PatientHeader = () => {
   const logoutHandler = useLogout();
   const user = useSelector((state) => state.userReducer.user);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { ai } = useFeatures();
+  const visibleNavItems = navItems.filter(
+    (item) => ai || item.href !== "/patient/AI",
+  );
 
   const { data: consultation } = useMyConsultations({
     select: findJoinableConsultation,
@@ -114,7 +118,7 @@ export const PatientHeader = () => {
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
             return (

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useFeatures } from "@/hooks";
 
 // functions
 import { createConsultation } from "@/services/consultationService";
@@ -121,6 +122,10 @@ export default function BookConsultationPage() {
     queryFn: () => getDoctorDetailsQuery(),
   });
 
+  // Without Stripe the backend books every consultation for free.
+  const { payments } = useFeatures();
+  const price = payments ? doctor?.price : 0;
+
   const goToNext = () => {
     if (activeStep < steps.length) {
       setActiveStep(activeStep + 1);
@@ -178,7 +183,6 @@ export default function BookConsultationPage() {
       }),
     );
 
-    const price = doctor?.price;
     if (!price || price <= 0) {
       await createConsultation({ date, doctor: params.id });
       queryClient.invalidateQueries({ queryKey: ["consultations"] });
@@ -254,7 +258,7 @@ export default function BookConsultationPage() {
             isOpen={activeStep === steps.length}
             onClose={resetHandler}
             onConfirm={form.handleSubmit(handlePayment)}
-            doctor={doctor}
+            price={price}
           />
         </form>
       </Form>

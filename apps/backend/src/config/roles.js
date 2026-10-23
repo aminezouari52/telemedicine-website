@@ -1,13 +1,5 @@
-const allRoles = {
-  admin: ["currentUser", "createOrUpdateUser", "updateDoctor"],
-  doctor: ["currentUser", "createOrUpdateUser", "updateDoctor"],
-  patient: ["currentUser", "createOrUpdateUser"],
-};
-
-const roles = Object.keys(allRoles);
-const roleRights = new Map(Object.entries(allRoles));
+const roles = ["admin", "doctor", "patient"];
 
 module.exports = {
   roles,
-  roleRights,
 };

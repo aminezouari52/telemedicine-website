@@ -32,6 +32,10 @@ export async function POST(req) {
     return Response.json({ suggestions: [] }, { status: 401 });
   }
 
+  if (!process.env.GEMINI_API_KEY) {
+    return Response.json({ suggestions: [] }, { status: 503 });
+  }
+
   const { messages } = await req.json();
 
   if (!messages || !Array.isArray(messages) || messages.length === 0) {

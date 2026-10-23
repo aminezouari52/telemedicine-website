@@ -1,6 +1,7 @@
 const express = require("express");
 const authCheck = require("../../middlewares/auth");
 const validate = require("../../middlewares/validate");
+const requireFeature = require("../../middlewares/requireFeature");
 const patientValidation = require("../../validations/patient.validation");
 
 const router = express.Router();
@@ -19,11 +20,12 @@ router
 
 router
   .route("/medical-context")
-  .post(authCheck, patientController.getMedicalContext);
+  .post(requireFeature("ai"), authCheck, patientController.getMedicalContext);
 
 router
   .route("/ai-usage")
   .post(
+    requireFeature("ai"),
     authCheck,
     validate(patientValidation.consumeAiUsage),
     patientController.consumeAiUsage,

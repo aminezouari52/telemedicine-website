@@ -1,6 +1,7 @@
 const express = require("express");
 const authCheck = require("../../middlewares/auth");
 const validate = require("../../middlewares/validate");
+const requireFeature = require("../../middlewares/requireFeature");
 const doctorValidation = require("../../validations/doctor.validation");
 
 const router = express.Router();
@@ -20,6 +21,7 @@ router
 router
   .route("/profile-image")
   .post(
+    requireFeature("uploads"),
     authCheck,
     validate(doctorValidation.uploadProfilePicture),
     doctorController.uploadProfilePicture,

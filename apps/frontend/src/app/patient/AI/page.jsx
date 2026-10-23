@@ -35,6 +35,7 @@ import ConversationList from "./ConversationList";
 import QuotaAlert from "./QuotaAlert";
 import FollowUpChips from "./FollowUpChips";
 import PulseOrb from "@/components/PulseOrb";
+import { useFeatures } from "@/hooks";
 import PdfPreviewCard from "./PdfPreviewCard";
 import ImagePreviewCard from "./ImagePreviewCard";
 
@@ -68,6 +69,7 @@ function parseRouteError(text) {
 }
 
 export default function PatientAIPage() {
+  const { ai } = useFeatures();
   const [userInput, setUserInput] = useState("");
   const [pdfFile, setPdfFile] = useState(null);
   const [pdfInfo, setPdfInfo] = useState(null);
@@ -390,6 +392,20 @@ export default function PatientAIPage() {
   );
 
   const canSend = !isSending && userInput.trim().length > 0;
+
+  if (!ai) {
+    return (
+      <div className="flex h-full flex-col items-center justify-center gap-2 p-6 text-center">
+        <h1 className="text-xl font-bold text-gray-800">
+          The AI assistant isn&apos;t set up
+        </h1>
+        <p className="max-w-md text-sm text-gray-600">
+          Add GEMINI_API_KEY to the backend and frontend .env files to turn it
+          on. See docs/configuration.md.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full bg-background overflow-x-hidden">

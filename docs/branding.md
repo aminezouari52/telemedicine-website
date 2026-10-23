@@ -51,8 +51,6 @@ The app uses Plus Jakarta Sans and Lora from Google Fonts. To change them, updat
 
 `src/components/home/Footer.jsx` holds the contact email and the GitHub and LinkedIn links. Replace them with your own.
 
-The footer's newsletter form is a placeholder: it checks the email address but doesn't send it anywhere. Connect it to your email provider in the form's `onSubmit`, or delete the Newsletter block.
-
 ## 6. Third-party dashboards
 
 Some branding lives in the services, not in this code:

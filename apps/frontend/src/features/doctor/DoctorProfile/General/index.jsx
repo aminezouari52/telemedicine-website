@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useToast, useUserCheck } from "@/hooks";
+import { useFeatures, useToast, useUserCheck } from "@/hooks";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -125,6 +125,7 @@ const General = ({ setIsLoading }) => {
   const toast = useToast();
   const user = useSelector((state) => state.userReducer.user);
   const userCheck = useUserCheck();
+  const { uploads } = useFeatures();
   const [currentUser, setCurrentUser] = useState();
   const [imageSrc, setImageSrc] = useState();
 
@@ -263,18 +264,24 @@ const General = ({ setIsLoading }) => {
                   <User className="h-9 w-9 mt-3 rounded-full text-gray-300" />
                 </AvatarFallback>
               </Avatar>
-              <label className="cursor-pointer">
-                <ImageUpload onChange={profileImageHandler} />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="font-medium focus:shadow-none"
-                  asChild
-                >
-                  <span>Change</span>
-                </Button>
-              </label>
+              {uploads ? (
+                <label className="cursor-pointer">
+                  <ImageUpload onChange={profileImageHandler} />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="font-medium focus:shadow-none"
+                    asChild
+                  >
+                    <span>Change</span>
+                  </Button>
+                </label>
+              ) : (
+                <p className="text-sm text-gray-500">
+                  Photo uploads need Cloudinary keys on the backend.
+                </p>
+              )}
             </div>
           </div>
 

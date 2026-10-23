@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { MedicalEmbedding, Patient, Consultation } = require("../models");
 const { embedText } = require("./embedding.service");
+const config = require("../config/config");
 const logger = require("../config/logger");
 
 const VECTOR_INDEX = "medical_embedding_index";
@@ -51,6 +52,8 @@ const serializeConsultation = (consultation) => {
 // --- Sync: upsert one embedding row for a profile / consultation ------------
 
 const upsert = async ({ patient, source, sourceId, text }) => {
+  // Without Gemini there is no AI search to keep in sync.
+  if (!config.features.ai) return;
   const embedding = await embedText(text);
   await MedicalEmbedding.findOneAndUpdate(
     { source, sourceId },

@@ -12,25 +12,27 @@ const envVarsSchema = Joi.object()
     PORT: Joi.number().default(8000),
     MONGODB_URL: Joi.string().required().description("Mongo DB url"),
     WEB_FRONTEND_URL: Joi.string().required().description("The frontend url"),
+    // Optional services: leave a group unset to turn its feature off (see
+    // `features` below). An empty value counts as unset.
     CLOUDINARY_CLOUD_NAME: Joi.string()
-      .required()
+      .empty("")
       .description("Cloudinary Cloud Name"),
     CLOUDINARY_API_KEY: Joi.string()
-      .required()
+      .empty("")
       .description("Cloudinary API Key"),
     CLOUDINARY_API_SECRET: Joi.string()
-      .required()
+      .empty("")
       .description("Cloudinary API Secret"),
-    LIVEKIT_API_KEY: Joi.string().required().description("LiveKit Api Key"),
+    LIVEKIT_API_KEY: Joi.string().empty("").description("LiveKit Api Key"),
     LIVEKIT_API_SECRET: Joi.string()
-      .required()
+      .empty("")
       .description("LiveKit Api Secret"),
-    STRIPE_SECRET_KEY: Joi.string().required().description("Stripe Secret Key"),
+    STRIPE_SECRET_KEY: Joi.string().empty("").description("Stripe Secret Key"),
     STRIPE_WEBHOOK_SECRET: Joi.string()
-      .required()
+      .empty("")
       .description("Stripe Webhook Secret"),
     GEMINI_API_KEY: Joi.string()
-      .required()
+      .empty("")
       .description("Google Gemini API key (chat + embeddings)"),
     AI_MESSAGES_PER_HOUR: Joi.number()
       .integer()
@@ -60,6 +62,10 @@ const envVarsSchema = Joi.object()
       .optional()
       .description("Password for both demo logins (seed:logins)"),
   })
+  // A half-configured service fails at startup instead of on first use.
+  .and("CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET")
+  .and("LIVEKIT_API_KEY", "LIVEKIT_API_SECRET")
+  .and("STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET")
   .unknown();
 
 const { value: envVars, error } = envVarsSchema
@@ -95,7 +101,20 @@ module.exports = {
     webhookSecret: envVars.STRIPE_WEBHOOK_SECRET,
   },
   ai: {
+    apiKey: envVars.GEMINI_API_KEY,
     messagesPerHour: envVars.AI_MESSAGES_PER_HOUR,
+  },
+  // Which optional services are configured. Served to the frontend by
+  // GET /v1/features so it can hide what is turned off.
+  features: {
+    // Off: every consultation is booked for free.
+    payments: Boolean(envVars.STRIPE_SECRET_KEY),
+    // Off: consultation rooms (video and chat) can't be joined.
+    video: Boolean(envVars.LIVEKIT_API_KEY),
+    // Off: doctors can't upload a profile photo.
+    uploads: Boolean(envVars.CLOUDINARY_CLOUD_NAME),
+    // Off: no AI assistant and no embeddings for AI search.
+    ai: Boolean(envVars.GEMINI_API_KEY),
   },
   clerk: {
     secretKey: envVars.CLERK_SECRET_KEY,

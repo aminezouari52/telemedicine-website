@@ -4,7 +4,10 @@ const { Payment, Doctor, Consultation } = require("../models");
 const ApiError = require("../utils/ApiError");
 const httpStatus = require("http-status");
 
-const stripe = Stripe(config.stripe.secretKey);
+// Null when Stripe isn't configured; the payment routes answer 503 then.
+const stripe = config.features.payments
+  ? Stripe(config.stripe.secretKey)
+  : null;
 
 const WEB_FRONTEND_URL = config.webFrontendUrl;
 

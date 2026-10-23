@@ -3,26 +3,11 @@
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
 import { Github, Linkedin } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { footerEmailInputValidations } from "@/utils/formValidations";
 import { siteConfig } from "@/site.config";
 
 function Footer() {
   const router = useRouter();
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm();
-
-  const onSubmit = (data) => {
-    const { email } = data;
-    // TODO: Implement the email service
-    console.info(email);
-  };
 
   const socialLinks = [
     {
@@ -40,7 +25,7 @@ function Footer() {
   return (
     <footer className="bg-primary-900 text-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {/* Logo and Description */}
           <div className="space-y-4">
             <Image
@@ -54,33 +39,6 @@ function Footer() {
               Discover our telemedicine platform, a modern and practical
               solution for accessing online medical consultations.
             </p>
-          </div>
-
-          {/* Newsletter */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Newsletter</h3>
-            <p className="text-white/80 text-sm">
-              Subscribe to our newsletter and receive the latest information on
-              innovations in telemedicine, health tips, and much more.
-            </p>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-              <Input
-                className="bg-white/10 border-white/20 text-white placeholder:text-white/60 focus-visible:ring-white"
-                type="email"
-                placeholder="E-Mail address"
-                {...register("email", footerEmailInputValidations)}
-              />
-              {errors?.email && (
-                <p className="text-sm text-red-300">{errors.email.message}</p>
-              )}
-              <Button
-                type="submit"
-                variant="outline"
-                className="bg-primary-500 w-full border-white/20 text-white hover:bg-primary-600 hover:text-white"
-              >
-                Subscribe
-              </Button>
-            </form>
           </div>
 
           {/* Quick Links */}

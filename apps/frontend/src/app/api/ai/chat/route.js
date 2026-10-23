@@ -700,6 +700,13 @@ export async function POST(req) {
     return Response.json({ error: "Please sign in." }, { status: 401 });
   }
 
+  if (!process.env.GEMINI_API_KEY) {
+    return Response.json(
+      { error: "The AI assistant isn't configured on this server." },
+      { status: 503 },
+    );
+  }
+
   // The system prompt is built here; the client only picks tool ids.
   const { messages, selectedTools } = await req.json();
 

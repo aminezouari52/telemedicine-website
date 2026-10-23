@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const { Consultation, Doctor } = require("../models");
 const ApiError = require("../utils/ApiError");
 const httpStatus = require("http-status");
+const config = require("../config/config");
 
 const assertValidObjectId = (id, field) => {
   if (!mongoose.isValidObjectId(id)) {
@@ -30,7 +31,8 @@ const createFreeConsultation = async (patient, { doctor: doctorId, date }) => {
   if (!doctor) {
     throw new ApiError(httpStatus.NOT_FOUND, "Doctor not found");
   }
-  if (doctor.price > 0) {
+  // Without Stripe every booking is free, whatever the doctor's price.
+  if (doctor.price > 0 && config.features.payments) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
       "This doctor requires payment through checkout",

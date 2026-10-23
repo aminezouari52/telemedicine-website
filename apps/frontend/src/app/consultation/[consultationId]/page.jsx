@@ -4,6 +4,7 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useSelector } from "react-redux";
+import { useFeatures } from "@/hooks";
 
 // functions
 import { generateToken } from "@/services/livekitService";
@@ -17,6 +18,7 @@ export default function ChatPage() {
   const { consultationId } = useParams();
   const router = useRouter();
   const [token, setToken] = useState();
+  const { video } = useFeatures();
 
   const loadToken = async () => {
     try {
@@ -28,8 +30,22 @@ export default function ChatPage() {
   };
 
   useEffect(() => {
-    if (user) loadToken();
-  }, [user]);
+    if (user && video) loadToken();
+  }, [user, video]);
+
+  if (!video) {
+    return (
+      <div className="flex flex-col h-screen items-center justify-center gap-2 p-6 text-center">
+        <h1 className="text-xl font-bold text-gray-800">
+          Video consultations aren&apos;t set up
+        </h1>
+        <p className="max-w-md text-sm text-gray-600">
+          Add your LiveKit keys to the backend and frontend .env files to turn
+          on the consultation room. See docs/configuration.md.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen p-4 md:p-6 bg-gradient-to-b from-primary-50 to-white">

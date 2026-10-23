@@ -5,7 +5,10 @@ const httpStatus = require("http-status");
 const config = require("../config/config");
 const getCurrentUser = require("../utils/getCurrentUser");
 
-const stripe = Stripe(config.stripe.secretKey);
+// Null when Stripe isn't configured; the payment routes answer 503 then.
+const stripe = config.features.payments
+  ? Stripe(config.stripe.secretKey)
+  : null;
 
 const createCheckoutSession = catchAsync(async (req, res) => {
   const user = await getCurrentUser(req);
