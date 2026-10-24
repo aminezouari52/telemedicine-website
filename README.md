@@ -89,8 +89,8 @@ You need Node.js 20 or later, [pnpm](https://pnpm.io/) 8, and free accounts with
 1. Clone the repository and install dependencies:
 
    ```bash
-   git clone https://github.com/aminezouari52/telemedicine-website.git
-   cd telemedicine-website
+   git clone https://github.com/aminezouari52/telemed.git
+   cd telemed
    pnpm install
    ```
 

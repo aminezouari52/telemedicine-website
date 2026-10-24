@@ -12,7 +12,7 @@ function Footer() {
   const socialLinks = [
     {
       icon: Github,
-      href: "https://github.com/aminezouari52/telemedicine-website",
+      href: "https://github.com/aminezouari52/telemed",
       label: "GitHub",
     },
     {

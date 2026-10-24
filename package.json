@@ -1,5 +1,5 @@
 {
-  "name": "telemedicine-website",
+  "name": "telemed",
   "private": true,
   "scripts": {
     "dev": "turbo dev",
