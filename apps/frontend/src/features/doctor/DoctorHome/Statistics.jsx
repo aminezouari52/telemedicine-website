@@ -15,7 +15,7 @@ const Statistics = ({ doctor, consultations }) => {
       const date = new Date(consultation.date);
       const now = new Date();
       return (
-        consultation.status === "pending" &&
+        consultation.status !== "canceled" &&
         date.getMonth() === now.getMonth() &&
         date.getFullYear() === now.getFullYear()
       );

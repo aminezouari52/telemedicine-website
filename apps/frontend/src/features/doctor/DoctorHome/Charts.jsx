@@ -34,7 +34,15 @@ const MONTHS = [
 const STATUS_COLORS = {
   completed: "#22c55e",
   pending: "#f59e0b",
+  "in-progress": "#3b82f6",
   canceled: "#ef4444",
+};
+
+const STATUS_LABELS = {
+  completed: "Completed",
+  pending: "Pending",
+  "in-progress": "In progress",
+  canceled: "Canceled",
 };
 
 const Charts = ({ consultations = [] }) => {
@@ -46,6 +54,7 @@ const Charts = ({ consultations = [] }) => {
       name,
       completed: 0,
       pending: 0,
+      "in-progress": 0,
       canceled: 0,
     }));
 
@@ -61,14 +70,19 @@ const Charts = ({ consultations = [] }) => {
 
   // Status distribution for the donut
   const statusData = useMemo(() => {
-    const counts = { completed: 0, pending: 0, canceled: 0 };
+    const counts = {
+      completed: 0,
+      pending: 0,
+      "in-progress": 0,
+      canceled: 0,
+    };
     consultations.forEach((c) => {
       if (counts[c.status] !== undefined) counts[c.status] += 1;
     });
     return Object.entries(counts)
       .filter(([, value]) => value > 0)
       .map(([key, value]) => ({
-        name: key.charAt(0).toUpperCase() + key.slice(1),
+        name: STATUS_LABELS[key] ?? key,
         value,
         color: STATUS_COLORS[key],
       }));
@@ -103,6 +117,10 @@ const Charts = ({ consultations = [] }) => {
                 <linearGradient id="canceledFill" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4} />
                   <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="inProgressFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid
@@ -144,6 +162,15 @@ const Charts = ({ consultations = [] }) => {
                 stackId="1"
                 stroke="#f59e0b"
                 fill="url(#pendingFill)"
+                strokeWidth={2}
+              />
+              <Area
+                type="monotone"
+                dataKey="in-progress"
+                name="In progress"
+                stackId="1"
+                stroke="#3b82f6"
+                fill="url(#inProgressFill)"
                 strokeWidth={2}
               />
               <Area
