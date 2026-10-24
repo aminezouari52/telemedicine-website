@@ -25,6 +25,13 @@ const consultationSchema = new Schema(
   },
 );
 
+// At most one consultation per payment, so concurrent fulfillment/reconcile
+// calls cannot create duplicates. Consultations without a payment are exempt.
+consultationSchema.index(
+  { payment: 1 },
+  { unique: true, partialFilterExpression: { payment: { $type: "objectId" } } },
+);
+
 // Keep the RAG vector store in sync whenever a consultation is created
 // (post "save" covers every Consultation.create site) or updated
 // (post "findOneAndUpdate" covers updateConsultation). Fire-and-forget: an

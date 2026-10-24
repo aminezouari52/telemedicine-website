@@ -71,26 +71,82 @@ const createCheckoutSession = async (patient, { doctorId, date }) => {
   };
 };
 
-// Called by both the success page and the webhook; the conditional update runs it once.
+// A payment counts as fulfilled only once it has a consultation.
+const isFulfilled = (payment) =>
+  payment.status === "paid" && Boolean(payment.consultation);
+
+// A paid payment that still has no consultation after this long is treated as
+// left behind by a crashed fulfillment and is reconciled.
+const STALE_FULFILLMENT_MS = 60 * 1000;
+
+const createConsultationFor = async (payment) => {
+  // Atomic upsert keyed on the payment; the unique index on
+  // Consultation.payment turns a concurrent insert into a duplicate-key error,
+  // in which case the other caller's consultation is used.
+  let consultation;
+  try {
+    consultation = await Consultation.findOneAndUpdate(
+      { payment: payment._id },
+      {
+        $setOnInsert: {
+          date: new Date(payment.metadata.date),
+          doctor: payment.doctor,
+          patient: payment.patient,
+          payment: payment._id,
+        },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    );
+  } catch (err) {
+    if (err?.code !== 11000) throw err;
+    consultation = await Consultation.findOne({ payment: payment._id });
+  }
+  await Payment.updateOne(
+    { _id: payment._id },
+    { consultation: consultation._id },
+  );
+};
+
+// Called by both the success page and the webhook; the conditional update
+// picks one caller to fulfill. Throws a retryable 503 while another caller is
+// still creating the consultation, so the webhook is retried instead of acked.
 const fulfillPayment = async (stripeSessionId, paymentIntentId) => {
-  const payment = await Payment.findOneAndUpdate(
+  const previous = await Payment.findOneAndUpdate(
     { stripeSessionId, status: { $ne: "paid" } },
     {
       status: "paid",
       ...(paymentIntentId && { stripePaymentIntentId: paymentIntentId }),
     },
-    { new: true },
   );
-  if (!payment) return;
 
-  const consultation = await Consultation.create({
-    date: new Date(payment.metadata.date),
-    doctor: payment.doctor,
-    patient: payment.patient,
-    payment: payment._id,
-  });
-  payment.consultation = consultation._id;
-  await payment.save();
+  if (previous) {
+    try {
+      await createConsultationFor(previous);
+    } catch (err) {
+      await Payment.updateOne(
+        { _id: previous._id, status: "paid", consultation: { $in: [null] } },
+        { status: previous.status },
+      );
+      throw err;
+    }
+    return;
+  }
+
+  const payment = await Payment.findOne({ stripeSessionId });
+  if (!payment || isFulfilled(payment)) return;
+
+  // Paid but no consultation yet: either another caller is mid-fulfillment or
+  // a previous attempt crashed. Reconcile stale ones, otherwise ask to retry.
+  const linked = await Consultation.findOne({ payment: payment._id });
+  const age = Date.now() - new Date(payment.updatedAt).getTime();
+  if (linked || age > STALE_FULFILLMENT_MS) {
+    await createConsultationFor(payment);
+    return;
+  }
+  throw new ApiError(
+    httpStatus.SERVICE_UNAVAILABLE,
+    "Payment fulfillment is still in progress",
+  );
 };
 
 const confirmPayment = async (sessionId) => {
@@ -98,7 +154,7 @@ const confirmPayment = async (sessionId) => {
   if (!payment) {
     throw new ApiError(httpStatus.NOT_FOUND, "Payment not found");
   }
-  if (payment.status === "paid") return payment;
+  if (isFulfilled(payment)) return payment;
 
   const session = await stripe.checkout.sessions.retrieve(sessionId);
   if (session.payment_status !== "paid") {
