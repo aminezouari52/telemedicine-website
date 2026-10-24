@@ -1,4 +1,4 @@
-# Télémédecine
+# Telemed
 
 [![Connect with me on LinkedIn](https://img.shields.io/badge/LinkedIn-Connect%20with%20me-0A66C2?logo=linkedin&logoColor=white)](https://www.linkedin.com/in/amine-zouari52)
 [![Live Demo](https://img.shields.io/badge/Live-Demo-00C7B7?logo=netlify&logoColor=white)](https://telemed-demo.netlify.app)
